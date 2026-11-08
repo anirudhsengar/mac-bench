@@ -1,0 +1,109 @@
+{
+  "frozen_at_utc": "2026-11-05T16:31:03.195323+00:00",
+  "preflight_verified": true,
+  "model": {
+    "provider": "anthropic",
+    "model_id": "claude-haiku-5-5",
+    "model_created_at": "2026-10-07T18:00:00Z",
+    "max_tokens": 4096,
+    "temperature": null,
+    "sdk_max_retries": 1,
+    "relay_transient_5xx_retries": 3
+  },
+  "shared_budgets": {
+    "max_http_transactions": 600,
+    "max_llm_calls": 120,
+    "max_duration_seconds": 3600
+  },
+  "pinned_artifacts_and_digests": {
+    "dvwa_2_3_release_tarball_sha256": "f19bed738dd2d3867b5a7d50ffafe6fe07b30278824467e0ff24a1737e009f22",
+    "php_8_2_apache_bookworm": "php@sha256:46804ea2b61eaf25ca47fa8aafc917015b8dad6b7a64c4364bb051a9dff275d5",
+    "mariadb_10_11": "mariadb@sha256:d769e37960821dfdcf096954f6e7ac89f747e116c1bba98e48edd265dfc7deae",
+    "juiceshop_v16_0_0": "bkimminich/juice-shop@sha256:5aef8464395d101d984d255166b079a52a573fba900450612f8cf3da2ad3a2dd",
+    "python_3_12_slim_bookworm": "python@sha256:da54eb86849fe19be7584d8b3f291fcf0c53c196760ab3d70dc6382f681ef9c0",
+    "playwright_v1_62_0_noble": "mcr.microsoft.com/playwright@sha256:baed2032d533817f3dbe6425de795788430ba345e819a1201337009ba17c9d07",
+    "alpine_3_22": "alpine@sha256:14358309a308569c32bdc37e2e0e9694be33a9d99e68afb0f5ff33cc1f695dce"
+  },
+  "code_and_prompt_sha256": {
+    "benchmark_manifest_yaml": "5bbeb8362abd68f617f876230961ba94d93388a54f897071c949444e9aaa2615",
+    "shared_scope_py": "36e07c179ac16cbf51cd1d438f507a04e78f01e5ed21e250a8ecc9ba3953544e",
+    "multi_agent_prompts_py": "32ea3165e9a9cc6cf9bccdd59097aa368fee952c36d0878c9a0447a927f3045f",
+    "react_prompts_py": "ba62c7e86d07eb289faa4b6f091b788ff1d11c9a282f8cb0054ba0b52a6e23c4",
+    "web_tools_py": "727851bced608053b3824c770d317400a6fe577137b56cc346080a31fe78bb59",
+    "multi_agent_py": "01ae32d551e5fd8666b1c83c2bb7af4775f2101726a086723e4410369233d713",
+    "react_baseline_py": "18a4cd5c3585c19f9c10200b0d5188795e282f94c1e56a3993e4a3e63acefe70",
+    "mediator_addon_py": "4fade4913d90c08056d08800b300e33fa76b0efc026dcd1b8568f798daffa341"
+  },
+  "paired_trial_schedule": [
+    {
+      "trial_index": 1,
+      "order": [
+        "multi_agent",
+        "react_baseline"
+      ]
+    },
+    {
+      "trial_index": 2,
+      "order": [
+        "react_baseline",
+        "multi_agent"
+      ]
+    },
+    {
+      "trial_index": 3,
+      "order": [
+        "multi_agent",
+        "react_baseline"
+      ]
+    },
+    {
+      "trial_index": 4,
+      "order": [
+        "react_baseline",
+        "multi_agent"
+      ]
+    },
+    {
+      "trial_index": 5,
+      "order": [
+        "multi_agent",
+        "react_baseline"
+      ]
+    },
+    {
+      "trial_index": 6,
+      "order": [
+        "react_baseline",
+        "multi_agent"
+      ]
+    },
+    {
+      "trial_index": 7,
+      "order": [
+        "multi_agent",
+        "react_baseline"
+      ]
+    },
+    {
+      "trial_index": 8,
+      "order": [
+        "react_baseline",
+        "multi_agent"
+      ]
+    },
+    {
+      "trial_index": 9,
+      "order": [
+        "multi_agent",
+        "react_baseline"
+      ]
+    },
+    {
+      "trial_index": 10,
+      "order": [
+        "react_baseline",
+        "multi_agent"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+[project]
+name = "mac-bench"
+version = "0.1.0"
+description = "Evaluative Benchmarking of a Specialized Multi-Agent LLM Architecture for Web Vulnerability Identification in Isolated Environments"
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "anthropic>=0.49.0",
+    "httpx>=0.28.0",
+    "langchain-anthropic>=0.3.10",
+    "langchain-core>=0.3.45",
+    "langgraph>=0.3.18",
+    "pydantic>=2.10.0",
+    "pyyaml>=6.0.2",
+    "playwright==1.62.0",
+    "beautifulsoup4>=4.12.3",
+    "pytest>=8.3.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mac_bench"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

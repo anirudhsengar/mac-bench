@@ -1,0 +1,27 @@
+# Secrets & Environment
+.env
+.env.*
+!.env.example
+
+# Python & Virtual Environments
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+
+# Runtime sockets & temporary state
+run_state/
+*.sock
+*.pid
+docker/dvwa/dvwa-src.tar.gz
+
+# Internal planning doc (not part of the published artifact)
+research_plan.docx
+
+# Paper write-up (maintained separately)
+paper/
+archive/v1/paper_v1/

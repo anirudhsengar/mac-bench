@@ -1,0 +1,9 @@
+.venv
+.git
+.env
+.env.*
+results
+run_state
+__pycache__
+*.pyc
+research_plan.docx

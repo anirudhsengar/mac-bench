@@ -1,0 +1,106 @@
+name: mac-bench
+
+networks:
+  agent_net:
+    driver: bridge
+    internal: true
+  target_net:
+    driver: bridge
+    internal: true
+
+services:
+  proxy:
+    build:
+      context: ./docker/proxy
+    restart: unless-stopped
+    cpus: 1.0
+    mem_limit: 512m
+    networks:
+      - agent_net
+      - target_net
+    environment:
+      - MEDIATOR_LOG_DIR=/logs
+      - MEDIATOR_CONTROL_SOCK=/run/proxy-ctl/control.sock
+    volumes:
+      - ./results/proxy_logs:/logs
+      - ./run_state/proxy_ctl:/run/proxy-ctl
+
+  agent-firewall:
+    build:
+      context: ./docker/firewall
+    restart: unless-stopped
+    cpus: 0.25
+    mem_limit: 128m
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - proxy
+    networks:
+      - agent_net
+
+  agent:
+    build:
+      context: .
+      dockerfile: ./docker/agent/Dockerfile
+    restart: unless-stopped
+    cpus: 2.0
+    mem_limit: 3g
+    shm_size: "1gb"
+    network_mode: "service:agent-firewall"
+    depends_on:
+      - agent-firewall
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - ./src:/app/src:ro
+      - ./configs:/app/configs:ro
+      - ./run_state/llm_relay:/run/llm-relay
+      - ./run_state/agent_out:/app/work
+
+  dvwa-db:
+    image: mariadb:10.11@sha256:d769e37960821dfdcf096954f6e7ac89f747e116c1bba98e48edd265dfc7deae
+    restart: unless-stopped
+    cpus: 1.0
+    mem_limit: 1g
+    environment:
+      - MYSQL_ROOT_PASSWORD=dvwa_root_local
+      - MYSQL_DATABASE=dvwa
+      - MYSQL_USER=dvwa
+      - MYSQL_PASSWORD=p@ssw0rd
+    networks:
+      - target_net
+
+  dvwa:
+    build:
+      context: ./docker/dvwa
+    restart: unless-stopped
+    cpus: 1.0
+    mem_limit: 512m
+    depends_on:
+      - dvwa-db
+    environment:
+      - DB_SERVER=dvwa-db
+      - DB_DATABASE=dvwa
+      - DB_USER=dvwa
+      - DB_PASSWORD=p@ssw0rd
+    networks:
+      - target_net
+
+  juiceshop:
+    image: bkimminich/juice-shop:v16.0.0@sha256:5aef8464395d101d984d255166b079a52a573fba900450612f8cf3da2ad3a2dd
+    restart: unless-stopped
+    cpus: 1.5
+    mem_limit: 1g
+    networks:
+      - target_net
+
+  redirect-trap:
+    build:
+      context: ./docker/redirect_trap
+    restart: unless-stopped
+    cpus: 0.25
+    mem_limit: 128m
+    networks:
+      - target_net
