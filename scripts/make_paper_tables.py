@@ -280,28 +280,32 @@ def main() -> None:
                                             encoding="utf-8")
         digest["funnel_total"] = funnel
 
-    # ---- Ablation: multi-agent without the LLM Coordinator ----
+    # ---- Ablations (Haiku): fixed routing, and LLM Coordinator with per-instance coverage tracking ----
     arows = []
     for slug, label, mid, d, runs in present:
-        st = _runs(root, f"{rset}/{slug}_static")
-        if not st.get(MA):
+        variants = {v: _runs(root, f"{rset}/{slug}_{v}") for v in ("static", "tracked")}
+        if not any(r.get(MA) for r in variants.values()):
             continue
-        s_rec, s_rt = _col(st, MA, "recall"), _col(st, MA, "runtime_seconds")
-        s_llm = _col(st, MA, "llm_calls")
-        arows.append(
-            f"{label} & {_ms(_col(runs, MA, 'recall'))} & {_ms(s_rec)} & {_ms(_col(runs, SA, 'recall'))} \\\\\n"
-            f" & {_ms(_col(runs, MA, 'runtime_seconds'), '{:.0f}')} & {_ms(s_rt, '{:.0f}')} & "
-            f"{_ms(_col(runs, SA, 'runtime_seconds'), '{:.0f}')} \\\\\n"
-        )
-        digest["models"][slug]["ablation_static"] = {
-            "recall_mean": statistics.mean(s_rec), "recall_sd": statistics.stdev(s_rec) if len(s_rec) > 1 else 0,
-            "runtime_mean": statistics.mean(s_rt), "llm_calls_mean": statistics.mean(s_llm), "n": len(s_rec),
-            "per_case": _summary(root, f"{rset}/{slug}_static")["metrics"]["by_architecture"][MA]["per_case_detection"]
-            if _summary(root, f"{rset}/{slug}_static") else None,
-        }
+        cells_r, cells_t = [_ms(_col(runs, MA, "recall"))], [_ms(_col(runs, MA, "runtime_seconds"), "{:.0f}")]
+        for v, r in variants.items():
+            if not r.get(MA):
+                cells_r.append("--"); cells_t.append("--"); continue
+            rec, rt = _col(r, MA, "recall"), _col(r, MA, "runtime_seconds")
+            cells_r.append(_ms(rec)); cells_t.append(_ms(rt, "{:.0f}"))
+            summ = _summary(root, f"{rset}/{slug}_{v}")
+            digest["models"][slug][f"ablation_{v}"] = {
+                "recall_mean": statistics.mean(rec), "recall_sd": statistics.stdev(rec) if len(rec) > 1 else 0,
+                "runtime_mean": statistics.mean(rt), "llm_calls_mean": statistics.mean(_col(r, MA, "llm_calls")),
+                "n": len(rec),
+                "per_case": summ["metrics"]["by_architecture"][MA]["per_case_detection"] if summ else None,
+            }
+        cells_r.append(_ms(_col(runs, SA, "recall"))); cells_t.append(_ms(_col(runs, SA, "runtime_seconds"), "{:.0f}"))
+        arows.append(f"Recall & {' & '.join(cells_r)} \\\\\nRuntime (s) & {' & '.join(cells_t)} \\\\\n")
     if arows:
         (out_dir / "ablation.tex").write_text(_tab(
-            "@{}l c c c@{}", "Model & MA (LLM Coordinator) & MA (fixed routing) & SA", "".join(arows)), encoding="utf-8")
+            "@{}l c c c c@{}",
+            "Haiku 5.5 & MA (LLM Coord.) & MA (fixed routing) & MA (coverage-tracked) & SA", "".join(arows)),
+            encoding="utf-8")
 
     for slug, label, mid, d, runs in present:
         ba = d["metrics"]["by_architecture"]

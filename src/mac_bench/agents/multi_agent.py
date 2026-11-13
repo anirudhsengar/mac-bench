@@ -18,6 +18,7 @@ from mac_bench.prompts.multi_agent_prompts import (
     VERIFIER_SYSTEM_PROMPT,
 )
 from mac_bench.config import load_manifest
+from mac_bench.oracles.verify_oracles import CASE_ROUTE, SCOPE_ITEM_LABEL, scope_coverage
 from mac_bench.schemas import AssessmentState, BudgetState, TargetEndpoint, normalize_endpoint_key
 from mac_bench.tools.session_store import SessionManager
 from mac_bench.tools.web_tools import ToolRuntimeContext, build_shared_tools
@@ -36,6 +37,9 @@ STATIC_VERIFY_INSTRUCTION = (
     "For DVWA routes, test every security level named in the scope and submit one finding per level."
 )
 STATIC_VERIFY_BATCH = 2
+# Ablation: LLM Coordinator plus per-instance coverage tracking (MAC_BENCH_MA_COORDINATOR=tracked).
+MAX_COVERAGE_OVERRIDES = 4
+COVERAGE_NOTE_PREFIX = "[CoverageCheck"
 STATIC_MAX_VERIFY_ATTEMPTS = 2
 
 
@@ -66,7 +70,7 @@ class CoordinatorDecision(BaseModel):
     )
 
 
-def _format_state_brief_for_coordinator(state: AssessmentState) -> str:
+def _format_state_brief_for_coordinator(state: AssessmentState, with_coverage: bool = False) -> str:
     b = state.budgets
     ep_rows = [
         {
@@ -109,6 +113,9 @@ def _format_state_brief_for_coordinator(state: AssessmentState) -> str:
         "endpoints_inventory": ep_rows,
         "findings_inventory": finding_rows,
     }
+    if with_coverage:
+        cov = scope_coverage(state.findings)
+        summary["scope_coverage_checklist"] = {SCOPE_ITEM_LABEL[c]: st for c, st in cov.items()}
     return json.dumps(summary, indent=2, ensure_ascii=False)
 
 
@@ -202,10 +209,12 @@ def _execute_tool_loop(
 def run_multi_agent_assessment(run_id: str, coordinator: str | None = None) -> tuple[AssessmentState, SessionManager]:
     """Build and execute the 3-role LangGraph workflow (Coordinator, Surface Mapper, Verification Agent).
 
-    coordinator: "llm" (default) or "static" (ablation: deterministic routing, no Coordinator LLM calls).
+    coordinator: "llm" (default), "static" (ablation: deterministic routing, no Coordinator LLM calls), or
+    "tracked" (ablation: LLM Coordinator that sees a per-instance coverage checklist and cannot halt while
+    items remain open, up to MAX_COVERAGE_OVERRIDES times).
     """
     coordinator = coordinator or os.environ.get("MAC_BENCH_MA_COORDINATOR", "llm")
-    if coordinator not in ("llm", "static"):
+    if coordinator not in ("llm", "static", "tracked"):
         raise ValueError(f"Unknown coordinator mode: {coordinator}")
     redactor = RunRedactor()
     session_mgr = SessionManager()
@@ -213,6 +222,42 @@ def run_multi_agent_assessment(run_id: str, coordinator: str | None = None) -> t
 
     mapper_tools = build_shared_tools(ctx, allow_record_endpoint=True, allow_submit_finding=False)
     verifier_tools = build_shared_tools(ctx, allow_record_endpoint=False, allow_submit_finding=True)
+
+    def _coverage_override(state: AssessmentState, budgets: BudgetState) -> dict[str, Any] | None:
+        """Refuse a halt while scope items are open: send them to the Verifier (or the Mapper)."""
+        used = sum(1 for n in state.notes if n.startswith(COVERAGE_NOTE_PREFIX))
+        depleted, _ = budgets.is_depleted()
+        if used >= MAX_COVERAGE_OVERRIDES or depleted or budgets.llm_remaining < 10:
+            return None
+        open_items = [c for c, st in scope_coverage(state.findings).items() if st in ("open", "inconclusive")]
+        if not open_items:
+            return None
+        labels = "; ".join(SCOPE_ITEM_LABEL[c] for c in open_items)
+        ep_ids: list[str] = []
+        for c in open_items:
+            target, frag = CASE_ROUTE[c]
+            for ep in state.endpoints:
+                if ep.target == target and frag in ep.path.lower() and ep.endpoint_id not in ep_ids:
+                    ep_ids.append(ep.endpoint_id)
+        if ep_ids:
+            route, assignment = "verifier", (
+                f"Coverage check: these scope items have no confirmed or rejected finding yet: {labels}. "
+                "Verify them on the assigned endpoints, setting the DVWA security level as each item requires, "
+                "and submit one finding per item."
+            )
+            ep_ids = ep_ids[:3]
+        else:
+            route, assignment = "surface_mapper", (
+                f"Coverage check: these scope items have no mapped route yet: {labels}. Map their routes."
+            )
+        return {
+            "budgets": budgets,
+            "handoff_count": state.handoff_count + 1,
+            "next_action": route,
+            "active_assignment": assignment,
+            "assigned_endpoint_ids": ep_ids,
+            "notes": [f"{COVERAGE_NOTE_PREFIX} {used + 1}/{MAX_COVERAGE_OVERRIDES} -> {route}] halt refused; open: {labels}"[:400]],
+        }
 
     def coordinator_node(state: AssessmentState) -> dict[str, Any]:
         live_b = sync_live_budgets(state.budgets, state.started_at_epoch)
@@ -233,7 +278,9 @@ def run_multi_agent_assessment(run_id: str, coordinator: str | None = None) -> t
 
         ctx.active_role = "coordinator"
         coord_llm = build_role_llm("coordinator").with_structured_output(CoordinatorDecision)
-        state_json = _format_state_brief_for_coordinator(state.model_copy(update={"budgets": live_b}))
+        state_json = _format_state_brief_for_coordinator(
+            state.model_copy(update={"budgets": live_b}), with_coverage=(coordinator == "tracked")
+        )
 
         try:
             decision: CoordinatorDecision = coord_llm.invoke(
@@ -256,6 +303,11 @@ def run_multi_agent_assessment(run_id: str, coordinator: str | None = None) -> t
             }
 
         updated_b = sync_live_budgets(live_b, state.started_at_epoch)
+
+        if coordinator == "tracked" and decision.route_to == "halt":
+            override = _coverage_override(state, updated_b)
+            if override is not None:
+                return override
 
         # Apply optional reopen_for_mapping transitions on candidate endpoints
         reopened_eps: list[TargetEndpoint] = []
@@ -444,7 +496,7 @@ def run_multi_agent_assessment(run_id: str, coordinator: str | None = None) -> t
         return "__end__"
 
     graph = StateGraph(state_schema=AssessmentState)
-    graph.add_node("coordinator", coordinator_node if coordinator == "llm" else static_coordinator_node)
+    graph.add_node("coordinator", static_coordinator_node if coordinator == "static" else coordinator_node)
     graph.add_node("surface_mapper", surface_mapper_node)
     graph.add_node("verifier", verifier_node)
 

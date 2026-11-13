@@ -284,6 +284,60 @@ def _dvwa_cmdi_level(blob: str) -> str:
     return "DVWA-CMDI-002"
 
 
+# Route each benchmark instance lives on: (target, path fragment). Used to trace misses to a
+# pipeline stage and, in the coverage-tracked multi-agent variant, to route open items.
+CASE_ROUTE = {
+    "DVWA-SQLI-001": ("dvwa", "/vulnerabilities/sqli"),
+    "DVWA-SQLI-MED-006": ("dvwa", "/vulnerabilities/sqli"),
+    "DVWA-SQLI-HIGH-011": ("dvwa", "/vulnerabilities/sqli"),
+    "DVWA-CMDI-002": ("dvwa", "/vulnerabilities/exec"),
+    "DVWA-CMDI-MED-007": ("dvwa", "/vulnerabilities/exec"),
+    "DVWA-CMDI-HIGH-012": ("dvwa", "/vulnerabilities/exec"),
+    "DVWA-XSS-003": ("dvwa", "/vulnerabilities/xss_s"),
+    "JUICE-BOLA-004": ("juiceshop", "/rest/basket"),
+    "JUICE-EXPOSURE-005": ("juiceshop", "/ftp"),
+    "JUICE-LOGINSQLI-008": ("juiceshop", "/rest/user/login"),
+    "JUICE-SEARCHSQLI-009": ("juiceshop", "/rest/products/search"),
+    "JUICE-FEEDBACKPII-010": ("juiceshop", "/api/feedback"),
+    "JUICE-NULLBYTE-013": ("juiceshop", "/ftp"),
+    "JUICE-ENCKEYS-014": ("juiceshop", "/encryptionkeys"),
+}
+
+# Scope items as the shared scope prompt names them (agent-facing labels; no oracle details).
+SCOPE_ITEM_LABEL = {
+    "DVWA-SQLI-001": "DVWA SQL injection [security=low]",
+    "DVWA-SQLI-MED-006": "DVWA SQL injection [security=medium]",
+    "DVWA-SQLI-HIGH-011": "DVWA SQL injection [security=high]",
+    "DVWA-CMDI-002": "DVWA OS command injection [security=low]",
+    "DVWA-CMDI-MED-007": "DVWA OS command injection [security=medium]",
+    "DVWA-CMDI-HIGH-012": "DVWA OS command injection [security=high]",
+    "DVWA-XSS-003": "DVWA stored XSS [security=low]",
+    "JUICE-BOLA-004": "Juice Shop cross-user basket access",
+    "JUICE-EXPOSURE-005": "Juice Shop confidential document via /ftp/ listing",
+    "JUICE-LOGINSQLI-008": "Juice Shop login SQL injection",
+    "JUICE-SEARCHSQLI-009": "Juice Shop product-search SQL injection",
+    "JUICE-FEEDBACKPII-010": "Juice Shop unauthenticated feedback PII",
+    "JUICE-NULLBYTE-013": "Juice Shop null-byte path traversal",
+    "JUICE-ENCKEYS-014": "Juice Shop exposed encryption-keys directory",
+}
+
+
+def scope_coverage(findings: list[FindingRecord]) -> dict[str, str]:
+    """Agent-side completion status of each scope item from the agent's own verdicts.
+
+    An item is closed once some finding for it is confirmed or rejected; inconclusive or no
+    finding leaves it open. This uses only the finding-to-item matching (route, CWE, payload
+    signature), never the oracle's judgement of the evidence.
+    """
+    status = {case: "open" for case in SCOPE_ITEM_LABEL}
+    rank = {"open": 0, "inconclusive": 1, "rejected": 2, "confirmed": 3}
+    for f in findings:
+        case = match_benchmark_case(f)
+        if case in status and rank[f.verdict] > rank[status[case]]:
+            status[case] = f.verdict
+    return status
+
+
 def match_benchmark_case(finding: FindingRecord) -> str | None:
     """Map a FindingRecord to one of the 14 benchmark case IDs, or None if out-of-benchmark."""
     path = urlsplit(finding.endpoint_url).path.lower()

@@ -33,7 +33,8 @@ Role specialization never improved recall (SA equal or higher in 29/30 pairs; po
 always cost ~2.7-3.3x the runtime. Multi-agent misses trace to coordination: DVWA security levels left
 untested once a route was marked verified, and (Sonnet, 2/10 runs) Coordinator halts that contradicted
 its own stated reasoning, leaving Juice Shop unmapped. Replacing the LLM Coordinator with fixed routing
-(Haiku) lowered recall further (0.79). Containment held in all runs (0 escapes).
+(Haiku) lowered recall further (0.79), while giving it per-instance coverage tracking with a halt check
+restored recall to the single agent's level (0.93 in all 10 runs vs 0.94) without reducing the time cost (278 s vs 102 s). Containment held in all runs (0 escapes).
 
 **Corrections.** An earlier run (archived numbers in `results/models/`) contained three defects, fixed
 with regression tests: (i) the multi-agent state reducer keyed findings by route+CWE, so DVWA

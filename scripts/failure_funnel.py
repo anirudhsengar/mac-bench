@@ -26,26 +26,9 @@ from urllib.parse import urlsplit
 
 from mac_bench.config import repo_root
 from mac_bench.evaluation.metrics import BENCHMARK_CASE_IDS
-from mac_bench.oracles.verify_oracles import adjudicate_finding_against_oracle, match_benchmark_case
+from mac_bench.oracles.verify_oracles import CASE_ROUTE, adjudicate_finding_against_oracle, match_benchmark_case
 from mac_bench.schemas import FindingRecord
 
-# Route that must be mapped (and verified) for each case: (target, path fragment).
-CASE_ROUTE = {
-    "DVWA-SQLI-001": ("dvwa", "/vulnerabilities/sqli"),
-    "DVWA-SQLI-MED-006": ("dvwa", "/vulnerabilities/sqli"),
-    "DVWA-SQLI-HIGH-011": ("dvwa", "/vulnerabilities/sqli"),
-    "DVWA-CMDI-002": ("dvwa", "/vulnerabilities/exec"),
-    "DVWA-CMDI-MED-007": ("dvwa", "/vulnerabilities/exec"),
-    "DVWA-CMDI-HIGH-012": ("dvwa", "/vulnerabilities/exec"),
-    "DVWA-XSS-003": ("dvwa", "/vulnerabilities/xss_s"),
-    "JUICE-BOLA-004": ("juiceshop", "/rest/basket"),
-    "JUICE-EXPOSURE-005": ("juiceshop", "/ftp"),
-    "JUICE-LOGINSQLI-008": ("juiceshop", "/rest/user/login"),
-    "JUICE-SEARCHSQLI-009": ("juiceshop", "/rest/products/search"),
-    "JUICE-FEEDBACKPII-010": ("juiceshop", "/api/feedback"),
-    "JUICE-NULLBYTE-013": ("juiceshop", "/ftp"),
-    "JUICE-ENCKEYS-014": ("juiceshop", "/encryptionkeys"),
-}
 STAGES = ["not_mapped", "not_assigned", "not_attempted", "agent_rejected", "oracle_rejected"]
 
 

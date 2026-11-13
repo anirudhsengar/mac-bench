@@ -239,3 +239,21 @@ def test_sqli_level_is_attributed_by_payload_before_wording():
     assert _dvwa_sqli_level(low) == "DVWA-SQLI-001"
     assert _dvwa_sqli_level(med) == "DVWA-SQLI-MED-006"
     assert _dvwa_sqli_level(high) == "DVWA-SQLI-HIGH-011"
+
+
+def test_scope_coverage_tracks_each_level_separately():
+    """The tracked-coordinator checklist closes an item only for its own level and verdict."""
+    from mac_bench.oracles.verify_oracles import scope_coverage
+    from mac_bench.schemas import FindingRecord
+
+    def f(payload, level, verdict):
+        return FindingRecord(
+            finding_id=f"x{level}", target="dvwa", endpoint_url="http://dvwa/vulnerabilities/exec/", method="POST",
+            cwe="CWE-78", title=f"Command injection [security={level}]", verdict=verdict,
+            request_sequence=[f"POST ip={payload}"], response_evidence=f"www-data [security={level}]",
+        )
+
+    cov = scope_coverage([f("127.0.0.1; whoami", "low", "confirmed"), f("127.0.0.1| whoami", "medium", "inconclusive")])
+    assert cov["DVWA-CMDI-002"] == "confirmed"
+    assert cov["DVWA-CMDI-MED-007"] == "inconclusive"
+    assert cov["DVWA-CMDI-HIGH-012"] == "open"
