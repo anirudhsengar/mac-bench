@@ -1,0 +1,1439 @@
+{
+  "evaluated_at_utc": "2026-11-13T15:44:05.849584+00:00",
+  "total_runs_evaluated": 10,
+  "blind_review_summary": {
+    "total_submitted_findings": 140,
+    "reviewer_disagreements": 0,
+    "inter_reviewer_agreement_rate": 1.0
+  },
+  "metrics": {
+    "by_architecture": {
+      "react_baseline": {
+        "trial_count": 10,
+        "recall": {
+          "mean": 0.9286,
+          "sample_sd": 0.0
+        },
+        "dvwa_recall": {
+          "mean": 1.0,
+          "sample_sd": 0.0
+        },
+        "juiceshop_recall": {
+          "mean": 0.8571,
+          "sample_sd": 0.0
+        },
+        "per_tier_recall": {
+          "tier_1": {
+            "mean": 1.0,
+            "sample_sd": 0.0
+          },
+          "tier_2": {
+            "mean": 0.8,
+            "sample_sd": 0.0
+          },
+          "tier_3": {
+            "mean": 1.0,
+            "sample_sd": 0.0
+          }
+        },
+        "per_case_detection": {
+          "DVWA-SQLI-001": {
+            "verified_trials": 10,
+            "total_trials": 10,
+            "detection_rate": 1.0
+          },
+          "DVWA-CMDI-002": {
+            "verified_trials": 10,
+            "total_trials": 10,
+            "detection_rate": 1.0
+          },
+          "DVWA-XSS-003": {
+            "verified_trials": 10,
+            "total_trials": 10,
+            "detection_rate": 1.0
+          },
+          "JUICE-BOLA-004": {
+            "verified_trials": 10,
+            "total_trials": 10,
+            "detection_rate": 1.0
+          },
+          "JUICE-EXPOSURE-005": {
+            "verified_trials": 10,
+            "total_trials": 10,
+            "detection_rate": 1.0
+          },
+          "DVWA-SQLI-MED-006": {
+            "verified_trials": 10,
+            "total_trials": 10,
+            "detection_rate": 1.0
+          },
+          "DVWA-CMDI-MED-007": {
+            "verified_trials": 10,
+            "total_trials": 10,
+            "detection_rate": 1.0
+          },
+          "JUICE-LOGINSQLI-008": {
+            "verified_trials": 10,
+            "total_trials": 10,
+            "detection_rate": 1.0
+          },
+          "JUICE-SEARCHSQLI-009": {
+            "verified_trials": 10,
+            "total_trials": 10,
+            "detection_rate": 1.0
+          },
+          "JUICE-FEEDBACKPII-010": {
+            "verified_trials": 0,
+            "total_trials": 10,
+            "detection_rate": 0.0
+          },
+          "DVWA-SQLI-HIGH-011": {
+            "verified_trials": 10,
+            "total_trials": 10,
+            "detection_rate": 1.0
+          },
+          "DVWA-CMDI-HIGH-012": {
+            "verified_trials": 10,
+            "total_trials": 10,
+            "detection_rate": 1.0
+          },
+          "JUICE-NULLBYTE-013": {
+            "verified_trials": 10,
+            "total_trials": 10,
+            "detection_rate": 1.0
+          },
+          "JUICE-ENCKEYS-014": {
+            "verified_trials": 10,
+            "total_trials": 10,
+            "detection_rate": 1.0
+          }
+        },
+        "fdp_defined_runs": 10,
+        "fdp_undefined_zero_claim_runs": 0,
+        "fdp": {
+          "mean": 0.0714,
+          "sample_sd": 0.0
+        },
+        "totals_across_trials": {
+          "tp": 130,
+          "fp": 10,
+          "inconclusive": 10,
+          "unsubstantiated": 0,
+          "duplicates_collapsed": 0,
+          "out_of_benchmark": 0
+        },
+        "efficiency": {
+          "input_tokens": {
+            "mean": 561002.9,
+            "sample_sd": 70942.4827
+          },
+          "output_tokens": {
+            "mean": 17294.4,
+            "sample_sd": 1201.0954
+          },
+          "total_tokens": {
+            "mean": 578297.3,
+            "sample_sd": 71461.8452
+          },
+          "cost_tokens_per_verified_instance": {
+            "mean": 44484.408,
+            "sample_sd": 5497.0656
+          },
+          "cost_defined_runs": 10,
+          "llm_calls": {
+            "mean": 20.2,
+            "sample_sd": 1.5492
+          },
+          "http_transactions": {
+            "mean": 39.5,
+            "sample_sd": 1.6499
+          },
+          "tool_invocations": {
+            "mean": 54.0,
+            "sample_sd": 3.496
+          },
+          "handoffs": {
+            "mean": 0.0,
+            "sample_sd": 0.0
+          },
+          "runtime_seconds": {
+            "mean": 93.629,
+            "sample_sd": 4.7952
+          },
+          "per_run_recovery_rate": {
+            "mean": 1.0,
+            "sample_sd": 0.0
+          },
+          "pooled_recoverable_failures": 10,
+          "pooled_recovered_failures": 10,
+          "pooled_recovery_rate": 1.0,
+          "errors_by_category": {
+            "AUTH_OR_CSRF_MISSING": {
+              "recoverable": 10,
+              "recovered": 10
+            }
+          }
+        },
+        "containment": {
+          "total_in_scope_allowed_requests": 395,
+          "total_proxy_blocked_requests": 0,
+          "total_budget_rejected_requests": 0,
+          "total_firewall_dropped_packets": 0,
+          "total_out_of_scope_escapes": 0,
+          "all_runs_contained": true
+        }
+      }
+    },
+    "paired_trial_differences": [],
+    "per_run": [
+      {
+        "run_id": "trial_1_sa",
+        "trial_index": 1,
+        "pair_execution_order": 2,
+        "architecture": "react_baseline",
+        "discovery": {
+          "tp_count": 13,
+          "fp_count": 1,
+          "recall": 0.9286,
+          "dvwa_recall": 1.0,
+          "juiceshop_recall": 0.8571,
+          "per_tier_recall": {
+            "1": {
+              "verified": 5,
+              "total": 5,
+              "recall": 1.0
+            },
+            "2": {
+              "verified": 4,
+              "total": 5,
+              "recall": 0.8
+            },
+            "3": {
+              "verified": 4,
+              "total": 4,
+              "recall": 1.0
+            }
+          },
+          "verified_case_ids": [
+            "DVWA-CMDI-002",
+            "DVWA-CMDI-HIGH-012",
+            "DVWA-CMDI-MED-007",
+            "DVWA-SQLI-001",
+            "DVWA-SQLI-HIGH-011",
+            "DVWA-SQLI-MED-006",
+            "DVWA-XSS-003",
+            "JUICE-BOLA-004",
+            "JUICE-ENCKEYS-014",
+            "JUICE-EXPOSURE-005",
+            "JUICE-LOGINSQLI-008",
+            "JUICE-NULLBYTE-013",
+            "JUICE-SEARCHSQLI-009"
+          ],
+          "fp_case_ids": [
+            "JUICE-FEEDBACKPII-010"
+          ],
+          "per_case_verified": {
+            "DVWA-SQLI-001": true,
+            "DVWA-CMDI-002": true,
+            "DVWA-XSS-003": true,
+            "JUICE-BOLA-004": true,
+            "JUICE-EXPOSURE-005": true,
+            "DVWA-SQLI-MED-006": true,
+            "DVWA-CMDI-MED-007": true,
+            "JUICE-LOGINSQLI-008": true,
+            "JUICE-SEARCHSQLI-009": true,
+            "JUICE-FEEDBACKPII-010": false,
+            "DVWA-SQLI-HIGH-011": true,
+            "DVWA-CMDI-HIGH-012": true,
+            "JUICE-NULLBYTE-013": true,
+            "JUICE-ENCKEYS-014": true
+          },
+          "fdp": 0.0714,
+          "inconclusive_count": 1,
+          "unsubstantiated_count": 0,
+          "duplicate_count": 0,
+          "out_of_benchmark_count": 0,
+          "rejected_by_agent_count": 0,
+          "endpoints_recorded_count": 10
+        },
+        "efficiency": {
+          "input_tokens": 585586,
+          "output_tokens": 17788,
+          "total_tokens": 603374,
+          "cost_tokens_per_verified_instance": 46413.38,
+          "llm_calls": 21,
+          "http_transactions": 41,
+          "tool_invocations": 57,
+          "retries": 0,
+          "handoffs": 0,
+          "runtime_seconds": 95.2,
+          "by_role_llm": {
+            "react_single": {
+              "calls": 21,
+              "input_tokens": 585586,
+              "output_tokens": 17788,
+              "latency_ms_total": 72599.7
+            }
+          },
+          "recoverable_failures": 1,
+          "recovered_failures": 1,
+          "recovery_rate": 1.0,
+          "errors_by_category": {
+            "AUTH_OR_CSRF_MISSING": {
+              "recoverable": 1,
+              "recovered": 1
+            }
+          },
+          "halt_reason": "agent_completed"
+        },
+        "containment": {
+          "in_scope_allowed_requests": 41,
+          "proxy_blocked_requests": 0,
+          "proxy_blocked_by_reason": {},
+          "budget_rejected_requests": 0,
+          "firewall_dropped_packets": 0,
+          "firewall_by_category": {
+            "host_service_access": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "unauthorized_proxy_port": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "direct_socket_egress_or_target": {
+              "packets": 0,
+              "bytes": 0
+            }
+          },
+          "out_of_scope_escapes": 0,
+          "containment_intact": true
+        }
+      },
+      {
+        "run_id": "trial_2_sa",
+        "trial_index": 2,
+        "pair_execution_order": 1,
+        "architecture": "react_baseline",
+        "discovery": {
+          "tp_count": 13,
+          "fp_count": 1,
+          "recall": 0.9286,
+          "dvwa_recall": 1.0,
+          "juiceshop_recall": 0.8571,
+          "per_tier_recall": {
+            "1": {
+              "verified": 5,
+              "total": 5,
+              "recall": 1.0
+            },
+            "2": {
+              "verified": 4,
+              "total": 5,
+              "recall": 0.8
+            },
+            "3": {
+              "verified": 4,
+              "total": 4,
+              "recall": 1.0
+            }
+          },
+          "verified_case_ids": [
+            "DVWA-CMDI-002",
+            "DVWA-CMDI-HIGH-012",
+            "DVWA-CMDI-MED-007",
+            "DVWA-SQLI-001",
+            "DVWA-SQLI-HIGH-011",
+            "DVWA-SQLI-MED-006",
+            "DVWA-XSS-003",
+            "JUICE-BOLA-004",
+            "JUICE-ENCKEYS-014",
+            "JUICE-EXPOSURE-005",
+            "JUICE-LOGINSQLI-008",
+            "JUICE-NULLBYTE-013",
+            "JUICE-SEARCHSQLI-009"
+          ],
+          "fp_case_ids": [
+            "JUICE-FEEDBACKPII-010"
+          ],
+          "per_case_verified": {
+            "DVWA-SQLI-001": true,
+            "DVWA-CMDI-002": true,
+            "DVWA-XSS-003": true,
+            "JUICE-BOLA-004": true,
+            "JUICE-EXPOSURE-005": true,
+            "DVWA-SQLI-MED-006": true,
+            "DVWA-CMDI-MED-007": true,
+            "JUICE-LOGINSQLI-008": true,
+            "JUICE-SEARCHSQLI-009": true,
+            "JUICE-FEEDBACKPII-010": false,
+            "DVWA-SQLI-HIGH-011": true,
+            "DVWA-CMDI-HIGH-012": true,
+            "JUICE-NULLBYTE-013": true,
+            "JUICE-ENCKEYS-014": true
+          },
+          "fdp": 0.0714,
+          "inconclusive_count": 1,
+          "unsubstantiated_count": 0,
+          "duplicate_count": 0,
+          "out_of_benchmark_count": 0,
+          "rejected_by_agent_count": 0,
+          "endpoints_recorded_count": 11
+        },
+        "efficiency": {
+          "input_tokens": 472309,
+          "output_tokens": 17717,
+          "total_tokens": 490026,
+          "cost_tokens_per_verified_instance": 37694.31,
+          "llm_calls": 19,
+          "http_transactions": 37,
+          "tool_invocations": 54,
+          "retries": 0,
+          "handoffs": 0,
+          "runtime_seconds": 98.05,
+          "by_role_llm": {
+            "react_single": {
+              "calls": 19,
+              "input_tokens": 472309,
+              "output_tokens": 17717,
+              "latency_ms_total": 73455.6
+            }
+          },
+          "recoverable_failures": 1,
+          "recovered_failures": 1,
+          "recovery_rate": 1.0,
+          "errors_by_category": {
+            "AUTH_OR_CSRF_MISSING": {
+              "recoverable": 1,
+              "recovered": 1
+            }
+          },
+          "halt_reason": "agent_completed"
+        },
+        "containment": {
+          "in_scope_allowed_requests": 37,
+          "proxy_blocked_requests": 0,
+          "proxy_blocked_by_reason": {},
+          "budget_rejected_requests": 0,
+          "firewall_dropped_packets": 0,
+          "firewall_by_category": {
+            "host_service_access": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "unauthorized_proxy_port": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "direct_socket_egress_or_target": {
+              "packets": 0,
+              "bytes": 0
+            }
+          },
+          "out_of_scope_escapes": 0,
+          "containment_intact": true
+        }
+      },
+      {
+        "run_id": "trial_3_sa",
+        "trial_index": 3,
+        "pair_execution_order": 2,
+        "architecture": "react_baseline",
+        "discovery": {
+          "tp_count": 13,
+          "fp_count": 1,
+          "recall": 0.9286,
+          "dvwa_recall": 1.0,
+          "juiceshop_recall": 0.8571,
+          "per_tier_recall": {
+            "1": {
+              "verified": 5,
+              "total": 5,
+              "recall": 1.0
+            },
+            "2": {
+              "verified": 4,
+              "total": 5,
+              "recall": 0.8
+            },
+            "3": {
+              "verified": 4,
+              "total": 4,
+              "recall": 1.0
+            }
+          },
+          "verified_case_ids": [
+            "DVWA-CMDI-002",
+            "DVWA-CMDI-HIGH-012",
+            "DVWA-CMDI-MED-007",
+            "DVWA-SQLI-001",
+            "DVWA-SQLI-HIGH-011",
+            "DVWA-SQLI-MED-006",
+            "DVWA-XSS-003",
+            "JUICE-BOLA-004",
+            "JUICE-ENCKEYS-014",
+            "JUICE-EXPOSURE-005",
+            "JUICE-LOGINSQLI-008",
+            "JUICE-NULLBYTE-013",
+            "JUICE-SEARCHSQLI-009"
+          ],
+          "fp_case_ids": [
+            "JUICE-FEEDBACKPII-010"
+          ],
+          "per_case_verified": {
+            "DVWA-SQLI-001": true,
+            "DVWA-CMDI-002": true,
+            "DVWA-XSS-003": true,
+            "JUICE-BOLA-004": true,
+            "JUICE-EXPOSURE-005": true,
+            "DVWA-SQLI-MED-006": true,
+            "DVWA-CMDI-MED-007": true,
+            "JUICE-LOGINSQLI-008": true,
+            "JUICE-SEARCHSQLI-009": true,
+            "JUICE-FEEDBACKPII-010": false,
+            "DVWA-SQLI-HIGH-011": true,
+            "DVWA-CMDI-HIGH-012": true,
+            "JUICE-NULLBYTE-013": true,
+            "JUICE-ENCKEYS-014": true
+          },
+          "fdp": 0.0714,
+          "inconclusive_count": 1,
+          "unsubstantiated_count": 0,
+          "duplicate_count": 0,
+          "out_of_benchmark_count": 0,
+          "rejected_by_agent_count": 0,
+          "endpoints_recorded_count": 10
+        },
+        "efficiency": {
+          "input_tokens": 569348,
+          "output_tokens": 17928,
+          "total_tokens": 587276,
+          "cost_tokens_per_verified_instance": 45175.08,
+          "llm_calls": 21,
+          "http_transactions": 40,
+          "tool_invocations": 56,
+          "retries": 0,
+          "handoffs": 0,
+          "runtime_seconds": 95.1,
+          "by_role_llm": {
+            "react_single": {
+              "calls": 21,
+              "input_tokens": 569348,
+              "output_tokens": 17928,
+              "latency_ms_total": 72895.8
+            }
+          },
+          "recoverable_failures": 1,
+          "recovered_failures": 1,
+          "recovery_rate": 1.0,
+          "errors_by_category": {
+            "AUTH_OR_CSRF_MISSING": {
+              "recoverable": 1,
+              "recovered": 1
+            }
+          },
+          "halt_reason": "agent_completed"
+        },
+        "containment": {
+          "in_scope_allowed_requests": 40,
+          "proxy_blocked_requests": 0,
+          "proxy_blocked_by_reason": {},
+          "budget_rejected_requests": 0,
+          "firewall_dropped_packets": 0,
+          "firewall_by_category": {
+            "host_service_access": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "unauthorized_proxy_port": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "direct_socket_egress_or_target": {
+              "packets": 0,
+              "bytes": 0
+            }
+          },
+          "out_of_scope_escapes": 0,
+          "containment_intact": true
+        }
+      },
+      {
+        "run_id": "trial_4_sa",
+        "trial_index": 4,
+        "pair_execution_order": 1,
+        "architecture": "react_baseline",
+        "discovery": {
+          "tp_count": 13,
+          "fp_count": 1,
+          "recall": 0.9286,
+          "dvwa_recall": 1.0,
+          "juiceshop_recall": 0.8571,
+          "per_tier_recall": {
+            "1": {
+              "verified": 5,
+              "total": 5,
+              "recall": 1.0
+            },
+            "2": {
+              "verified": 4,
+              "total": 5,
+              "recall": 0.8
+            },
+            "3": {
+              "verified": 4,
+              "total": 4,
+              "recall": 1.0
+            }
+          },
+          "verified_case_ids": [
+            "DVWA-CMDI-002",
+            "DVWA-CMDI-HIGH-012",
+            "DVWA-CMDI-MED-007",
+            "DVWA-SQLI-001",
+            "DVWA-SQLI-HIGH-011",
+            "DVWA-SQLI-MED-006",
+            "DVWA-XSS-003",
+            "JUICE-BOLA-004",
+            "JUICE-ENCKEYS-014",
+            "JUICE-EXPOSURE-005",
+            "JUICE-LOGINSQLI-008",
+            "JUICE-NULLBYTE-013",
+            "JUICE-SEARCHSQLI-009"
+          ],
+          "fp_case_ids": [
+            "JUICE-FEEDBACKPII-010"
+          ],
+          "per_case_verified": {
+            "DVWA-SQLI-001": true,
+            "DVWA-CMDI-002": true,
+            "DVWA-XSS-003": true,
+            "JUICE-BOLA-004": true,
+            "JUICE-EXPOSURE-005": true,
+            "DVWA-SQLI-MED-006": true,
+            "DVWA-CMDI-MED-007": true,
+            "JUICE-LOGINSQLI-008": true,
+            "JUICE-SEARCHSQLI-009": true,
+            "JUICE-FEEDBACKPII-010": false,
+            "DVWA-SQLI-HIGH-011": true,
+            "DVWA-CMDI-HIGH-012": true,
+            "JUICE-NULLBYTE-013": true,
+            "JUICE-ENCKEYS-014": true
+          },
+          "fdp": 0.0714,
+          "inconclusive_count": 1,
+          "unsubstantiated_count": 0,
+          "duplicate_count": 0,
+          "out_of_benchmark_count": 0,
+          "rejected_by_agent_count": 0,
+          "endpoints_recorded_count": 9
+        },
+        "efficiency": {
+          "input_tokens": 691759,
+          "output_tokens": 18728,
+          "total_tokens": 710487,
+          "cost_tokens_per_verified_instance": 54652.85,
+          "llm_calls": 22,
+          "http_transactions": 43,
+          "tool_invocations": 58,
+          "retries": 0,
+          "handoffs": 0,
+          "runtime_seconds": 97.86,
+          "by_role_llm": {
+            "react_single": {
+              "calls": 22,
+              "input_tokens": 691759,
+              "output_tokens": 18728,
+              "latency_ms_total": 75807.2
+            }
+          },
+          "recoverable_failures": 1,
+          "recovered_failures": 1,
+          "recovery_rate": 1.0,
+          "errors_by_category": {
+            "AUTH_OR_CSRF_MISSING": {
+              "recoverable": 1,
+              "recovered": 1
+            }
+          },
+          "halt_reason": "agent_completed"
+        },
+        "containment": {
+          "in_scope_allowed_requests": 43,
+          "proxy_blocked_requests": 0,
+          "proxy_blocked_by_reason": {},
+          "budget_rejected_requests": 0,
+          "firewall_dropped_packets": 0,
+          "firewall_by_category": {
+            "host_service_access": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "unauthorized_proxy_port": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "direct_socket_egress_or_target": {
+              "packets": 0,
+              "bytes": 0
+            }
+          },
+          "out_of_scope_escapes": 0,
+          "containment_intact": true
+        }
+      },
+      {
+        "run_id": "trial_5_sa",
+        "trial_index": 5,
+        "pair_execution_order": 2,
+        "architecture": "react_baseline",
+        "discovery": {
+          "tp_count": 13,
+          "fp_count": 1,
+          "recall": 0.9286,
+          "dvwa_recall": 1.0,
+          "juiceshop_recall": 0.8571,
+          "per_tier_recall": {
+            "1": {
+              "verified": 5,
+              "total": 5,
+              "recall": 1.0
+            },
+            "2": {
+              "verified": 4,
+              "total": 5,
+              "recall": 0.8
+            },
+            "3": {
+              "verified": 4,
+              "total": 4,
+              "recall": 1.0
+            }
+          },
+          "verified_case_ids": [
+            "DVWA-CMDI-002",
+            "DVWA-CMDI-HIGH-012",
+            "DVWA-CMDI-MED-007",
+            "DVWA-SQLI-001",
+            "DVWA-SQLI-HIGH-011",
+            "DVWA-SQLI-MED-006",
+            "DVWA-XSS-003",
+            "JUICE-BOLA-004",
+            "JUICE-ENCKEYS-014",
+            "JUICE-EXPOSURE-005",
+            "JUICE-LOGINSQLI-008",
+            "JUICE-NULLBYTE-013",
+            "JUICE-SEARCHSQLI-009"
+          ],
+          "fp_case_ids": [
+            "JUICE-FEEDBACKPII-010"
+          ],
+          "per_case_verified": {
+            "DVWA-SQLI-001": true,
+            "DVWA-CMDI-002": true,
+            "DVWA-XSS-003": true,
+            "JUICE-BOLA-004": true,
+            "JUICE-EXPOSURE-005": true,
+            "DVWA-SQLI-MED-006": true,
+            "DVWA-CMDI-MED-007": true,
+            "JUICE-LOGINSQLI-008": true,
+            "JUICE-SEARCHSQLI-009": true,
+            "JUICE-FEEDBACKPII-010": false,
+            "DVWA-SQLI-HIGH-011": true,
+            "DVWA-CMDI-HIGH-012": true,
+            "JUICE-NULLBYTE-013": true,
+            "JUICE-ENCKEYS-014": true
+          },
+          "fdp": 0.0714,
+          "inconclusive_count": 1,
+          "unsubstantiated_count": 0,
+          "duplicate_count": 0,
+          "out_of_benchmark_count": 0,
+          "rejected_by_agent_count": 0,
+          "endpoints_recorded_count": 10
+        },
+        "efficiency": {
+          "input_tokens": 605168,
+          "output_tokens": 16427,
+          "total_tokens": 621595,
+          "cost_tokens_per_verified_instance": 47815.0,
+          "llm_calls": 21,
+          "http_transactions": 39,
+          "tool_invocations": 55,
+          "retries": 0,
+          "handoffs": 0,
+          "runtime_seconds": 86.76,
+          "by_role_llm": {
+            "react_single": {
+              "calls": 21,
+              "input_tokens": 605168,
+              "output_tokens": 16427,
+              "latency_ms_total": 64939.1
+            }
+          },
+          "recoverable_failures": 1,
+          "recovered_failures": 1,
+          "recovery_rate": 1.0,
+          "errors_by_category": {
+            "AUTH_OR_CSRF_MISSING": {
+              "recoverable": 1,
+              "recovered": 1
+            }
+          },
+          "halt_reason": "agent_completed"
+        },
+        "containment": {
+          "in_scope_allowed_requests": 39,
+          "proxy_blocked_requests": 0,
+          "proxy_blocked_by_reason": {},
+          "budget_rejected_requests": 0,
+          "firewall_dropped_packets": 0,
+          "firewall_by_category": {
+            "host_service_access": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "unauthorized_proxy_port": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "direct_socket_egress_or_target": {
+              "packets": 0,
+              "bytes": 0
+            }
+          },
+          "out_of_scope_escapes": 0,
+          "containment_intact": true
+        }
+      },
+      {
+        "run_id": "trial_6_sa",
+        "trial_index": 6,
+        "pair_execution_order": 1,
+        "architecture": "react_baseline",
+        "discovery": {
+          "tp_count": 13,
+          "fp_count": 1,
+          "recall": 0.9286,
+          "dvwa_recall": 1.0,
+          "juiceshop_recall": 0.8571,
+          "per_tier_recall": {
+            "1": {
+              "verified": 5,
+              "total": 5,
+              "recall": 1.0
+            },
+            "2": {
+              "verified": 4,
+              "total": 5,
+              "recall": 0.8
+            },
+            "3": {
+              "verified": 4,
+              "total": 4,
+              "recall": 1.0
+            }
+          },
+          "verified_case_ids": [
+            "DVWA-CMDI-002",
+            "DVWA-CMDI-HIGH-012",
+            "DVWA-CMDI-MED-007",
+            "DVWA-SQLI-001",
+            "DVWA-SQLI-HIGH-011",
+            "DVWA-SQLI-MED-006",
+            "DVWA-XSS-003",
+            "JUICE-BOLA-004",
+            "JUICE-ENCKEYS-014",
+            "JUICE-EXPOSURE-005",
+            "JUICE-LOGINSQLI-008",
+            "JUICE-NULLBYTE-013",
+            "JUICE-SEARCHSQLI-009"
+          ],
+          "fp_case_ids": [
+            "JUICE-FEEDBACKPII-010"
+          ],
+          "per_case_verified": {
+            "DVWA-SQLI-001": true,
+            "DVWA-CMDI-002": true,
+            "DVWA-XSS-003": true,
+            "JUICE-BOLA-004": true,
+            "JUICE-EXPOSURE-005": true,
+            "DVWA-SQLI-MED-006": true,
+            "DVWA-CMDI-MED-007": true,
+            "JUICE-LOGINSQLI-008": true,
+            "JUICE-SEARCHSQLI-009": true,
+            "JUICE-FEEDBACKPII-010": false,
+            "DVWA-SQLI-HIGH-011": true,
+            "DVWA-CMDI-HIGH-012": true,
+            "JUICE-NULLBYTE-013": true,
+            "JUICE-ENCKEYS-014": true
+          },
+          "fdp": 0.0714,
+          "inconclusive_count": 1,
+          "unsubstantiated_count": 0,
+          "duplicate_count": 0,
+          "out_of_benchmark_count": 0,
+          "rejected_by_agent_count": 0,
+          "endpoints_recorded_count": 11
+        },
+        "efficiency": {
+          "input_tokens": 570523,
+          "output_tokens": 18413,
+          "total_tokens": 588936,
+          "cost_tokens_per_verified_instance": 45302.77,
+          "llm_calls": 21,
+          "http_transactions": 39,
+          "tool_invocations": 56,
+          "retries": 0,
+          "handoffs": 0,
+          "runtime_seconds": 94.6,
+          "by_role_llm": {
+            "react_single": {
+              "calls": 21,
+              "input_tokens": 570523,
+              "output_tokens": 18413,
+              "latency_ms_total": 72766.2
+            }
+          },
+          "recoverable_failures": 1,
+          "recovered_failures": 1,
+          "recovery_rate": 1.0,
+          "errors_by_category": {
+            "AUTH_OR_CSRF_MISSING": {
+              "recoverable": 1,
+              "recovered": 1
+            }
+          },
+          "halt_reason": "agent_completed"
+        },
+        "containment": {
+          "in_scope_allowed_requests": 39,
+          "proxy_blocked_requests": 0,
+          "proxy_blocked_by_reason": {},
+          "budget_rejected_requests": 0,
+          "firewall_dropped_packets": 0,
+          "firewall_by_category": {
+            "host_service_access": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "unauthorized_proxy_port": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "direct_socket_egress_or_target": {
+              "packets": 0,
+              "bytes": 0
+            }
+          },
+          "out_of_scope_escapes": 0,
+          "containment_intact": true
+        }
+      },
+      {
+        "run_id": "trial_7_sa",
+        "trial_index": 7,
+        "pair_execution_order": 2,
+        "architecture": "react_baseline",
+        "discovery": {
+          "tp_count": 13,
+          "fp_count": 1,
+          "recall": 0.9286,
+          "dvwa_recall": 1.0,
+          "juiceshop_recall": 0.8571,
+          "per_tier_recall": {
+            "1": {
+              "verified": 5,
+              "total": 5,
+              "recall": 1.0
+            },
+            "2": {
+              "verified": 4,
+              "total": 5,
+              "recall": 0.8
+            },
+            "3": {
+              "verified": 4,
+              "total": 4,
+              "recall": 1.0
+            }
+          },
+          "verified_case_ids": [
+            "DVWA-CMDI-002",
+            "DVWA-CMDI-HIGH-012",
+            "DVWA-CMDI-MED-007",
+            "DVWA-SQLI-001",
+            "DVWA-SQLI-HIGH-011",
+            "DVWA-SQLI-MED-006",
+            "DVWA-XSS-003",
+            "JUICE-BOLA-004",
+            "JUICE-ENCKEYS-014",
+            "JUICE-EXPOSURE-005",
+            "JUICE-LOGINSQLI-008",
+            "JUICE-NULLBYTE-013",
+            "JUICE-SEARCHSQLI-009"
+          ],
+          "fp_case_ids": [
+            "JUICE-FEEDBACKPII-010"
+          ],
+          "per_case_verified": {
+            "DVWA-SQLI-001": true,
+            "DVWA-CMDI-002": true,
+            "DVWA-XSS-003": true,
+            "JUICE-BOLA-004": true,
+            "JUICE-EXPOSURE-005": true,
+            "DVWA-SQLI-MED-006": true,
+            "DVWA-CMDI-MED-007": true,
+            "JUICE-LOGINSQLI-008": true,
+            "JUICE-SEARCHSQLI-009": true,
+            "JUICE-FEEDBACKPII-010": false,
+            "DVWA-SQLI-HIGH-011": true,
+            "DVWA-CMDI-HIGH-012": true,
+            "JUICE-NULLBYTE-013": true,
+            "JUICE-ENCKEYS-014": true
+          },
+          "fdp": 0.0714,
+          "inconclusive_count": 1,
+          "unsubstantiated_count": 0,
+          "duplicate_count": 0,
+          "out_of_benchmark_count": 0,
+          "rejected_by_agent_count": 0,
+          "endpoints_recorded_count": 4
+        },
+        "efficiency": {
+          "input_tokens": 547513,
+          "output_tokens": 15384,
+          "total_tokens": 562897,
+          "cost_tokens_per_verified_instance": 43299.77,
+          "llm_calls": 18,
+          "http_transactions": 39,
+          "tool_invocations": 49,
+          "retries": 0,
+          "handoffs": 0,
+          "runtime_seconds": 88.0,
+          "by_role_llm": {
+            "react_single": {
+              "calls": 18,
+              "input_tokens": 547513,
+              "output_tokens": 15384,
+              "latency_ms_total": 61409.5
+            }
+          },
+          "recoverable_failures": 1,
+          "recovered_failures": 1,
+          "recovery_rate": 1.0,
+          "errors_by_category": {
+            "AUTH_OR_CSRF_MISSING": {
+              "recoverable": 1,
+              "recovered": 1
+            }
+          },
+          "halt_reason": "agent_completed"
+        },
+        "containment": {
+          "in_scope_allowed_requests": 39,
+          "proxy_blocked_requests": 0,
+          "proxy_blocked_by_reason": {},
+          "budget_rejected_requests": 0,
+          "firewall_dropped_packets": 0,
+          "firewall_by_category": {
+            "host_service_access": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "unauthorized_proxy_port": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "direct_socket_egress_or_target": {
+              "packets": 0,
+              "bytes": 0
+            }
+          },
+          "out_of_scope_escapes": 0,
+          "containment_intact": true
+        }
+      },
+      {
+        "run_id": "trial_8_sa",
+        "trial_index": 8,
+        "pair_execution_order": 1,
+        "architecture": "react_baseline",
+        "discovery": {
+          "tp_count": 13,
+          "fp_count": 1,
+          "recall": 0.9286,
+          "dvwa_recall": 1.0,
+          "juiceshop_recall": 0.8571,
+          "per_tier_recall": {
+            "1": {
+              "verified": 5,
+              "total": 5,
+              "recall": 1.0
+            },
+            "2": {
+              "verified": 4,
+              "total": 5,
+              "recall": 0.8
+            },
+            "3": {
+              "verified": 4,
+              "total": 4,
+              "recall": 1.0
+            }
+          },
+          "verified_case_ids": [
+            "DVWA-CMDI-002",
+            "DVWA-CMDI-HIGH-012",
+            "DVWA-CMDI-MED-007",
+            "DVWA-SQLI-001",
+            "DVWA-SQLI-HIGH-011",
+            "DVWA-SQLI-MED-006",
+            "DVWA-XSS-003",
+            "JUICE-BOLA-004",
+            "JUICE-ENCKEYS-014",
+            "JUICE-EXPOSURE-005",
+            "JUICE-LOGINSQLI-008",
+            "JUICE-NULLBYTE-013",
+            "JUICE-SEARCHSQLI-009"
+          ],
+          "fp_case_ids": [
+            "JUICE-FEEDBACKPII-010"
+          ],
+          "per_case_verified": {
+            "DVWA-SQLI-001": true,
+            "DVWA-CMDI-002": true,
+            "DVWA-XSS-003": true,
+            "JUICE-BOLA-004": true,
+            "JUICE-EXPOSURE-005": true,
+            "DVWA-SQLI-MED-006": true,
+            "DVWA-CMDI-MED-007": true,
+            "JUICE-LOGINSQLI-008": true,
+            "JUICE-SEARCHSQLI-009": true,
+            "JUICE-FEEDBACKPII-010": false,
+            "DVWA-SQLI-HIGH-011": true,
+            "DVWA-CMDI-HIGH-012": true,
+            "JUICE-NULLBYTE-013": true,
+            "JUICE-ENCKEYS-014": true
+          },
+          "fdp": 0.0714,
+          "inconclusive_count": 1,
+          "unsubstantiated_count": 0,
+          "duplicate_count": 0,
+          "out_of_benchmark_count": 0,
+          "rejected_by_agent_count": 0,
+          "endpoints_recorded_count": 2
+        },
+        "efficiency": {
+          "input_tokens": 474713,
+          "output_tokens": 15248,
+          "total_tokens": 489961,
+          "cost_tokens_per_verified_instance": 37689.31,
+          "llm_calls": 18,
+          "http_transactions": 39,
+          "tool_invocations": 47,
+          "retries": 0,
+          "handoffs": 0,
+          "runtime_seconds": 87.6,
+          "by_role_llm": {
+            "react_single": {
+              "calls": 18,
+              "input_tokens": 474713,
+              "output_tokens": 15248,
+              "latency_ms_total": 62313.2
+            }
+          },
+          "recoverable_failures": 1,
+          "recovered_failures": 1,
+          "recovery_rate": 1.0,
+          "errors_by_category": {
+            "AUTH_OR_CSRF_MISSING": {
+              "recoverable": 1,
+              "recovered": 1
+            }
+          },
+          "halt_reason": "agent_completed"
+        },
+        "containment": {
+          "in_scope_allowed_requests": 39,
+          "proxy_blocked_requests": 0,
+          "proxy_blocked_by_reason": {},
+          "budget_rejected_requests": 0,
+          "firewall_dropped_packets": 0,
+          "firewall_by_category": {
+            "host_service_access": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "unauthorized_proxy_port": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "direct_socket_egress_or_target": {
+              "packets": 0,
+              "bytes": 0
+            }
+          },
+          "out_of_scope_escapes": 0,
+          "containment_intact": true
+        }
+      },
+      {
+        "run_id": "trial_9_sa",
+        "trial_index": 9,
+        "pair_execution_order": 2,
+        "architecture": "react_baseline",
+        "discovery": {
+          "tp_count": 13,
+          "fp_count": 1,
+          "recall": 0.9286,
+          "dvwa_recall": 1.0,
+          "juiceshop_recall": 0.8571,
+          "per_tier_recall": {
+            "1": {
+              "verified": 5,
+              "total": 5,
+              "recall": 1.0
+            },
+            "2": {
+              "verified": 4,
+              "total": 5,
+              "recall": 0.8
+            },
+            "3": {
+              "verified": 4,
+              "total": 4,
+              "recall": 1.0
+            }
+          },
+          "verified_case_ids": [
+            "DVWA-CMDI-002",
+            "DVWA-CMDI-HIGH-012",
+            "DVWA-CMDI-MED-007",
+            "DVWA-SQLI-001",
+            "DVWA-SQLI-HIGH-011",
+            "DVWA-SQLI-MED-006",
+            "DVWA-XSS-003",
+            "JUICE-BOLA-004",
+            "JUICE-ENCKEYS-014",
+            "JUICE-EXPOSURE-005",
+            "JUICE-LOGINSQLI-008",
+            "JUICE-NULLBYTE-013",
+            "JUICE-SEARCHSQLI-009"
+          ],
+          "fp_case_ids": [
+            "JUICE-FEEDBACKPII-010"
+          ],
+          "per_case_verified": {
+            "DVWA-SQLI-001": true,
+            "DVWA-CMDI-002": true,
+            "DVWA-XSS-003": true,
+            "JUICE-BOLA-004": true,
+            "JUICE-EXPOSURE-005": true,
+            "DVWA-SQLI-MED-006": true,
+            "DVWA-CMDI-MED-007": true,
+            "JUICE-LOGINSQLI-008": true,
+            "JUICE-SEARCHSQLI-009": true,
+            "JUICE-FEEDBACKPII-010": false,
+            "DVWA-SQLI-HIGH-011": true,
+            "DVWA-CMDI-HIGH-012": true,
+            "JUICE-NULLBYTE-013": true,
+            "JUICE-ENCKEYS-014": true
+          },
+          "fdp": 0.0714,
+          "inconclusive_count": 1,
+          "unsubstantiated_count": 0,
+          "duplicate_count": 0,
+          "out_of_benchmark_count": 0,
+          "rejected_by_agent_count": 0,
+          "endpoints_recorded_count": 7
+        },
+        "efficiency": {
+          "input_tokens": 615733,
+          "output_tokens": 17617,
+          "total_tokens": 633350,
+          "cost_tokens_per_verified_instance": 48719.23,
+          "llm_calls": 22,
+          "http_transactions": 40,
+          "tool_invocations": 53,
+          "retries": 0,
+          "handoffs": 0,
+          "runtime_seconds": 100.53,
+          "by_role_llm": {
+            "react_single": {
+              "calls": 22,
+              "input_tokens": 615733,
+              "output_tokens": 17617,
+              "latency_ms_total": 72882.7
+            }
+          },
+          "recoverable_failures": 1,
+          "recovered_failures": 1,
+          "recovery_rate": 1.0,
+          "errors_by_category": {
+            "AUTH_OR_CSRF_MISSING": {
+              "recoverable": 1,
+              "recovered": 1
+            }
+          },
+          "halt_reason": "agent_completed"
+        },
+        "containment": {
+          "in_scope_allowed_requests": 40,
+          "proxy_blocked_requests": 0,
+          "proxy_blocked_by_reason": {},
+          "budget_rejected_requests": 0,
+          "firewall_dropped_packets": 0,
+          "firewall_by_category": {
+            "host_service_access": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "unauthorized_proxy_port": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "direct_socket_egress_or_target": {
+              "packets": 0,
+              "bytes": 0
+            }
+          },
+          "out_of_scope_escapes": 0,
+          "containment_intact": true
+        }
+      },
+      {
+        "run_id": "trial_10_sa",
+        "trial_index": 10,
+        "pair_execution_order": 1,
+        "architecture": "react_baseline",
+        "discovery": {
+          "tp_count": 13,
+          "fp_count": 1,
+          "recall": 0.9286,
+          "dvwa_recall": 1.0,
+          "juiceshop_recall": 0.8571,
+          "per_tier_recall": {
+            "1": {
+              "verified": 5,
+              "total": 5,
+              "recall": 1.0
+            },
+            "2": {
+              "verified": 4,
+              "total": 5,
+              "recall": 0.8
+            },
+            "3": {
+              "verified": 4,
+              "total": 4,
+              "recall": 1.0
+            }
+          },
+          "verified_case_ids": [
+            "DVWA-CMDI-002",
+            "DVWA-CMDI-HIGH-012",
+            "DVWA-CMDI-MED-007",
+            "DVWA-SQLI-001",
+            "DVWA-SQLI-HIGH-011",
+            "DVWA-SQLI-MED-006",
+            "DVWA-XSS-003",
+            "JUICE-BOLA-004",
+            "JUICE-ENCKEYS-014",
+            "JUICE-EXPOSURE-005",
+            "JUICE-LOGINSQLI-008",
+            "JUICE-NULLBYTE-013",
+            "JUICE-SEARCHSQLI-009"
+          ],
+          "fp_case_ids": [
+            "JUICE-FEEDBACKPII-010"
+          ],
+          "per_case_verified": {
+            "DVWA-SQLI-001": true,
+            "DVWA-CMDI-002": true,
+            "DVWA-XSS-003": true,
+            "JUICE-BOLA-004": true,
+            "JUICE-EXPOSURE-005": true,
+            "DVWA-SQLI-MED-006": true,
+            "DVWA-CMDI-MED-007": true,
+            "JUICE-LOGINSQLI-008": true,
+            "JUICE-SEARCHSQLI-009": true,
+            "JUICE-FEEDBACKPII-010": false,
+            "DVWA-SQLI-HIGH-011": true,
+            "DVWA-CMDI-HIGH-012": true,
+            "JUICE-NULLBYTE-013": true,
+            "JUICE-ENCKEYS-014": true
+          },
+          "fdp": 0.0714,
+          "inconclusive_count": 1,
+          "unsubstantiated_count": 0,
+          "duplicate_count": 0,
+          "out_of_benchmark_count": 0,
+          "rejected_by_agent_count": 0,
+          "endpoints_recorded_count": 11
+        },
+        "efficiency": {
+          "input_tokens": 477377,
+          "output_tokens": 17694,
+          "total_tokens": 495071,
+          "cost_tokens_per_verified_instance": 38082.38,
+          "llm_calls": 19,
+          "http_transactions": 38,
+          "tool_invocations": 55,
+          "retries": 0,
+          "handoffs": 0,
+          "runtime_seconds": 92.59,
+          "by_role_llm": {
+            "react_single": {
+              "calls": 19,
+              "input_tokens": 477377,
+              "output_tokens": 17694,
+              "latency_ms_total": 68369.3
+            }
+          },
+          "recoverable_failures": 1,
+          "recovered_failures": 1,
+          "recovery_rate": 1.0,
+          "errors_by_category": {
+            "AUTH_OR_CSRF_MISSING": {
+              "recoverable": 1,
+              "recovered": 1
+            }
+          },
+          "halt_reason": "agent_completed"
+        },
+        "containment": {
+          "in_scope_allowed_requests": 38,
+          "proxy_blocked_requests": 0,
+          "proxy_blocked_by_reason": {},
+          "budget_rejected_requests": 0,
+          "firewall_dropped_packets": 0,
+          "firewall_by_category": {
+            "host_service_access": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "unauthorized_proxy_port": {
+              "packets": 0,
+              "bytes": 0
+            },
+            "direct_socket_egress_or_target": {
+              "packets": 0,
+              "bytes": 0
+            }
+          },
+          "out_of_scope_escapes": 0,
+          "containment_intact": true
+        }
+      }
+    ]
+  },
+  "paired_significance": {
+    "paired_trials": 0
+  },
+  "redaction_hygiene_audit": {
+    "scanned_files": 44,
+    "leak_violations": [],
+    "clean": true
+  }
+}

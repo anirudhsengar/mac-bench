@@ -37,6 +37,7 @@ def verify_frozen_hashes(root: Path, frozen: dict[str, Any]) -> None:
         "multi_agent_py": root / "src" / "mac_bench" / "agents" / "multi_agent.py",
         "react_baseline_py": root / "src" / "mac_bench" / "agents" / "react_baseline.py",
         "mediator_addon_py": root / "docker" / "proxy" / "mediator_addon.py",
+        "llm_relay_py": root / "src" / "mac_bench" / "llm_relay.py",
     }
     for key, path in mapping.items():
         actual = hashlib.sha256(path.read_bytes()).hexdigest()
@@ -139,6 +140,8 @@ def main() -> None:
                             "-T",
                             "-e",
                             f"MAC_BENCH_MODEL={model_id}",
+                            "-e",
+                            f"MAC_BENCH_MA_COORDINATOR={os.environ.get('MAC_BENCH_MA_COORDINATOR', 'llm')}",
                             "agent",
                             "python3",
                             "-m",

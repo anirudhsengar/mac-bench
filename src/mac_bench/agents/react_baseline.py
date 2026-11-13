@@ -102,7 +102,7 @@ def run_react_baseline_assessment(run_id: str) -> tuple[AssessmentState, Session
                 halt_reason = "http_budget_depleted"
                 tool_msgs.append(
                     ToolMessage(
-                        content=json.dumps({"error": "HTTP budget (200) depleted; halting network requests."}),
+                        content=json.dumps({"error": "HTTP budget depleted; halting network requests."}),
                         tool_call_id=t_id,
                     )
                 )
@@ -147,7 +147,8 @@ def run_react_baseline_assessment(run_id: str) -> tuple[AssessmentState, Session
         HumanMessage(
             content=(
                 f"Begin security assessment run '{run_id}'. Map and behaviorally verify vulnerabilities across "
-                "both http://dvwa and http://juiceshop:3000 within the 200 HTTP transaction and 50 LLM call limits. "
+                "both http://dvwa and http://juiceshop:3000 within the "
+                f"{_init_budgets.max_http_transactions} HTTP transaction and {_init_budgets.max_llm_calls} LLM call limits. "
                 "Record endpoints via `record_endpoint` and verified findings via `submit_finding`."
             )
         ),

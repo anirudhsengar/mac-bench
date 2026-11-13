@@ -1,0 +1,982 @@
+{
+  "BLIND-0001": {
+    "run_id": "trial_8_sa",
+    "architecture": "react_baseline",
+    "trial_index": 8,
+    "within_run_index": 7,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:ecd9dab3e1"
+  },
+  "BLIND-0002": {
+    "run_id": "trial_1_sa",
+    "architecture": "react_baseline",
+    "trial_index": 1,
+    "within_run_index": 10,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:25083bc758"
+  },
+  "BLIND-0003": {
+    "run_id": "trial_5_sa",
+    "architecture": "react_baseline",
+    "trial_index": 5,
+    "within_run_index": 13,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:c271ad71cb"
+  },
+  "BLIND-0004": {
+    "run_id": "trial_6_sa",
+    "architecture": "react_baseline",
+    "trial_index": 6,
+    "within_run_index": 9,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:6742ba4667"
+  },
+  "BLIND-0005": {
+    "run_id": "trial_7_sa",
+    "architecture": "react_baseline",
+    "trial_index": 7,
+    "within_run_index": 12,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:e04f0f3bd7"
+  },
+  "BLIND-0006": {
+    "run_id": "trial_4_sa",
+    "architecture": "react_baseline",
+    "trial_index": 4,
+    "within_run_index": 2,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:5831f647f4"
+  },
+  "BLIND-0007": {
+    "run_id": "trial_2_sa",
+    "architecture": "react_baseline",
+    "trial_index": 2,
+    "within_run_index": 2,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:1a1722490e"
+  },
+  "BLIND-0008": {
+    "run_id": "trial_2_sa",
+    "architecture": "react_baseline",
+    "trial_index": 2,
+    "within_run_index": 8,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:19dbd5f351"
+  },
+  "BLIND-0009": {
+    "run_id": "trial_3_sa",
+    "architecture": "react_baseline",
+    "trial_index": 3,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:c016a99859"
+  },
+  "BLIND-0010": {
+    "run_id": "trial_6_sa",
+    "architecture": "react_baseline",
+    "trial_index": 6,
+    "within_run_index": 4,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:72f2695712"
+  },
+  "BLIND-0011": {
+    "run_id": "trial_1_sa",
+    "architecture": "react_baseline",
+    "trial_index": 1,
+    "within_run_index": 8,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:551044368e"
+  },
+  "BLIND-0012": {
+    "run_id": "trial_10_sa",
+    "architecture": "react_baseline",
+    "trial_index": 10,
+    "within_run_index": 10,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:27ae64c953"
+  },
+  "BLIND-0013": {
+    "run_id": "trial_4_sa",
+    "architecture": "react_baseline",
+    "trial_index": 4,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:d74988b79b"
+  },
+  "BLIND-0014": {
+    "run_id": "trial_5_sa",
+    "architecture": "react_baseline",
+    "trial_index": 5,
+    "within_run_index": 7,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:b96bd9a9c3"
+  },
+  "BLIND-0015": {
+    "run_id": "trial_7_sa",
+    "architecture": "react_baseline",
+    "trial_index": 7,
+    "within_run_index": 9,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:325b82435f"
+  },
+  "BLIND-0016": {
+    "run_id": "trial_8_sa",
+    "architecture": "react_baseline",
+    "trial_index": 8,
+    "within_run_index": 12,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak%2500.md:CWE-22:bc8123dee4"
+  },
+  "BLIND-0017": {
+    "run_id": "trial_3_sa",
+    "architecture": "react_baseline",
+    "trial_index": 3,
+    "within_run_index": 12,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:71d07d35db"
+  },
+  "BLIND-0018": {
+    "run_id": "trial_4_sa",
+    "architecture": "react_baseline",
+    "trial_index": 4,
+    "within_run_index": 11,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:d504bf9739"
+  },
+  "BLIND-0019": {
+    "run_id": "trial_2_sa",
+    "architecture": "react_baseline",
+    "trial_index": 2,
+    "within_run_index": 5,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:6307755cf4"
+  },
+  "BLIND-0020": {
+    "run_id": "trial_5_sa",
+    "architecture": "react_baseline",
+    "trial_index": 5,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:4f989bb79b"
+  },
+  "BLIND-0021": {
+    "run_id": "trial_2_sa",
+    "architecture": "react_baseline",
+    "trial_index": 2,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:fc89dc6d76"
+  },
+  "BLIND-0022": {
+    "run_id": "trial_7_sa",
+    "architecture": "react_baseline",
+    "trial_index": 7,
+    "within_run_index": 3,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:296427418d"
+  },
+  "BLIND-0023": {
+    "run_id": "trial_2_sa",
+    "architecture": "react_baseline",
+    "trial_index": 2,
+    "within_run_index": 7,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:010cc1d376"
+  },
+  "BLIND-0024": {
+    "run_id": "trial_5_sa",
+    "architecture": "react_baseline",
+    "trial_index": 5,
+    "within_run_index": 12,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:17be61f8ab"
+  },
+  "BLIND-0025": {
+    "run_id": "trial_8_sa",
+    "architecture": "react_baseline",
+    "trial_index": 8,
+    "within_run_index": 10,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:efd81f183a"
+  },
+  "BLIND-0026": {
+    "run_id": "trial_7_sa",
+    "architecture": "react_baseline",
+    "trial_index": 7,
+    "within_run_index": 11,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:d78cefdef5"
+  },
+  "BLIND-0027": {
+    "run_id": "trial_8_sa",
+    "architecture": "react_baseline",
+    "trial_index": 8,
+    "within_run_index": 1,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:bf04ee03b6"
+  },
+  "BLIND-0028": {
+    "run_id": "trial_7_sa",
+    "architecture": "react_baseline",
+    "trial_index": 7,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:e4e7433069"
+  },
+  "BLIND-0029": {
+    "run_id": "trial_9_sa",
+    "architecture": "react_baseline",
+    "trial_index": 9,
+    "within_run_index": 8,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:7d754986be"
+  },
+  "BLIND-0030": {
+    "run_id": "trial_10_sa",
+    "architecture": "react_baseline",
+    "trial_index": 10,
+    "within_run_index": 11,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak:CWE-22:a193febe97"
+  },
+  "BLIND-0031": {
+    "run_id": "trial_1_sa",
+    "architecture": "react_baseline",
+    "trial_index": 1,
+    "within_run_index": 12,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/session-input.php:CWE-89:3505b15e2b"
+  },
+  "BLIND-0032": {
+    "run_id": "trial_10_sa",
+    "architecture": "react_baseline",
+    "trial_index": 10,
+    "within_run_index": 1,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:c9c52e4635"
+  },
+  "BLIND-0033": {
+    "run_id": "trial_5_sa",
+    "architecture": "react_baseline",
+    "trial_index": 5,
+    "within_run_index": 11,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:6e7ce93d6f"
+  },
+  "BLIND-0034": {
+    "run_id": "trial_6_sa",
+    "architecture": "react_baseline",
+    "trial_index": 6,
+    "within_run_index": 6,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:07d015b5a1"
+  },
+  "BLIND-0035": {
+    "run_id": "trial_10_sa",
+    "architecture": "react_baseline",
+    "trial_index": 10,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:04ee1e5cb1"
+  },
+  "BLIND-0036": {
+    "run_id": "trial_1_sa",
+    "architecture": "react_baseline",
+    "trial_index": 1,
+    "within_run_index": 7,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak%2500.md:CWE-22:084b2af040"
+  },
+  "BLIND-0037": {
+    "run_id": "trial_9_sa",
+    "architecture": "react_baseline",
+    "trial_index": 9,
+    "within_run_index": 3,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:680de0cf6d"
+  },
+  "BLIND-0038": {
+    "run_id": "trial_6_sa",
+    "architecture": "react_baseline",
+    "trial_index": 6,
+    "within_run_index": 8,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:e6c8b1bfa4"
+  },
+  "BLIND-0039": {
+    "run_id": "trial_3_sa",
+    "architecture": "react_baseline",
+    "trial_index": 3,
+    "within_run_index": 7,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:4d3e65e916"
+  },
+  "BLIND-0040": {
+    "run_id": "trial_1_sa",
+    "architecture": "react_baseline",
+    "trial_index": 1,
+    "within_run_index": 4,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:e5798500ac"
+  },
+  "BLIND-0041": {
+    "run_id": "trial_5_sa",
+    "architecture": "react_baseline",
+    "trial_index": 5,
+    "within_run_index": 3,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:4a03792035"
+  },
+  "BLIND-0042": {
+    "run_id": "trial_8_sa",
+    "architecture": "react_baseline",
+    "trial_index": 8,
+    "within_run_index": 5,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:6b9dbdd2fe"
+  },
+  "BLIND-0043": {
+    "run_id": "trial_8_sa",
+    "architecture": "react_baseline",
+    "trial_index": 8,
+    "within_run_index": 11,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:3eefef778e"
+  },
+  "BLIND-0044": {
+    "run_id": "trial_6_sa",
+    "architecture": "react_baseline",
+    "trial_index": 6,
+    "within_run_index": 1,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:a842acd067"
+  },
+  "BLIND-0045": {
+    "run_id": "trial_6_sa",
+    "architecture": "react_baseline",
+    "trial_index": 6,
+    "within_run_index": 2,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:6c6e3e0132"
+  },
+  "BLIND-0046": {
+    "run_id": "trial_5_sa",
+    "architecture": "react_baseline",
+    "trial_index": 5,
+    "within_run_index": 4,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:65d209bcb3"
+  },
+  "BLIND-0047": {
+    "run_id": "trial_3_sa",
+    "architecture": "react_baseline",
+    "trial_index": 3,
+    "within_run_index": 10,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:a4c7270061"
+  },
+  "BLIND-0048": {
+    "run_id": "trial_6_sa",
+    "architecture": "react_baseline",
+    "trial_index": 6,
+    "within_run_index": 3,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:22d095381b"
+  },
+  "BLIND-0049": {
+    "run_id": "trial_1_sa",
+    "architecture": "react_baseline",
+    "trial_index": 1,
+    "within_run_index": 1,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:ca5fb6ef0f"
+  },
+  "BLIND-0050": {
+    "run_id": "trial_10_sa",
+    "architecture": "react_baseline",
+    "trial_index": 10,
+    "within_run_index": 2,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:ac2a3ffc11"
+  },
+  "BLIND-0051": {
+    "run_id": "trial_1_sa",
+    "architecture": "react_baseline",
+    "trial_index": 1,
+    "within_run_index": 13,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:65e155d95a"
+  },
+  "BLIND-0052": {
+    "run_id": "trial_4_sa",
+    "architecture": "react_baseline",
+    "trial_index": 4,
+    "within_run_index": 3,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:e8c1ad802b"
+  },
+  "BLIND-0053": {
+    "run_id": "trial_10_sa",
+    "architecture": "react_baseline",
+    "trial_index": 10,
+    "within_run_index": 4,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:6e8ac2f124"
+  },
+  "BLIND-0054": {
+    "run_id": "trial_10_sa",
+    "architecture": "react_baseline",
+    "trial_index": 10,
+    "within_run_index": 12,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:283bf04612"
+  },
+  "BLIND-0055": {
+    "run_id": "trial_3_sa",
+    "architecture": "react_baseline",
+    "trial_index": 3,
+    "within_run_index": 3,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:1f01900ac7"
+  },
+  "BLIND-0056": {
+    "run_id": "trial_9_sa",
+    "architecture": "react_baseline",
+    "trial_index": 9,
+    "within_run_index": 12,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:b31b15c708"
+  },
+  "BLIND-0057": {
+    "run_id": "trial_9_sa",
+    "architecture": "react_baseline",
+    "trial_index": 9,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:e0f2500dd8"
+  },
+  "BLIND-0058": {
+    "run_id": "trial_3_sa",
+    "architecture": "react_baseline",
+    "trial_index": 3,
+    "within_run_index": 11,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak%2500.md:CWE-22:3fe9e71020"
+  },
+  "BLIND-0059": {
+    "run_id": "trial_2_sa",
+    "architecture": "react_baseline",
+    "trial_index": 2,
+    "within_run_index": 12,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:ee733be4c8"
+  },
+  "BLIND-0060": {
+    "run_id": "trial_6_sa",
+    "architecture": "react_baseline",
+    "trial_index": 6,
+    "within_run_index": 12,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:2d31e7ef72"
+  },
+  "BLIND-0061": {
+    "run_id": "trial_3_sa",
+    "architecture": "react_baseline",
+    "trial_index": 3,
+    "within_run_index": 4,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:055ee5b633"
+  },
+  "BLIND-0062": {
+    "run_id": "trial_9_sa",
+    "architecture": "react_baseline",
+    "trial_index": 9,
+    "within_run_index": 4,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:ed9fce178e"
+  },
+  "BLIND-0063": {
+    "run_id": "trial_1_sa",
+    "architecture": "react_baseline",
+    "trial_index": 1,
+    "within_run_index": 3,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:9f4a0feae1"
+  },
+  "BLIND-0064": {
+    "run_id": "trial_5_sa",
+    "architecture": "react_baseline",
+    "trial_index": 5,
+    "within_run_index": 5,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:41e52f96ee"
+  },
+  "BLIND-0065": {
+    "run_id": "trial_7_sa",
+    "architecture": "react_baseline",
+    "trial_index": 7,
+    "within_run_index": 6,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:acd22fb80b"
+  },
+  "BLIND-0066": {
+    "run_id": "trial_2_sa",
+    "architecture": "react_baseline",
+    "trial_index": 2,
+    "within_run_index": 13,
+    "finding_id": "juiceshop:GET:/api/Feedbacks/:CWE-359:dbdd7b51f8"
+  },
+  "BLIND-0067": {
+    "run_id": "trial_8_sa",
+    "architecture": "react_baseline",
+    "trial_index": 8,
+    "within_run_index": 6,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:c1c8f9b3e6"
+  },
+  "BLIND-0068": {
+    "run_id": "trial_7_sa",
+    "architecture": "react_baseline",
+    "trial_index": 7,
+    "within_run_index": 1,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:d04bab7cbd"
+  },
+  "BLIND-0069": {
+    "run_id": "trial_9_sa",
+    "architecture": "react_baseline",
+    "trial_index": 9,
+    "within_run_index": 13,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:16092abd83"
+  },
+  "BLIND-0070": {
+    "run_id": "trial_4_sa",
+    "architecture": "react_baseline",
+    "trial_index": 4,
+    "within_run_index": 12,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:ee80dda8b9"
+  },
+  "BLIND-0071": {
+    "run_id": "trial_6_sa",
+    "architecture": "react_baseline",
+    "trial_index": 6,
+    "within_run_index": 7,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:ed391930fc"
+  },
+  "BLIND-0072": {
+    "run_id": "trial_1_sa",
+    "architecture": "react_baseline",
+    "trial_index": 1,
+    "within_run_index": 5,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:33e2a898f7"
+  },
+  "BLIND-0073": {
+    "run_id": "trial_7_sa",
+    "architecture": "react_baseline",
+    "trial_index": 7,
+    "within_run_index": 4,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:7697769705"
+  },
+  "BLIND-0074": {
+    "run_id": "trial_3_sa",
+    "architecture": "react_baseline",
+    "trial_index": 3,
+    "within_run_index": 8,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:a620ef0cbc"
+  },
+  "BLIND-0075": {
+    "run_id": "trial_2_sa",
+    "architecture": "react_baseline",
+    "trial_index": 2,
+    "within_run_index": 9,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:3fbb89acee"
+  },
+  "BLIND-0076": {
+    "run_id": "trial_3_sa",
+    "architecture": "react_baseline",
+    "trial_index": 3,
+    "within_run_index": 9,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:5065bcd691"
+  },
+  "BLIND-0077": {
+    "run_id": "trial_10_sa",
+    "architecture": "react_baseline",
+    "trial_index": 10,
+    "within_run_index": 9,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:91370f4455"
+  },
+  "BLIND-0078": {
+    "run_id": "trial_4_sa",
+    "architecture": "react_baseline",
+    "trial_index": 4,
+    "within_run_index": 8,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:f72a348886"
+  },
+  "BLIND-0079": {
+    "run_id": "trial_9_sa",
+    "architecture": "react_baseline",
+    "trial_index": 9,
+    "within_run_index": 11,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak:CWE-22:ab459e8f9f"
+  },
+  "BLIND-0080": {
+    "run_id": "trial_10_sa",
+    "architecture": "react_baseline",
+    "trial_index": 10,
+    "within_run_index": 7,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:18311273d8"
+  },
+  "BLIND-0081": {
+    "run_id": "trial_4_sa",
+    "architecture": "react_baseline",
+    "trial_index": 4,
+    "within_run_index": 9,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak%2500.md:CWE-22:7113e9ef4b"
+  },
+  "BLIND-0082": {
+    "run_id": "trial_5_sa",
+    "architecture": "react_baseline",
+    "trial_index": 5,
+    "within_run_index": 8,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:844d617902"
+  },
+  "BLIND-0083": {
+    "run_id": "trial_10_sa",
+    "architecture": "react_baseline",
+    "trial_index": 10,
+    "within_run_index": 3,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:136cc4dc49"
+  },
+  "BLIND-0084": {
+    "run_id": "trial_2_sa",
+    "architecture": "react_baseline",
+    "trial_index": 2,
+    "within_run_index": 3,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:b72243a347"
+  },
+  "BLIND-0085": {
+    "run_id": "trial_10_sa",
+    "architecture": "react_baseline",
+    "trial_index": 10,
+    "within_run_index": 13,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:de97c38516"
+  },
+  "BLIND-0086": {
+    "run_id": "trial_2_sa",
+    "architecture": "react_baseline",
+    "trial_index": 2,
+    "within_run_index": 1,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:f9d2d60cb9"
+  },
+  "BLIND-0087": {
+    "run_id": "trial_1_sa",
+    "architecture": "react_baseline",
+    "trial_index": 1,
+    "within_run_index": 2,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:b32335b5b0"
+  },
+  "BLIND-0088": {
+    "run_id": "trial_9_sa",
+    "architecture": "react_baseline",
+    "trial_index": 9,
+    "within_run_index": 7,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:f72660beb4"
+  },
+  "BLIND-0089": {
+    "run_id": "trial_3_sa",
+    "architecture": "react_baseline",
+    "trial_index": 3,
+    "within_run_index": 2,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:d632d2d68d"
+  },
+  "BLIND-0090": {
+    "run_id": "trial_5_sa",
+    "architecture": "react_baseline",
+    "trial_index": 5,
+    "within_run_index": 9,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:a676cb08e1"
+  },
+  "BLIND-0091": {
+    "run_id": "trial_7_sa",
+    "architecture": "react_baseline",
+    "trial_index": 7,
+    "within_run_index": 5,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak%2500.md:CWE-22:444683ee98"
+  },
+  "BLIND-0092": {
+    "run_id": "trial_4_sa",
+    "architecture": "react_baseline",
+    "trial_index": 4,
+    "within_run_index": 1,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:5065bcd691"
+  },
+  "BLIND-0093": {
+    "run_id": "trial_6_sa",
+    "architecture": "react_baseline",
+    "trial_index": 6,
+    "within_run_index": 13,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:ce24536a4e"
+  },
+  "BLIND-0094": {
+    "run_id": "trial_8_sa",
+    "architecture": "react_baseline",
+    "trial_index": 8,
+    "within_run_index": 8,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:f72660beb4"
+  },
+  "BLIND-0095": {
+    "run_id": "trial_6_sa",
+    "architecture": "react_baseline",
+    "trial_index": 6,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:89fad61db8"
+  },
+  "BLIND-0096": {
+    "run_id": "trial_4_sa",
+    "architecture": "react_baseline",
+    "trial_index": 4,
+    "within_run_index": 4,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:8ed47b128d"
+  },
+  "BLIND-0097": {
+    "run_id": "trial_8_sa",
+    "architecture": "react_baseline",
+    "trial_index": 8,
+    "within_run_index": 3,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:62c8b436d0"
+  },
+  "BLIND-0098": {
+    "run_id": "trial_6_sa",
+    "architecture": "react_baseline",
+    "trial_index": 6,
+    "within_run_index": 11,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak%2500.md:CWE-22:8e9b7b9a9d"
+  },
+  "BLIND-0099": {
+    "run_id": "trial_6_sa",
+    "architecture": "react_baseline",
+    "trial_index": 6,
+    "within_run_index": 10,
+    "finding_id": "juiceshop:GET:/ftp/:CWE-200:afd8b8fe88"
+  },
+  "BLIND-0100": {
+    "run_id": "trial_4_sa",
+    "architecture": "react_baseline",
+    "trial_index": 4,
+    "within_run_index": 10,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:ef57d43271"
+  },
+  "BLIND-0101": {
+    "run_id": "trial_6_sa",
+    "architecture": "react_baseline",
+    "trial_index": 6,
+    "within_run_index": 5,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:21bf8a5ea2"
+  },
+  "BLIND-0102": {
+    "run_id": "trial_7_sa",
+    "architecture": "react_baseline",
+    "trial_index": 7,
+    "within_run_index": 2,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:0f1fad45f9"
+  },
+  "BLIND-0103": {
+    "run_id": "trial_10_sa",
+    "architecture": "react_baseline",
+    "trial_index": 10,
+    "within_run_index": 5,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:01f32e48a8"
+  },
+  "BLIND-0104": {
+    "run_id": "trial_3_sa",
+    "architecture": "react_baseline",
+    "trial_index": 3,
+    "within_run_index": 13,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:e23942b75e"
+  },
+  "BLIND-0105": {
+    "run_id": "trial_4_sa",
+    "architecture": "react_baseline",
+    "trial_index": 4,
+    "within_run_index": 13,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:25e43024c1"
+  },
+  "BLIND-0106": {
+    "run_id": "trial_8_sa",
+    "architecture": "react_baseline",
+    "trial_index": 8,
+    "within_run_index": 13,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:6a9172d660"
+  },
+  "BLIND-0107": {
+    "run_id": "trial_4_sa",
+    "architecture": "react_baseline",
+    "trial_index": 4,
+    "within_run_index": 7,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:48c2adb0bf"
+  },
+  "BLIND-0108": {
+    "run_id": "trial_1_sa",
+    "architecture": "react_baseline",
+    "trial_index": 1,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:e0f2500dd8"
+  },
+  "BLIND-0109": {
+    "run_id": "trial_3_sa",
+    "architecture": "react_baseline",
+    "trial_index": 3,
+    "within_run_index": 6,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:23385d305e"
+  },
+  "BLIND-0110": {
+    "run_id": "trial_5_sa",
+    "architecture": "react_baseline",
+    "trial_index": 5,
+    "within_run_index": 1,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:2f19d58c33"
+  },
+  "BLIND-0111": {
+    "run_id": "trial_7_sa",
+    "architecture": "react_baseline",
+    "trial_index": 7,
+    "within_run_index": 8,
+    "finding_id": "juiceshop:GET:/api/Feedbacks/:CWE-359:611b389f66"
+  },
+  "BLIND-0112": {
+    "run_id": "trial_1_sa",
+    "architecture": "react_baseline",
+    "trial_index": 1,
+    "within_run_index": 6,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:bc125ce0ff"
+  },
+  "BLIND-0113": {
+    "run_id": "trial_9_sa",
+    "architecture": "react_baseline",
+    "trial_index": 9,
+    "within_run_index": 5,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:44f53418ce"
+  },
+  "BLIND-0114": {
+    "run_id": "trial_1_sa",
+    "architecture": "react_baseline",
+    "trial_index": 1,
+    "within_run_index": 9,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:b47396f42d"
+  },
+  "BLIND-0115": {
+    "run_id": "trial_8_sa",
+    "architecture": "react_baseline",
+    "trial_index": 8,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:fc89dc6d76"
+  },
+  "BLIND-0116": {
+    "run_id": "trial_5_sa",
+    "architecture": "react_baseline",
+    "trial_index": 5,
+    "within_run_index": 2,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:c9e5218c80"
+  },
+  "BLIND-0117": {
+    "run_id": "trial_4_sa",
+    "architecture": "react_baseline",
+    "trial_index": 4,
+    "within_run_index": 5,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:8b8c13f012"
+  },
+  "BLIND-0118": {
+    "run_id": "trial_10_sa",
+    "architecture": "react_baseline",
+    "trial_index": 10,
+    "within_run_index": 8,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:c78057803f"
+  },
+  "BLIND-0119": {
+    "run_id": "trial_9_sa",
+    "architecture": "react_baseline",
+    "trial_index": 9,
+    "within_run_index": 10,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:7a72dadbd8"
+  },
+  "BLIND-0120": {
+    "run_id": "trial_4_sa",
+    "architecture": "react_baseline",
+    "trial_index": 4,
+    "within_run_index": 6,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:55e4988116"
+  },
+  "BLIND-0121": {
+    "run_id": "trial_9_sa",
+    "architecture": "react_baseline",
+    "trial_index": 9,
+    "within_run_index": 1,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:29a6411b37"
+  },
+  "BLIND-0122": {
+    "run_id": "trial_7_sa",
+    "architecture": "react_baseline",
+    "trial_index": 7,
+    "within_run_index": 13,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:699d76e301"
+  },
+  "BLIND-0123": {
+    "run_id": "trial_9_sa",
+    "architecture": "react_baseline",
+    "trial_index": 9,
+    "within_run_index": 2,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:1dcb486c88"
+  },
+  "BLIND-0124": {
+    "run_id": "trial_8_sa",
+    "architecture": "react_baseline",
+    "trial_index": 8,
+    "within_run_index": 9,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:8e442f7d7d"
+  },
+  "BLIND-0125": {
+    "run_id": "trial_8_sa",
+    "architecture": "react_baseline",
+    "trial_index": 8,
+    "within_run_index": 2,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:88abbb5385"
+  },
+  "BLIND-0126": {
+    "run_id": "trial_2_sa",
+    "architecture": "react_baseline",
+    "trial_index": 2,
+    "within_run_index": 6,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:ec7e0e77a2"
+  },
+  "BLIND-0127": {
+    "run_id": "trial_2_sa",
+    "architecture": "react_baseline",
+    "trial_index": 2,
+    "within_run_index": 11,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak%2500.md:CWE-22:1323c6a0e3"
+  },
+  "BLIND-0128": {
+    "run_id": "trial_10_sa",
+    "architecture": "react_baseline",
+    "trial_index": 10,
+    "within_run_index": 6,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:469eb72f74"
+  },
+  "BLIND-0129": {
+    "run_id": "trial_9_sa",
+    "architecture": "react_baseline",
+    "trial_index": 9,
+    "within_run_index": 6,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:4b5a0027a1"
+  },
+  "BLIND-0130": {
+    "run_id": "trial_3_sa",
+    "architecture": "react_baseline",
+    "trial_index": 3,
+    "within_run_index": 5,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:a7d43d7a70"
+  },
+  "BLIND-0131": {
+    "run_id": "trial_5_sa",
+    "architecture": "react_baseline",
+    "trial_index": 5,
+    "within_run_index": 10,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:491de6ac00"
+  },
+  "BLIND-0132": {
+    "run_id": "trial_8_sa",
+    "architecture": "react_baseline",
+    "trial_index": 8,
+    "within_run_index": 4,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:7b73490f2a"
+  },
+  "BLIND-0133": {
+    "run_id": "trial_9_sa",
+    "architecture": "react_baseline",
+    "trial_index": 9,
+    "within_run_index": 9,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:2e2505f83c"
+  },
+  "BLIND-0134": {
+    "run_id": "trial_5_sa",
+    "architecture": "react_baseline",
+    "trial_index": 5,
+    "within_run_index": 6,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak%2500.md:CWE-22:0470f285ef"
+  },
+  "BLIND-0135": {
+    "run_id": "trial_7_sa",
+    "architecture": "react_baseline",
+    "trial_index": 7,
+    "within_run_index": 10,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:2f2379bb82"
+  },
+  "BLIND-0136": {
+    "run_id": "trial_3_sa",
+    "architecture": "react_baseline",
+    "trial_index": 3,
+    "within_run_index": 1,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:670ce43e3d"
+  },
+  "BLIND-0137": {
+    "run_id": "trial_7_sa",
+    "architecture": "react_baseline",
+    "trial_index": 7,
+    "within_run_index": 7,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:7064c2b8bf"
+  },
+  "BLIND-0138": {
+    "run_id": "trial_1_sa",
+    "architecture": "react_baseline",
+    "trial_index": 1,
+    "within_run_index": 11,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:e207d1cbd1"
+  },
+  "BLIND-0139": {
+    "run_id": "trial_2_sa",
+    "architecture": "react_baseline",
+    "trial_index": 2,
+    "within_run_index": 10,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:57bf373e11"
+  },
+  "BLIND-0140": {
+    "run_id": "trial_2_sa",
+    "architecture": "react_baseline",
+    "trial_index": 2,
+    "within_run_index": 4,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:32b61bd7e4"
+  }
+}

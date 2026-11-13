@@ -1,0 +1,1500 @@
+{
+  "BLIND-0001": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 16,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:4f6913c4c2"
+  },
+  "BLIND-0002": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 12,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:572499fe14"
+  },
+  "BLIND-0003": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 7,
+    "finding_id": "dvwa:POST:/security.php:CWE-653:ccdf3da773"
+  },
+  "BLIND-0004": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 14,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:028d524fbb"
+  },
+  "BLIND-0005": {
+    "run_id": "trial_8_ma",
+    "architecture": "multi_agent",
+    "trial_index": 8,
+    "within_run_index": 16,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:a955c69560"
+  },
+  "BLIND-0006": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 4,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/session-input.php:CWE-89:a8447ad723"
+  },
+  "BLIND-0007": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 13,
+    "finding_id": "juiceshop:GET:/rest/basket/{basketId}:CWE-639:34d6f1c4e6"
+  },
+  "BLIND-0008": {
+    "run_id": "trial_8_ma",
+    "architecture": "multi_agent",
+    "trial_index": 8,
+    "within_run_index": 3,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:31921533e1"
+  },
+  "BLIND-0009": {
+    "run_id": "trial_8_ma",
+    "architecture": "multi_agent",
+    "trial_index": 8,
+    "within_run_index": 2,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/session-input.php:CWE-89:2fa9271ea3"
+  },
+  "BLIND-0010": {
+    "run_id": "trial_1_ma",
+    "architecture": "multi_agent",
+    "trial_index": 1,
+    "within_run_index": 16,
+    "finding_id": "juiceshop:GET:/rest/user/whoami:CWE-200:6228e549e1"
+  },
+  "BLIND-0011": {
+    "run_id": "trial_1_ma",
+    "architecture": "multi_agent",
+    "trial_index": 1,
+    "within_run_index": 12,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:15feb97f26"
+  },
+  "BLIND-0012": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 12,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak:CWE-22:22e7b6343e"
+  },
+  "BLIND-0013": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 20,
+    "finding_id": "juiceshop:GET:/encryptionkeys/jwt.pub:CWE-548:798072050c"
+  },
+  "BLIND-0014": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 11,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak:CWE-22:aaf86c8c2d"
+  },
+  "BLIND-0015": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 3,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:7915682fe0"
+  },
+  "BLIND-0016": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 18,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:b3c1e41970"
+  },
+  "BLIND-0017": {
+    "run_id": "trial_1_ma",
+    "architecture": "multi_agent",
+    "trial_index": 1,
+    "within_run_index": 11,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:1499cfcdd9"
+  },
+  "BLIND-0018": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 15,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:9dba9c4293"
+  },
+  "BLIND-0019": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 13,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:64b7856025"
+  },
+  "BLIND-0020": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 8,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:608d3e8343"
+  },
+  "BLIND-0021": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 16,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:a53a4a9c91"
+  },
+  "BLIND-0022": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 8,
+    "finding_id": "juiceshop:GET:/ftp/:CWE-200:3732204498"
+  },
+  "BLIND-0023": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 17,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:f64cf7edeb"
+  },
+  "BLIND-0024": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 15,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak:CWE-22:712bc15bad"
+  },
+  "BLIND-0025": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 15,
+    "finding_id": "juiceshop:GET:/ftp/:CWE-200:a5c6c7eeae"
+  },
+  "BLIND-0026": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 22,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:bd12f4be90"
+  },
+  "BLIND-0027": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 10,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak:CWE-22:e0e36a7934"
+  },
+  "BLIND-0028": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 9,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:aa19c2f63a"
+  },
+  "BLIND-0029": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 17,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak:CWE-22:a6af62efad"
+  },
+  "BLIND-0030": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:ddff63e2c1"
+  },
+  "BLIND-0031": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 17,
+    "finding_id": "juiceshop:GET:/ftp/:CWE-548:a18a06349d"
+  },
+  "BLIND-0032": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 1,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:69a0c82078"
+  },
+  "BLIND-0033": {
+    "run_id": "trial_1_ma",
+    "architecture": "multi_agent",
+    "trial_index": 1,
+    "within_run_index": 6,
+    "finding_id": "juiceshop:GET:/ftp/:CWE-548:fb00fb902b"
+  },
+  "BLIND-0034": {
+    "run_id": "trial_10_ma",
+    "architecture": "multi_agent",
+    "trial_index": 10,
+    "within_run_index": 3,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:384075336a"
+  },
+  "BLIND-0035": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 20,
+    "finding_id": "juiceshop:GET:/encryptionkeys/premium.key:CWE-548:6727c74a5f"
+  },
+  "BLIND-0036": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 10,
+    "finding_id": "juiceshop:GET:/ftp/:CWE-200:67cb50cff0"
+  },
+  "BLIND-0037": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 3,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:9162bf4302"
+  },
+  "BLIND-0038": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 6,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:66867c1246"
+  },
+  "BLIND-0039": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 4,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:86647c5e39"
+  },
+  "BLIND-0040": {
+    "run_id": "trial_10_ma",
+    "architecture": "multi_agent",
+    "trial_index": 10,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:d154059e7b"
+  },
+  "BLIND-0041": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 24,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:25102bd759"
+  },
+  "BLIND-0042": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 4,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:933f10ee9d"
+  },
+  "BLIND-0043": {
+    "run_id": "trial_8_ma",
+    "architecture": "multi_agent",
+    "trial_index": 8,
+    "within_run_index": 13,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:597078db96"
+  },
+  "BLIND-0044": {
+    "run_id": "trial_8_ma",
+    "architecture": "multi_agent",
+    "trial_index": 8,
+    "within_run_index": 7,
+    "finding_id": "dvwa:POST:/security.php:CWE-352:5755f9cb77"
+  },
+  "BLIND-0045": {
+    "run_id": "trial_8_ma",
+    "architecture": "multi_agent",
+    "trial_index": 8,
+    "within_run_index": 9,
+    "finding_id": "juiceshop:GET:/ftp/:CWE-200:908d67609a"
+  },
+  "BLIND-0046": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 20,
+    "finding_id": "juiceshop:GET:/encryptionkeys/premium.key:CWE-548:2116edae6b"
+  },
+  "BLIND-0047": {
+    "run_id": "trial_10_ma",
+    "architecture": "multi_agent",
+    "trial_index": 10,
+    "within_run_index": 15,
+    "finding_id": "juiceshop:GET:/rest/basket/:id:CWE-639:fe8323cd18"
+  },
+  "BLIND-0048": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 10,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:2ff7179f40"
+  },
+  "BLIND-0049": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 9,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:9fcd05d305"
+  },
+  "BLIND-0050": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 12,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:ba334176e5"
+  },
+  "BLIND-0051": {
+    "run_id": "trial_10_ma",
+    "architecture": "multi_agent",
+    "trial_index": 10,
+    "within_run_index": 8,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:e877c21d3b"
+  },
+  "BLIND-0052": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 10,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:8a70d57f6f"
+  },
+  "BLIND-0053": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 12,
+    "finding_id": "juiceshop:GET:/rest/user/whoami:CWE-200:f97e9c359d"
+  },
+  "BLIND-0054": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 13,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:af95fe402c"
+  },
+  "BLIND-0055": {
+    "run_id": "trial_1_ma",
+    "architecture": "multi_agent",
+    "trial_index": 1,
+    "within_run_index": 1,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:3501697086"
+  },
+  "BLIND-0056": {
+    "run_id": "trial_8_ma",
+    "architecture": "multi_agent",
+    "trial_index": 8,
+    "within_run_index": 14,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:e60c0bc30f"
+  },
+  "BLIND-0057": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 1,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:6cc95a1cb2"
+  },
+  "BLIND-0058": {
+    "run_id": "trial_1_ma",
+    "architecture": "multi_agent",
+    "trial_index": 1,
+    "within_run_index": 5,
+    "finding_id": "juiceshop:GET:/ftp/:CWE-200:0389b0d228"
+  },
+  "BLIND-0059": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 6,
+    "finding_id": "dvwa:POST:/security.php:CWE-284:3b4bffcd84"
+  },
+  "BLIND-0060": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 12,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:2b7b284cc1"
+  },
+  "BLIND-0061": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:62d62fe8b6"
+  },
+  "BLIND-0062": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 9,
+    "finding_id": "juiceshop:GET:/ftp/:CWE-200:ef488bf7d0"
+  },
+  "BLIND-0063": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 13,
+    "finding_id": "juiceshop:GET:/ftp/quarantine:CWE-200:eb3f73df12"
+  },
+  "BLIND-0064": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 6,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:6df9ce9529"
+  },
+  "BLIND-0065": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 19,
+    "finding_id": "juiceshop:GET:/encryptionkeys/premium.key:CWE-548:97d90c5a11"
+  },
+  "BLIND-0066": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 21,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:2b18bef573"
+  },
+  "BLIND-0067": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 4,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli_blind/:CWE-89:7808f05f42"
+  },
+  "BLIND-0068": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 6,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:9e57005da6"
+  },
+  "BLIND-0069": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 18,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:36fce71b7a"
+  },
+  "BLIND-0070": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 14,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:f0f9032d82"
+  },
+  "BLIND-0071": {
+    "run_id": "trial_8_ma",
+    "architecture": "multi_agent",
+    "trial_index": 8,
+    "within_run_index": 5,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:bf8dc0e6c8"
+  },
+  "BLIND-0072": {
+    "run_id": "trial_10_ma",
+    "architecture": "multi_agent",
+    "trial_index": 10,
+    "within_run_index": 4,
+    "finding_id": "dvwa:POST:/security.php:CWE-306:c9e99ffc9f"
+  },
+  "BLIND-0073": {
+    "run_id": "trial_8_ma",
+    "architecture": "multi_agent",
+    "trial_index": 8,
+    "within_run_index": 17,
+    "finding_id": "juiceshop:GET:/api/Feedbacks/:CWE-359:6c23d1c390"
+  },
+  "BLIND-0074": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 6,
+    "finding_id": "dvwa:POST:/security.php:CWE-284:7ae5285361"
+  },
+  "BLIND-0075": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 1,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:a42aab874b"
+  },
+  "BLIND-0076": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:c898d9c923"
+  },
+  "BLIND-0077": {
+    "run_id": "trial_1_ma",
+    "architecture": "multi_agent",
+    "trial_index": 1,
+    "within_run_index": 8,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak%2500.md:CWE-22:cb92758d3a"
+  },
+  "BLIND-0078": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 9,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:9f18da6be5"
+  },
+  "BLIND-0079": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 16,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:84dff8bdf7"
+  },
+  "BLIND-0080": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 11,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak:CWE-22:a635cedb92"
+  },
+  "BLIND-0081": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 8,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:7679196364"
+  },
+  "BLIND-0082": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 8,
+    "finding_id": "dvwa:POST:/security.php:CWE-284:dfc43ada8e"
+  },
+  "BLIND-0083": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 17,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:4851016b27"
+  },
+  "BLIND-0084": {
+    "run_id": "trial_1_ma",
+    "architecture": "multi_agent",
+    "trial_index": 1,
+    "within_run_index": 17,
+    "finding_id": "juiceshop:GET:/rest/admin/application-configuration:CWE-200:e21c204a2e"
+  },
+  "BLIND-0085": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 16,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:96b681d65d"
+  },
+  "BLIND-0086": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 21,
+    "finding_id": "juiceshop:GET:/ftp/quarantine:CWE-548:f7cf0550f4"
+  },
+  "BLIND-0087": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 1,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:b09f242e2b"
+  },
+  "BLIND-0088": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 23,
+    "finding_id": "juiceshop:GET:/ftp/quarantine:CWE-548:35d313dcb8"
+  },
+  "BLIND-0089": {
+    "run_id": "trial_1_ma",
+    "architecture": "multi_agent",
+    "trial_index": 1,
+    "within_run_index": 2,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:37482168c9"
+  },
+  "BLIND-0090": {
+    "run_id": "trial_1_ma",
+    "architecture": "multi_agent",
+    "trial_index": 1,
+    "within_run_index": 15,
+    "finding_id": "juiceshop:GET:/rest/basket/{basketId}:CWE-639:8dc5bb050c"
+  },
+  "BLIND-0091": {
+    "run_id": "trial_8_ma",
+    "architecture": "multi_agent",
+    "trial_index": 8,
+    "within_run_index": 4,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:6c5d26a4f1"
+  },
+  "BLIND-0092": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 13,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:1782c1ad1f"
+  },
+  "BLIND-0093": {
+    "run_id": "trial_8_ma",
+    "architecture": "multi_agent",
+    "trial_index": 8,
+    "within_run_index": 12,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak:CWE-22:e28f266cc4"
+  },
+  "BLIND-0094": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 3,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:32be00777b"
+  },
+  "BLIND-0095": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 7,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/session-input.php:CWE-89:878fe7376c"
+  },
+  "BLIND-0096": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 15,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:db65e173e5"
+  },
+  "BLIND-0097": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 14,
+    "finding_id": "juiceshop:GET:/api/BasketItems:CWE-639:059fce0fc7"
+  },
+  "BLIND-0098": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 10,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:081798265d"
+  },
+  "BLIND-0099": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 10,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:8b919aea61"
+  },
+  "BLIND-0100": {
+    "run_id": "trial_1_ma",
+    "architecture": "multi_agent",
+    "trial_index": 1,
+    "within_run_index": 13,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:a72bb96a82"
+  },
+  "BLIND-0101": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 4,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:107f39cfbd"
+  },
+  "BLIND-0102": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 17,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:ea9876751a"
+  },
+  "BLIND-0103": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 14,
+    "finding_id": "juiceshop:GET:/ftp/{name}.bak:CWE-22:249f08d7bc"
+  },
+  "BLIND-0104": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 4,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:3cfa33e9e5"
+  },
+  "BLIND-0105": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 6,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:101635bda3"
+  },
+  "BLIND-0106": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 18,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:79f8856117"
+  },
+  "BLIND-0107": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 11,
+    "finding_id": "juiceshop:GET:/rest/basket/{id}:CWE-639:5f5645ca08"
+  },
+  "BLIND-0108": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 20,
+    "finding_id": "juiceshop:GET:/rest/user/whoami:CWE-200:c4df0d99a1"
+  },
+  "BLIND-0109": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 3,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:bd803f3522"
+  },
+  "BLIND-0110": {
+    "run_id": "trial_8_ma",
+    "architecture": "multi_agent",
+    "trial_index": 8,
+    "within_run_index": 8,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:7486f658c2"
+  },
+  "BLIND-0111": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 16,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:26a6d17ff7"
+  },
+  "BLIND-0112": {
+    "run_id": "trial_10_ma",
+    "architecture": "multi_agent",
+    "trial_index": 10,
+    "within_run_index": 2,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:a3c788a24b"
+  },
+  "BLIND-0113": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 14,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:b02aa59457"
+  },
+  "BLIND-0114": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 14,
+    "finding_id": "juiceshop:GET:/encryptionkeys/jwt.pub:CWE-548:d55aa3fc4e"
+  },
+  "BLIND-0115": {
+    "run_id": "trial_10_ma",
+    "architecture": "multi_agent",
+    "trial_index": 10,
+    "within_run_index": 1,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/session-input.php:CWE-89:00229923f8"
+  },
+  "BLIND-0116": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 5,
+    "finding_id": "dvwa:POST:/security.php:CWE-284:d730e51934"
+  },
+  "BLIND-0117": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:7b1ae270db"
+  },
+  "BLIND-0118": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 9,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:918176d364"
+  },
+  "BLIND-0119": {
+    "run_id": "trial_10_ma",
+    "architecture": "multi_agent",
+    "trial_index": 10,
+    "within_run_index": 9,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak:CWE-22:689e84606c"
+  },
+  "BLIND-0120": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 12,
+    "finding_id": "juiceshop:GET:/encryptionkeys/premium.key:CWE-548:bec5b2a282"
+  },
+  "BLIND-0121": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 3,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:5eb8c6dbda"
+  },
+  "BLIND-0122": {
+    "run_id": "trial_10_ma",
+    "architecture": "multi_agent",
+    "trial_index": 10,
+    "within_run_index": 5,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:5a8496fbfd"
+  },
+  "BLIND-0123": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 1,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:ca9bb33fba"
+  },
+  "BLIND-0124": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 19,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:033c3ac4bb"
+  },
+  "BLIND-0125": {
+    "run_id": "trial_10_ma",
+    "architecture": "multi_agent",
+    "trial_index": 10,
+    "within_run_index": 16,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:d1a48742d6"
+  },
+  "BLIND-0126": {
+    "run_id": "trial_8_ma",
+    "architecture": "multi_agent",
+    "trial_index": 8,
+    "within_run_index": 6,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:b543e54a05"
+  },
+  "BLIND-0127": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 23,
+    "finding_id": "juiceshop:GET:/encryptionkeys/jwt.pub:CWE-548:2853eebefb"
+  },
+  "BLIND-0128": {
+    "run_id": "trial_8_ma",
+    "architecture": "multi_agent",
+    "trial_index": 8,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:bb389e8ac2"
+  },
+  "BLIND-0129": {
+    "run_id": "trial_8_ma",
+    "architecture": "multi_agent",
+    "trial_index": 8,
+    "within_run_index": 11,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:46ddd29cb1"
+  },
+  "BLIND-0130": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:4f77b4710f"
+  },
+  "BLIND-0131": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 1,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:0c7154f3f2"
+  },
+  "BLIND-0132": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 19,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:c586672cc2"
+  },
+  "BLIND-0133": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 20,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:3079ce3a4e"
+  },
+  "BLIND-0134": {
+    "run_id": "trial_1_ma",
+    "architecture": "multi_agent",
+    "trial_index": 1,
+    "within_run_index": 4,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:3523e8f507"
+  },
+  "BLIND-0135": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 26,
+    "finding_id": "juiceshop:GET:/encryptionkeys/jwt.pub:CWE-548:555ce24879"
+  },
+  "BLIND-0136": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 1,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:a9534c6182"
+  },
+  "BLIND-0137": {
+    "run_id": "trial_1_ma",
+    "architecture": "multi_agent",
+    "trial_index": 1,
+    "within_run_index": 3,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/session-input.php:CWE-89:e479390d6b"
+  },
+  "BLIND-0138": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 19,
+    "finding_id": "juiceshop:GET:/encryptionkeys/premium.key:CWE-548:ad5f7791fd"
+  },
+  "BLIND-0139": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 25,
+    "finding_id": "juiceshop:GET:/encryptionkeys/premium.key:CWE-548:296d98148d"
+  },
+  "BLIND-0140": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 5,
+    "finding_id": "dvwa:POST:/security.php:CWE-653:89c39f36b5"
+  },
+  "BLIND-0141": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 2,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:ad15b4d4ca"
+  },
+  "BLIND-0142": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 9,
+    "finding_id": "juiceshop:GET:/ftp/:CWE-548:e787a9a9d3"
+  },
+  "BLIND-0143": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 18,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:57e6daafd3"
+  },
+  "BLIND-0144": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 4,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:0b38b2618f"
+  },
+  "BLIND-0145": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 11,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:dabf219a98"
+  },
+  "BLIND-0146": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 13,
+    "finding_id": "juiceshop:GET:/encryptionkeys/premium.key:CWE-548:2b1c3cf7f7"
+  },
+  "BLIND-0147": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 3,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:e989136274"
+  },
+  "BLIND-0148": {
+    "run_id": "trial_10_ma",
+    "architecture": "multi_agent",
+    "trial_index": 10,
+    "within_run_index": 10,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:734ef28714"
+  },
+  "BLIND-0149": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 19,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:580058769a"
+  },
+  "BLIND-0150": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 15,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:bc5654b9c2"
+  },
+  "BLIND-0151": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 21,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:c2c5cbf5c9"
+  },
+  "BLIND-0152": {
+    "run_id": "trial_1_ma",
+    "architecture": "multi_agent",
+    "trial_index": 1,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:c309f3a729"
+  },
+  "BLIND-0153": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 3,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:b1b18a51af"
+  },
+  "BLIND-0154": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 15,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:35a0de8428"
+  },
+  "BLIND-0155": {
+    "run_id": "trial_10_ma",
+    "architecture": "multi_agent",
+    "trial_index": 10,
+    "within_run_index": 14,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:50eabb9800"
+  },
+  "BLIND-0156": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 5,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:acabe484f9"
+  },
+  "BLIND-0157": {
+    "run_id": "trial_10_ma",
+    "architecture": "multi_agent",
+    "trial_index": 10,
+    "within_run_index": 7,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:bd78c38d91"
+  },
+  "BLIND-0158": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 2,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:5b2d05c70e"
+  },
+  "BLIND-0159": {
+    "run_id": "trial_1_ma",
+    "architecture": "multi_agent",
+    "trial_index": 1,
+    "within_run_index": 9,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak:CWE-22:6a713fbace"
+  },
+  "BLIND-0160": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 22,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak%2500.md:CWE-22:5e9e4734a6"
+  },
+  "BLIND-0161": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 21,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak%2500.md:CWE-22:b5c1b47f93"
+  },
+  "BLIND-0162": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:182988a2f9"
+  },
+  "BLIND-0163": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 7,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:a08ef9c98a"
+  },
+  "BLIND-0164": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 7,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:4758511524"
+  },
+  "BLIND-0165": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 8,
+    "finding_id": "juiceshop:GET:/ftp/:CWE-200:84e7e56aee"
+  },
+  "BLIND-0166": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 11,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:3d45f271a4"
+  },
+  "BLIND-0167": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 18,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:efd043af6e"
+  },
+  "BLIND-0168": {
+    "run_id": "trial_10_ma",
+    "architecture": "multi_agent",
+    "trial_index": 10,
+    "within_run_index": 13,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:b4650e9aab"
+  },
+  "BLIND-0169": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 17,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:4f7d80ce60"
+  },
+  "BLIND-0170": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 20,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak:CWE-22:38bdff1422"
+  },
+  "BLIND-0171": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 7,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:9f9929983b"
+  },
+  "BLIND-0172": {
+    "run_id": "trial_10_ma",
+    "architecture": "multi_agent",
+    "trial_index": 10,
+    "within_run_index": 11,
+    "finding_id": "juiceshop:GET:/encryptionkeys/jwt.pub:CWE-548:11e40d64c2"
+  },
+  "BLIND-0173": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 7,
+    "finding_id": "dvwa:POST:/security.php:CWE-352:e885f18087"
+  },
+  "BLIND-0174": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 14,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:df6eba5947"
+  },
+  "BLIND-0175": {
+    "run_id": "trial_8_ma",
+    "architecture": "multi_agent",
+    "trial_index": 8,
+    "within_run_index": 15,
+    "finding_id": "juiceshop:GET:/api/Feedbacks/:CWE-359:f79996e812"
+  },
+  "BLIND-0176": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 2,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/session-input.php:CWE-89:ac52080b1b"
+  },
+  "BLIND-0177": {
+    "run_id": "trial_1_ma",
+    "architecture": "multi_agent",
+    "trial_index": 1,
+    "within_run_index": 10,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:fbf3539207"
+  },
+  "BLIND-0178": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 15,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak%2500.md:CWE-22:a4be418bb6"
+  },
+  "BLIND-0179": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 18,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:8a3d13ed0a"
+  },
+  "BLIND-0180": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 5,
+    "finding_id": "dvwa:POST:/security.php:CWE-1188:9183b48f9b"
+  },
+  "BLIND-0181": {
+    "run_id": "trial_8_ma",
+    "architecture": "multi_agent",
+    "trial_index": 8,
+    "within_run_index": 10,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:5e9f5690e2"
+  },
+  "BLIND-0182": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 0,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:5ca4fe297a"
+  },
+  "BLIND-0183": {
+    "run_id": "trial_6_ma",
+    "architecture": "multi_agent",
+    "trial_index": 6,
+    "within_run_index": 19,
+    "finding_id": "juiceshop:GET:/ftp/package.json.bak:CWE-22:9a546f0496"
+  },
+  "BLIND-0184": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 19,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:6aefb91c4d"
+  },
+  "BLIND-0185": {
+    "run_id": "trial_10_ma",
+    "architecture": "multi_agent",
+    "trial_index": 10,
+    "within_run_index": 17,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:06df55787d"
+  },
+  "BLIND-0186": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 21,
+    "finding_id": "juiceshop:GET:/api/Products:CWE-200:5e34d7cd10"
+  },
+  "BLIND-0187": {
+    "run_id": "trial_10_ma",
+    "architecture": "multi_agent",
+    "trial_index": 10,
+    "within_run_index": 12,
+    "finding_id": "juiceshop:GET:/encryptionkeys/premium.key:CWE-548:762bcd7cb9"
+  },
+  "BLIND-0188": {
+    "run_id": "trial_4_ma",
+    "architecture": "multi_agent",
+    "trial_index": 4,
+    "within_run_index": 5,
+    "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:ad13fba9b2"
+  },
+  "BLIND-0189": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 8,
+    "finding_id": "juiceshop:GET:/ftp/:CWE-200:0654d351b3"
+  },
+  "BLIND-0190": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 18,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:ade0a06bdb"
+  },
+  "BLIND-0191": {
+    "run_id": "trial_10_ma",
+    "architecture": "multi_agent",
+    "trial_index": 10,
+    "within_run_index": 6,
+    "finding_id": "juiceshop:GET:/ftp/:CWE-548:aa780e2fc5"
+  },
+  "BLIND-0192": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 8,
+    "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:e8e5b69a30"
+  },
+  "BLIND-0193": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 11,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:9f18da6be5"
+  },
+  "BLIND-0194": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 20,
+    "finding_id": "juiceshop:GET:/encryptionkeys/jwt.pub:CWE-548:87fad95fc5"
+  },
+  "BLIND-0195": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 16,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:fb45fa3d55"
+  },
+  "BLIND-0196": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 13,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:fadba82863"
+  },
+  "BLIND-0197": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 2,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:680e5acae3"
+  },
+  "BLIND-0198": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 6,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:f0b452091b"
+  },
+  "BLIND-0199": {
+    "run_id": "trial_8_ma",
+    "architecture": "multi_agent",
+    "trial_index": 8,
+    "within_run_index": 18,
+    "finding_id": "juiceshop:GET:/rest/user/whoami:CWE-200:d544da5a6c"
+  },
+  "BLIND-0200": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 17,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:1d77617991"
+  },
+  "BLIND-0201": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 11,
+    "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:3987bbb90a"
+  },
+  "BLIND-0202": {
+    "run_id": "trial_3_ma",
+    "architecture": "multi_agent",
+    "trial_index": 3,
+    "within_run_index": 16,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:1ba5aaee2d"
+  },
+  "BLIND-0203": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 5,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:b23811f016"
+  },
+  "BLIND-0204": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 7,
+    "finding_id": "dvwa:POST:/security.php:CWE-1188:d03002f62e"
+  },
+  "BLIND-0205": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 10,
+    "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:b42551e07c"
+  },
+  "BLIND-0206": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 5,
+    "finding_id": "dvwa:POST:/security.php:CWE-200:f174cb9229"
+  },
+  "BLIND-0207": {
+    "run_id": "trial_5_ma",
+    "architecture": "multi_agent",
+    "trial_index": 5,
+    "within_run_index": 2,
+    "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:e2a2540fc2"
+  },
+  "BLIND-0208": {
+    "run_id": "trial_1_ma",
+    "architecture": "multi_agent",
+    "trial_index": 1,
+    "within_run_index": 7,
+    "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:344b574ab0"
+  },
+  "BLIND-0209": {
+    "run_id": "trial_7_ma",
+    "architecture": "multi_agent",
+    "trial_index": 7,
+    "within_run_index": 2,
+    "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:d9a727e65d"
+  },
+  "BLIND-0210": {
+    "run_id": "trial_2_ma",
+    "architecture": "multi_agent",
+    "trial_index": 2,
+    "within_run_index": 2,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/session-input.php:CWE-89:737c553195"
+  },
+  "BLIND-0211": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 9,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:06743ad00f"
+  },
+  "BLIND-0212": {
+    "run_id": "trial_8_ma",
+    "architecture": "multi_agent",
+    "trial_index": 8,
+    "within_run_index": 1,
+    "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:21fff188d9"
+  },
+  "BLIND-0213": {
+    "run_id": "trial_9_ma",
+    "architecture": "multi_agent",
+    "trial_index": 9,
+    "within_run_index": 12,
+    "finding_id": "juiceshop:GET:/api/Feedbacks:CWE-359:93882f89ab"
+  },
+  "BLIND-0214": {
+    "run_id": "trial_1_ma",
+    "architecture": "multi_agent",
+    "trial_index": 1,
+    "within_run_index": 14,
+    "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:05abc7df21"
+  }
+}

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import uuid
 from typing import Any, Literal
@@ -467,7 +468,13 @@ def build_shared_tools(
         """
         ctx.note_call("submit_finding", endpoint_url)
         ep_key = normalize_endpoint_key(target, method, endpoint_url)
-        fid = f"{ep_key}:{cwe.upper().strip()}"
+        # One route+CWE can carry several benchmark instances (e.g. DVWA command injection at
+        # low/medium/high), so the ID must also distinguish the claim itself; identical
+        # resubmissions still collapse to one ID.
+        claim_digest = hashlib.sha256(
+            json.dumps([title, parameter, request_sequence], ensure_ascii=False).encode("utf-8")
+        ).hexdigest()[:10]
+        fid = f"{ep_key}:{cwe.upper().strip()}:{claim_digest}"
         rec = FindingRecord(
             finding_id=fid,
             target=target,

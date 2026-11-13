@@ -184,11 +184,58 @@ def test_metrics_undefined_edge_cases_and_duplicate_collapsing(tmp_path: Path) -
     m_dup = compute_single_run_metrics(dup_run, review["adjudicated_by_run"]["t1_ma"])
     assert m_dup["discovery"]["tp_count"] == 1
     assert m_dup["discovery"]["duplicate_count"] == 1
-    assert m_dup["discovery"]["recall"] == 0.2
+    assert m_dup["discovery"]["recall"] == round(1 / 14, 4)
     assert m_dup["discovery"]["fdp"] == 0.0
     assert m_dup["efficiency"]["cost_tokens_per_verified_instance"] == 4800.0
     assert m_dup["efficiency"]["recovery_rate"] == 1.0
 
     agg = aggregate_architecture_metrics([m_dup, m_empty])
-    assert agg["by_architecture"]["multi_agent"]["recall"]["mean"] == 0.2
+    assert agg["by_architecture"]["multi_agent"]["recall"]["mean"] == round(1 / 14, 4)
     assert agg["by_architecture"]["react_baseline"]["fdp_undefined_zero_claim_runs"] == 1
+
+
+def test_graded_levels_on_one_route_do_not_overwrite_each_other():
+    """Regression: low/medium/high findings on the same route+CWE must survive the state reducer."""
+    from mac_bench.crypto_redact import RunRedactor
+    from mac_bench.schemas import merge_findings
+    from mac_bench.tools.session_store import SessionManager
+    from mac_bench.tools.web_tools import ToolRuntimeContext, build_shared_tools
+
+    ctx = ToolRuntimeContext(session_mgr=SessionManager(), redactor=RunRedactor())
+    submit = {t.name: t for t in build_shared_tools(ctx, allow_record_endpoint=False, allow_submit_finding=True)}[
+        "submit_finding"
+    ]
+    for payload in ("127.0.0.1; whoami", "127.0.0.1| whoami", "127.0.0.1|whoami"):
+        submit.invoke({
+            "target": "dvwa", "endpoint_url": "http://dvwa/vulnerabilities/exec/", "method": "POST",
+            "cwe": "CWE-78", "title": f"Command injection {payload}", "verdict": "confirmed",
+            "request_sequence": [f"POST ip={payload}"], "response_evidence": "output: www-data",
+        })
+    merged = merge_findings([], list(ctx.recorded_findings))
+    assert len(merged) == 3
+
+
+def test_ftp_listing_evidence_mentioning_bak_is_exposure_case():
+    """Regression: the /ftp/ listing names .bak files, which must not reroute it to the null-byte case."""
+    from mac_bench.oracles.verify_oracles import match_benchmark_case
+    from mac_bench.schemas import FindingRecord
+
+    f = FindingRecord(
+        finding_id="x", target="juiceshop", endpoint_url="http://juiceshop:3000/ftp/", method="GET",
+        cwe="CWE-200", title="Confidential document exposed via open FTP directory listing", verdict="confirmed",
+        request_sequence=["GET /ftp/", "GET /ftp/acquisitions.md"],
+        response_evidence="listing: acquisitions.md, package.json.bak, coupons_2013.md.bak ...",
+    )
+    assert match_benchmark_case(f) == "JUICE-EXPOSURE-005"
+
+
+def test_sqli_level_is_attributed_by_payload_before_wording():
+    """Regression: a low-level finding described as "numeric/quoted id" must count as the low case."""
+    from mac_bench.oracles.verify_oracles import _dvwa_sqli_level
+
+    low = "sql injection (numeric/quoted id) [security=low] get /vulnerabilities/sqli/?id=1' or '1'='1&submit=submit"
+    med = "[security=medium] post /vulnerabilities/sqli/ id=1 or 1=1&submit=submit; earlier the level was high"
+    high = "post /vulnerabilities/sqli/session-input.php id=1' or '1'='1' #&submit=submit [security=high]"
+    assert _dvwa_sqli_level(low) == "DVWA-SQLI-001"
+    assert _dvwa_sqli_level(med) == "DVWA-SQLI-MED-006"
+    assert _dvwa_sqli_level(high) == "DVWA-SQLI-HIGH-011"

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from typing import Any, Literal
 
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage, ToolMessage
@@ -22,6 +23,20 @@ from mac_bench.tools.session_store import SessionManager
 from mac_bench.tools.web_tools import ToolRuntimeContext, build_shared_tools
 
 MAX_WORKER_TURNS_PER_HANDOFF = 7
+
+# Ablation: fixed routing instead of the LLM Coordinator (MAC_BENCH_MA_COORDINATOR=static).
+STATIC_MAPPING_ASSIGNMENTS = [
+    "Map the in-scope attack surface of the DVWA target (http://dvwa): every vulnerability-class route named "
+    "in the scope, with its exact form fields, parameters, and submit-button names.",
+    "Map the in-scope attack surface of the OWASP Juice Shop target (http://juiceshop:3000): every "
+    "vulnerability-class route named in the scope, including REST API endpoints and exposed directories.",
+]
+STATIC_VERIFY_INSTRUCTION = (
+    "Behaviorally verify the assigned endpoint(s) for every in-scope vulnerability class that applies to them. "
+    "For DVWA routes, test every security level named in the scope and submit one finding per level."
+)
+STATIC_VERIFY_BATCH = 2
+STATIC_MAX_VERIFY_ATTEMPTS = 2
 
 
 class CoordinatorDecision(BaseModel):
@@ -184,8 +199,14 @@ def _execute_tool_loop(
     return final_summary or f"{role} finished assigned step.", depleted_reason
 
 
-def run_multi_agent_assessment(run_id: str) -> tuple[AssessmentState, SessionManager]:
-    """Build and execute the 3-role LangGraph workflow (Coordinator, Surface Mapper, Verification Agent)."""
+def run_multi_agent_assessment(run_id: str, coordinator: str | None = None) -> tuple[AssessmentState, SessionManager]:
+    """Build and execute the 3-role LangGraph workflow (Coordinator, Surface Mapper, Verification Agent).
+
+    coordinator: "llm" (default) or "static" (ablation: deterministic routing, no Coordinator LLM calls).
+    """
+    coordinator = coordinator or os.environ.get("MAC_BENCH_MA_COORDINATOR", "llm")
+    if coordinator not in ("llm", "static"):
+        raise ValueError(f"Unknown coordinator mode: {coordinator}")
     redactor = RunRedactor()
     session_mgr = SessionManager()
     ctx = ToolRuntimeContext(session_mgr=session_mgr, redactor=redactor)
@@ -268,6 +289,39 @@ def run_multi_agent_assessment(run_id: str) -> tuple[AssessmentState, SessionMan
             ],
         }
 
+    def static_coordinator_node(state: AssessmentState) -> dict[str, Any]:
+        live_b = sync_live_budgets(state.budgets, state.started_at_epoch)
+        depleted, reason = live_b.is_depleted()
+        if depleted or live_b.llm_remaining <= 0:
+            return {"budgets": live_b, "next_action": "halt", "halt_reason": reason or "llm_budget_depleted"}
+        if state.handoff_count < len(STATIC_MAPPING_ASSIGNMENTS):
+            assignment = STATIC_MAPPING_ASSIGNMENTS[state.handoff_count]
+            return {
+                "budgets": live_b,
+                "handoff_count": state.handoff_count + 1,
+                "next_action": "surface_mapper",
+                "active_assignment": assignment,
+                "assigned_endpoint_ids": [],
+                "notes": [f"[StaticRouter -> surface_mapper] {assignment[:200]}"],
+            }
+        pending = [
+            ep.endpoint_id
+            for ep in state.endpoints
+            if ep.task_status in ("pending_verification", "needs_more_mapping")
+            and ep.verification_attempts < STATIC_MAX_VERIFY_ATTEMPTS
+        ]
+        if not pending:
+            return {"budgets": live_b, "next_action": "halt", "halt_reason": "static_schedule_complete"}
+        batch = pending[:STATIC_VERIFY_BATCH]
+        return {
+            "budgets": live_b,
+            "handoff_count": state.handoff_count + 1,
+            "next_action": "verifier",
+            "active_assignment": STATIC_VERIFY_INSTRUCTION,
+            "assigned_endpoint_ids": batch,
+            "notes": [f"[StaticRouter -> verifier] {batch}"],
+        }
+
     def surface_mapper_node(state: AssessmentState) -> dict[str, Any]:
         ctx.recorded_endpoints.clear()
         existing_brief = [
@@ -278,8 +332,8 @@ def run_multi_agent_assessment(run_id: str) -> tuple[AssessmentState, SessionMan
             f"## Coordinator Assignment\n{state.active_assignment}\n\n"
             f"## Already Recorded Endpoints (avoid duplicate crawling unless re-mapping parameters)\n"
             + ("\n".join(existing_brief) if existing_brief else "(None yet)")
-            + f"\n\n## Current Remaining Budgets\nHTTP remaining: {state.budgets.http_remaining}/200, "
-            f"LLM remaining: {state.budgets.llm_remaining}/50.\n"
+            + f"\n\n## Current Remaining Budgets\nHTTP remaining: {state.budgets.http_remaining}/{state.budgets.max_http_transactions}, "
+            f"LLM remaining: {state.budgets.llm_remaining}/{state.budgets.max_llm_calls}.\n"
             "Map the assigned target surface and call `record_endpoint` for each observed or candidate endpoint."
         )
         summary, dep_reason = _execute_tool_loop(
@@ -316,8 +370,8 @@ def run_multi_agent_assessment(run_id: str) -> tuple[AssessmentState, SessionMan
         prompt = (
             f"## Coordinator Verification Assignment\n{state.active_assignment}\n\n"
             f"## Assigned Candidate Endpoint Records\n{ep_details}\n\n"
-            f"## Current Remaining Budgets\nHTTP remaining: {state.budgets.http_remaining}/200, "
-            f"LLM remaining: {state.budgets.llm_remaining}/50.\n"
+            f"## Current Remaining Budgets\nHTTP remaining: {state.budgets.http_remaining}/{state.budgets.max_http_transactions}, "
+            f"LLM remaining: {state.budgets.llm_remaining}/{state.budgets.max_llm_calls}.\n"
             "Execute behavioral verification for the assigned endpoint(s) and call `submit_finding` with "
             "complete request_sequence and behavioral response_evidence (plus browser_js_evidence where applicable)."
         )
@@ -390,7 +444,7 @@ def run_multi_agent_assessment(run_id: str) -> tuple[AssessmentState, SessionMan
         return "__end__"
 
     graph = StateGraph(state_schema=AssessmentState)
-    graph.add_node("coordinator", coordinator_node)
+    graph.add_node("coordinator", coordinator_node if coordinator == "llm" else static_coordinator_node)
     graph.add_node("surface_mapper", surface_mapper_node)
     graph.add_node("verifier", verifier_node)
 

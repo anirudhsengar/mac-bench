@@ -68,6 +68,7 @@ def main() -> None:
             "multi_agent_py": sha256_file(root / "src" / "mac_bench" / "agents" / "multi_agent.py"),
             "react_baseline_py": sha256_file(root / "src" / "mac_bench" / "agents" / "react_baseline.py"),
             "mediator_addon_py": sha256_file(root / "docker" / "proxy" / "mediator_addon.py"),
+            "llm_relay_py": sha256_file(root / "src" / "mac_bench" / "llm_relay.py"),
         },
         "paired_trial_schedule": paired_schedule,
     }

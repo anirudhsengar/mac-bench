@@ -1,0 +1,44 @@
+{
+  "results_subdir": "models_v3/haiku",
+  "total_misses": 28,
+  "by_architecture": {
+    "multi_agent": {
+      "not_mapped": 0,
+      "not_assigned": 0,
+      "not_attempted": 7,
+      "agent_rejected": 12,
+      "oracle_rejected": 0
+    },
+    "react_baseline": {
+      "not_mapped": 0,
+      "not_assigned": 0,
+      "not_attempted": 0,
+      "agent_rejected": 9,
+      "oracle_rejected": 0
+    }
+  },
+  "by_case": {
+    "multi_agent": {
+      "JUICE-FEEDBACKPII-010": {
+        "agent_rejected": 10
+      },
+      "DVWA-SQLI-MED-006": {
+        "not_attempted": 2
+      },
+      "DVWA-CMDI-MED-007": {
+        "not_attempted": 3
+      },
+      "DVWA-CMDI-HIGH-012": {
+        "not_attempted": 2
+      },
+      "DVWA-SQLI-HIGH-011": {
+        "agent_rejected": 2
+      }
+    },
+    "react_baseline": {
+      "JUICE-FEEDBACKPII-010": {
+        "agent_rejected": 9
+      }
+    }
+  }
+}

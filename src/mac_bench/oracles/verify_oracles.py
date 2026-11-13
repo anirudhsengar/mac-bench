@@ -253,10 +253,24 @@ def _finding_blob(finding: FindingRecord) -> str:
 
 
 def _dvwa_sqli_level(blob: str) -> str:
-    """Disambiguate DVWA SQLi low/medium/high by mutually-exclusive payload/level signatures (high>medium>low)."""
-    if "session-input" in blob or "'='1' #" in blob or ("union" in blob and "#" in blob) or "security=high" in blob or "[high]" in blob:
+    """Attribute a DVWA SQLi finding to low/medium/high.
+
+    The payload signature decides first, because finding text often mentions several levels
+    (e.g. a low-level finding titled "numeric/quoted id"): the out-of-band session-input route
+    exists only at high; a numeric boolean without quotes is the medium bypass (medium escapes
+    quotes); a quoted boolean outside session-input is the low payload. Level annotations are
+    the fallback when no payload signature is present.
+    """
+    if "session-input" in blob:
         return "DVWA-SQLI-HIGH-011"
-    if ("1 or 1=1" in blob and "'1'='1" not in blob) or "security=medium" in blob or "[medium]" in blob or "numeric" in blob:
+    quoted = "'1'='1" in blob
+    if "1 or 1=1" in blob and not quoted:
+        return "DVWA-SQLI-MED-006"
+    if quoted:
+        return "DVWA-SQLI-001"
+    if "security=high" in blob or "[high]" in blob or ("union" in blob and "#" in blob):
+        return "DVWA-SQLI-HIGH-011"
+    if "security=medium" in blob or "[medium]" in blob or "numeric" in blob:
         return "DVWA-SQLI-MED-006"
     return "DVWA-SQLI-001"
 
@@ -294,6 +308,14 @@ def match_benchmark_case(finding: FindingRecord) -> str | None:
             return "JUICE-FEEDBACKPII-010"
         if "/encryptionkeys" in path or "premium.key" in path or "premium.key" in blob or "jwt.pub" in blob:
             return "JUICE-ENCKEYS-014"
+        # The /ftp/ listing itself names the .bak files, so an exposure finding's evidence often
+        # contains ".bak": classify by the requested path first, and only then fall back to evidence.
+        ftp_listing_or_doc = path.rstrip("/") == "/ftp" or path.endswith("acquisitions.md")
+        if ftp_listing_or_doc and "null" not in title_l and (
+            "200" in cwe or "538" in cwe or "548" in cwe or "confidential" in title_l or "acquisition" in title_l
+            or "directory" in title_l or "exposure" in title_l or "ftp" in title_l
+        ):
+            return "JUICE-EXPOSURE-005"
         # Null-byte backup-file read: distinguish from the acquisitions.md open-listing case
         if ("%2500" in path or "%00" in path or ".bak" in path or "null byte" in title_l or "nullbyte" in title_l
                 or "%2500" in blob or ".bak" in blob or "null byte" in blob):

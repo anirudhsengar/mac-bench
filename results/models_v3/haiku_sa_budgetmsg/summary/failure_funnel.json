@@ -1,0 +1,20 @@
+{
+  "results_subdir": "models_v3/haiku_sa_budgetmsg",
+  "total_misses": 10,
+  "by_architecture": {
+    "react_baseline": {
+      "not_mapped": 0,
+      "not_assigned": 0,
+      "not_attempted": 0,
+      "agent_rejected": 10,
+      "oracle_rejected": 0
+    }
+  },
+  "by_case": {
+    "react_baseline": {
+      "JUICE-FEEDBACKPII-010": {
+        "agent_rejected": 10
+      }
+    }
+  }
+}

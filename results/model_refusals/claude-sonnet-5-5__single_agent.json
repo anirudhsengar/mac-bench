@@ -1,0 +1,70 @@
+{
+  "timestamp_utc": "2026-11-13T17:24:49.789910+00:00",
+  "model": "claude-sonnet-5-5",
+  "prompt": "single_agent",
+  "request_sha256": "852bafa766382c49067699400dab3aceaf50955ae77aea0b8290e312cbf11d5f",
+  "stop_reason": "refusal",
+  "stop_details": {
+    "category": "cyber",
+    "explanation": "Cyber safeguards flagged this message. If this is legitimate security work, you can apply for the Cyber Verification Program: https://support.claude.com/en/articles/14604842-cyber-verification-program. API integrators: you can reduce refusals for your users by configuring a fallback model \u2014 see https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback",
+    "type": "refusal"
+  },
+  "first_block_types": [
+    "thinking"
+  ],
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "global",
+    "input_tokens": 5734,
+    "output_tokens": 6,
+    "output_tokens_details": {
+      "thinking_tokens": 6
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+  },
+  "api_error": null,
+  "response": {
+    "id": "msg_011Ch1KLeUBrYMFLS8iCDqMm",
+    "container": null,
+    "content": [
+      {
+        "signature": "CAQS5AQKEAgTGAI4AUIIdGhpbmtpbmcSDJgrrmuiLT/UXun54hoM2REumL+Goq88vLAFIjDHHnlE1vjbOnQBuNaSCRNCT4/rPjWsyd+qEovPSfOS8u2UAJheB1Pfs5MeYtnbf1IqgQQ/sXcetH6UjT7LntdmrAIIP6yfWMvW2W4+2Lt6nQoKAoq9kIPZVFdSUGMPRbSG99nCfU5q2gS2H4hx6zTXovFzpyphNN7lYUce8hvxHWzbbyd91wcdl9Lc7/Rss2f7jpz+steJTmqBAkgxvMBdMl+5HU0o5AJA1rm9dMveXkpmRR7WCe8YJSOSvewZuCgPerXqiyxW6wxPquYlrrWV+m6RYFCpjVDURzTDCMMFWK4GfHFom7McACodeqZ3LAelIEBMbM0iZXVSLgHCNANV7pJfSJdbbo9KvIz7XFBDo56YO8sixRqYD+W8PbREqH+DJcsb7sPFgV6z4HrBxQlwWTvmU1VFpM+YET9q/NGv/XA+NeWLVCWRs5ahdx/HSZlH2B9oc38l/1doKMdFVWm5oRHLlLMIJXpCr+iyzfEt02+QTUeoSSGKrHUy7VXjmfP7OG4nYlCYY7eO1ST2ANBsmZGQakvSwGuDiD6uolEgEQNqXoXjaJt3DrW1WQQhQhkr3KFFvugiEF4ei1f+L7s91Zv/321g8YNIVVjjv/+K7iqr/ICFl/0R8L77W3EKShwpOK4P0BckeTvtsqp9+lzg2Ufp521xYldQp6qNnQr9vaGlmgXNMAY0/zfAPekGrEqlmP9TiWgXJVn/GNzfsVsByqDDQGRQOMdYk38cjVDtW20tsmoYAQ==",
+        "thinking": "",
+        "type": "thinking"
+      }
+    ],
+    "diagnostics": null,
+    "model": "claude-sonnet-5-5",
+    "role": "assistant",
+    "stop_details": {
+      "category": "cyber",
+      "explanation": "Cyber safeguards flagged this message. If this is legitimate security work, you can apply for the Cyber Verification Program: https://support.claude.com/en/articles/14604842-cyber-verification-program. API integrators: you can reduce refusals for your users by configuring a fallback model \u2014 see https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback",
+      "type": "refusal"
+    },
+    "stop_reason": "refusal",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "inference_geo": "global",
+      "input_tokens": 5734,
+      "output_tokens": 6,
+      "output_tokens_details": {
+        "thinking_tokens": 6
+      },
+      "service_tier": "standard",
+      "speed": "standard"
+    }
+  }
+}

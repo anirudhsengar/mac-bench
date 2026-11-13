@@ -22,6 +22,8 @@ docker/dvwa/dvwa-src.tar.gz
 # Internal planning doc (not part of the published artifact)
 research_plan.docx
 
-# Paper write-up (maintained separately)
+# Paper write-up (maintained separately; not published before the conference)
 paper/
+paper_springer/
+Springer-Template-latex.zip
 archive/v1/paper_v1/

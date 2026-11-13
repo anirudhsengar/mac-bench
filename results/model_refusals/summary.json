@@ -1,0 +1,149 @@
+[
+  {
+    "model": "claude-haiku-5-5",
+    "prompt": "single_agent",
+    "stop_reason": "tool_use",
+    "stop_details": null,
+    "first_block_types": [
+      "thinking",
+      "text",
+      "tool_use",
+      "tool_use",
+      "tool_use"
+    ],
+    "api_error": null
+  },
+  {
+    "model": "claude-haiku-5-5",
+    "prompt": "coordinator",
+    "stop_reason": "tool_use",
+    "stop_details": null,
+    "first_block_types": [
+      "tool_use"
+    ],
+    "api_error": null
+  },
+  {
+    "model": "claude-sonnet-5",
+    "prompt": "single_agent",
+    "stop_reason": "tool_use",
+    "stop_details": null,
+    "first_block_types": [
+      "thinking",
+      "text",
+      "tool_use",
+      "tool_use",
+      "tool_use",
+      "tool_use"
+    ],
+    "api_error": null
+  },
+  {
+    "model": "claude-sonnet-5",
+    "prompt": "coordinator",
+    "stop_reason": "tool_use",
+    "stop_details": null,
+    "first_block_types": [
+      "thinking",
+      "tool_use"
+    ],
+    "api_error": null
+  },
+  {
+    "model": "claude-opus-4-8",
+    "prompt": "single_agent",
+    "stop_reason": "tool_use",
+    "stop_details": null,
+    "first_block_types": [
+      "text",
+      "tool_use",
+      "tool_use",
+      "tool_use",
+      "tool_use"
+    ],
+    "api_error": null
+  },
+  {
+    "model": "claude-opus-4-8",
+    "prompt": "coordinator",
+    "stop_reason": "tool_use",
+    "stop_details": null,
+    "first_block_types": [
+      "text",
+      "tool_use"
+    ],
+    "api_error": null
+  },
+  {
+    "model": "claude-sonnet-5-5",
+    "prompt": "single_agent",
+    "stop_reason": "refusal",
+    "stop_details": {
+      "category": "cyber",
+      "explanation": "Cyber safeguards flagged this message. If this is legitimate security work, you can apply for the Cyber Verification Program: https://support.claude.com/en/articles/14604842-cyber-verification-program. API integrators: you can reduce refusals for your users by configuring a fallback model \u2014 see https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback",
+      "type": "refusal"
+    },
+    "first_block_types": [
+      "thinking"
+    ],
+    "api_error": null
+  },
+  {
+    "model": "claude-sonnet-5-5",
+    "prompt": "coordinator",
+    "stop_reason": "tool_use",
+    "stop_details": null,
+    "first_block_types": [
+      "tool_use"
+    ],
+    "api_error": null
+  },
+  {
+    "model": "claude-opus-5",
+    "prompt": "single_agent",
+    "stop_reason": "refusal",
+    "stop_details": {
+      "category": "cyber",
+      "explanation": "This request triggered restrictions on violative cyber content and was blocked under Anthropic's Usage Policy. To learn more, see https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback. API integrators: you can reduce refusals for your users by configuring a fallback model \u2014 see https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback",
+      "type": "refusal"
+    },
+    "first_block_types": [],
+    "api_error": null
+  },
+  {
+    "model": "claude-opus-5",
+    "prompt": "coordinator",
+    "stop_reason": "refusal",
+    "stop_details": {
+      "category": "cyber",
+      "explanation": "This request triggered restrictions on violative cyber content and was blocked under Anthropic's Usage Policy. To learn more, see https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback. API integrators: you can reduce refusals for your users by configuring a fallback model \u2014 see https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback",
+      "type": "refusal"
+    },
+    "first_block_types": [],
+    "api_error": null
+  },
+  {
+    "model": "claude-opus-5-5",
+    "prompt": "single_agent",
+    "stop_reason": "refusal",
+    "stop_details": {
+      "category": "cyber",
+      "explanation": "Cyber safeguards flagged this message. If this is legitimate security work, you can apply for the Cyber Verification Program: https://support.claude.com/en/articles/14604842-cyber-verification-program. API integrators: you can reduce refusals for your users by configuring a fallback model \u2014 see https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback",
+      "type": "refusal"
+    },
+    "first_block_types": [],
+    "api_error": null
+  },
+  {
+    "model": "claude-opus-5-5",
+    "prompt": "coordinator",
+    "stop_reason": "refusal",
+    "stop_details": {
+      "category": "cyber",
+      "explanation": "Cyber safeguards flagged this message. If this is legitimate security work, you can apply for the Cyber Verification Program: https://support.claude.com/en/articles/14604842-cyber-verification-program. API integrators: you can reduce refusals for your users by configuring a fallback model \u2014 see https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback",
+      "type": "refusal"
+    },
+    "first_block_types": [],
+    "api_error": null
+  }
+]

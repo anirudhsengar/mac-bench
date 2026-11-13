@@ -14,6 +14,22 @@ from typing import Any
 import httpx
 
 
+
+def _apply_prompt_caching(req_json: dict[str, Any], role: str) -> None:
+    """Mark cache breakpoints on the relayed request (billing-only; the model sees identical input).
+
+    The system prompt is cached for every role. Worker and single-agent loops are append-only
+    conversations, so the whole prefix is also cached for them; the Coordinator rebuilds its
+    message from fresh state on every call, so caching its message would only add write cost.
+    """
+    system = req_json.get("system")
+    if isinstance(system, str) and system:
+        req_json["system"] = [{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}]
+    elif isinstance(system, list) and system and isinstance(system[-1], dict):
+        system[-1]["cache_control"] = {"type": "ephemeral"}
+    if role != "coordinator":
+        req_json["cache_control"] = {"type": "ephemeral"}
+
 class HostLLMRelay:
     """Mediates container LLM calls over a Unix socket so agent_net stays internal and API keys stay on host."""
 
@@ -162,6 +178,7 @@ class HostLLMRelay:
             # Enforce non-streaming JSON response for exact token accounting
             req_json["stream"] = False
             role = headers.get("x-agent-role", "unspecified")[:40]
+            _apply_prompt_caching(req_json, role)
 
             with self._lock:
                 if self.llm_calls_used >= self.llm_limit:
@@ -212,12 +229,15 @@ class HostLLMRelay:
 
             in_tok = 0
             out_tok = 0
+            cache_write_tok = 0
+            cache_read_tok = 0
             try:
                 parsed_resp = json.loads(resp_bytes.decode("utf-8"))
                 usage = parsed_resp.get("usage") or {}
-                in_tok = int(usage.get("input_tokens", 0)) + int(usage.get("cache_creation_input_tokens", 0)) + int(
-                    usage.get("cache_read_input_tokens", 0)
-                )
+                cache_write_tok = int(usage.get("cache_creation_input_tokens", 0) or 0)
+                cache_read_tok = int(usage.get("cache_read_input_tokens", 0) or 0)
+                # Total prompt size, cached or not, so token metrics stay comparable across runs.
+                in_tok = int(usage.get("input_tokens", 0)) + cache_write_tok + cache_read_tok
                 out_tok = int(usage.get("output_tokens", 0))
             except Exception:
                 pass
@@ -244,6 +264,8 @@ class HostLLMRelay:
                 in_tok=in_tok,
                 out_tok=out_tok,
                 latency_ms=latency_ms,
+                cache_write_tok=cache_write_tok,
+                cache_read_tok=cache_read_tok,
                 used=used_snapshot,
                 limit=limit_snapshot,
             )
@@ -269,6 +291,8 @@ class HostLLMRelay:
         in_tok: int,
         out_tok: int,
         latency_ms: float,
+        cache_write_tok: int,
+        cache_read_tok: int,
         used: int,
         limit: int,
     ) -> None:
@@ -284,6 +308,8 @@ class HostLLMRelay:
             "input_tokens": in_tok,
             "output_tokens": out_tok,
             "latency_ms": latency_ms,
+            "cache_creation_input_tokens": cache_write_tok,
+            "cache_read_input_tokens": cache_read_tok,
             "llm_calls_used": used,
             "llm_limit": limit,
         }
