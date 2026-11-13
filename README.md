@@ -5,7 +5,7 @@ Benchmarking framework and empirical evaluation comparing a 3-role LangGraph Mul
 ## Results (v3: final, as reported in the paper)
 
 > **Authoritative results:** `results/models_v3/` (main runs: `haiku`, `sonnet`, `opus`; ablations:
-> `haiku_static`, `haiku_tracked`; single-agent check: `haiku_sa_budgetmsg`). Earlier, superseded result sets
+> `haiku_static`, `haiku_tracked`, `sonnet_tracked`; single-agent check: `haiku_sa_budgetmsg`). Earlier, superseded result sets
 > are kept only for transparency: `results/models/` (original runs, before the fixes below) and
 > `results/models_v2_rescored/`.
 
@@ -39,7 +39,9 @@ always cost ~2.7-3.3x the runtime. Multi-agent misses trace to coordination: DVW
 untested once a route was marked verified, and (Sonnet, 2/10 runs) Coordinator halts that contradicted
 its own stated reasoning, leaving Juice Shop unmapped. Replacing the LLM Coordinator with fixed routing
 (Haiku ablation) lowered recall further (0.79), while giving it per-instance coverage tracking with a halt check
-restored recall to the single agent's level (0.93 in all 10 runs vs 0.94) without reducing the time cost (278 s vs 102 s). Containment held in all runs (0 escapes).
+restored recall to the single agent's level on Haiku (0.93 in all 10 runs vs 0.94) and Sonnet (1.00 in all
+10 runs), without removing the time cost (Haiku 278 s vs 102 s; Sonnet 407 s vs 186 s). The halt-refusal override
+never fired on Sonnet; the gain came from the Coordinator seeing the per-instance checklist. Containment held in all runs (0 escapes).
 
 **Corrections.** An earlier run (archived numbers in `results/models/`) contained three defects, fixed
 with regression tests: (i) the multi-agent state reducer keyed findings by route+CWE, so DVWA

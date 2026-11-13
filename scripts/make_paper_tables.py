@@ -300,11 +300,12 @@ def main() -> None:
                 "per_case": summ["metrics"]["by_architecture"][MA]["per_case_detection"] if summ else None,
             }
         cells_r.append(_ms(_col(runs, SA, "recall"))); cells_t.append(_ms(_col(runs, SA, "runtime_seconds"), "{:.0f}"))
-        arows.append(f"Recall & {' & '.join(cells_r)} \\\\\nRuntime (s) & {' & '.join(cells_t)} \\\\\n")
+        arows.append(f"{label} & Recall & {' & '.join(cells_r)} \\\\\n & Runtime (s) & {' & '.join(cells_t)} \\\\\n")
     if arows:
         (out_dir / "ablation.tex").write_text(_tab(
-            "@{}l c c c c@{}",
-            "Haiku 5.5 & MA (LLM Coord.) & MA (fixed routing) & MA (coverage-tracked) & SA", "".join(arows)),
+            "@{}l l c c c c@{}",
+            "Model & & MA (LLM Coord.) & MA (fixed routing) & MA (cov.-tracked) & SA",
+            "\\noalign{\\smallskip}\\hline\\noalign{\\smallskip}\n".join(arows)),
             encoding="utf-8")
 
     for slug, label, mid, d, runs in present:

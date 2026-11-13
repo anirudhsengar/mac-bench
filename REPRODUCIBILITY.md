@@ -103,18 +103,20 @@ for pair in "haiku claude-haiku-5-5" "sonnet claude-sonnet-5" "opus claude-opus-
   .venv/bin/python scripts/invalidate_failed_pairs.py models_v3/$1   # drop pairs with any failed LLM call ...
   .venv/bin/python scripts/run_trials.py --resume                    # ... and rerun them in full
 done
-# Ablations (Haiku only): fixed routing instead of the LLM Coordinator, and the LLM Coordinator
+# Ablations (Haiku; coverage tracking also on Sonnet below): fixed routing instead of the LLM Coordinator, and the LLM Coordinator
 # with per-instance coverage tracking and a halt check
 for v in static tracked; do
   MAC_BENCH_MA_COORDINATOR=$v MAC_BENCH_MODEL=claude-haiku-5-5 MAC_BENCH_RESULTS_SUBDIR=models_v3/haiku_$v \
     .venv/bin/python scripts/run_trials.py --resume --arch ma
 done
+MAC_BENCH_MA_COORDINATOR=tracked MAC_BENCH_MODEL=claude-sonnet-5 MAC_BENCH_RESULTS_SUBDIR=models_v3/sonnet_tracked \
+  .venv/bin/python scripts/run_trials.py --resume --arch ma
 ```
 Each run recreates Juice Shop v16.0.0, resets DVWA 2.3 via `setup.php`, seeds the two Juice Shop accounts, zeroes firewall and proxy counters, verifies `0` out-of-scope escapes afterward, and writes redacted artifacts to `results/<subdir>/trials/`. Prompt caching is applied at the host relay; it changes billing and latency, not the model input.
 
 ### Step 5: Score, Analyse, and Regenerate the Paper Tables
 ```bash
-for m in haiku sonnet opus haiku_static haiku_tracked; do
+for m in haiku sonnet opus haiku_static haiku_tracked sonnet_tracked; do
   MAC_BENCH_RESULTS_SUBDIR=models_v3/$m .venv/bin/python scripts/evaluate_results.py
   .venv/bin/python scripts/failure_funnel.py models_v3/$m
 done
