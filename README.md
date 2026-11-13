@@ -2,7 +2,12 @@
 
 Benchmarking framework and empirical evaluation comparing a 3-role LangGraph Multi-Agent architecture (Coordinator, Surface Mapper, Verification Agent) against a Single-Agent ReAct baseline on DVWA 2.3 and OWASP Juice Shop v16.0.0 under strict Docker network isolation and `mitmproxy` request mediation.
 
-## Results (v3: corrected agents and scorer)
+## Results (v3: final, as reported in the paper)
+
+> **Authoritative results:** `results/models_v3/` (main runs: `haiku`, `sonnet`, `opus`; ablations:
+> `haiku_static`, `haiku_tracked`; single-agent check: `haiku_sa_budgetmsg`). Earlier, superseded result sets
+> are kept only for transparency: `results/models/` (original runs, before the fixes below) and
+> `results/models_v2_rescored/`.
 
 The benchmark is a **14-case, 3-tier** difficulty-graded suite on DVWA 2.3 and OWASP Juice Shop
 v16.0.0; budgets are 600 HTTP / 120 LLM / 3600 s, which no run exhausts. Both architectures receive
@@ -21,7 +26,7 @@ uv run python scripts/failure_funnel.py models_v3/haiku        # where each miss
 uv run python scripts/make_paper_tables.py                     # regenerate paper_springer/tables/*.tex
 ```
 
-Headline (10 paired trials per model; exact Wilcoxon signed-rank, MA vs SA):
+Headline, final v3 runs (10 paired trials per model; exact Wilcoxon signed-rank, MA vs SA):
 
 | Model | MA recall | SA recall | p (recall) | MA:SA runtime | p (runtime) |
 |---|---|---|---|---|---|
@@ -33,7 +38,7 @@ Role specialization never improved recall (SA equal or higher in 29/30 pairs; po
 always cost ~2.7-3.3x the runtime. Multi-agent misses trace to coordination: DVWA security levels left
 untested once a route was marked verified, and (Sonnet, 2/10 runs) Coordinator halts that contradicted
 its own stated reasoning, leaving Juice Shop unmapped. Replacing the LLM Coordinator with fixed routing
-(Haiku) lowered recall further (0.79), while giving it per-instance coverage tracking with a halt check
+(Haiku ablation) lowered recall further (0.79), while giving it per-instance coverage tracking with a halt check
 restored recall to the single agent's level (0.93 in all 10 runs vs 0.94) without reducing the time cost (278 s vs 102 s). Containment held in all runs (0 escapes).
 
 **Corrections.** An earlier run (archived numbers in `results/models/`) contained three defects, fixed
